@@ -12,8 +12,8 @@ test.describe('Diagram Editor', () => {
     // Check for main heading
     await expect(page.locator('h1').filter({ hasText: 'Diagram Editor' })).toBeVisible();
 
-    // Check for AI generation panel
-    await expect(page.locator('h2').filter({ hasText: 'AI Diagram Generation' })).toBeVisible();
+    // Check for diagram editor
+    await expect(page.locator('[data-testid="unified-diagram-editor"]')).toBeVisible();
   });
 
   test('should have both Visual and Mermaid editor tabs', async ({ page }) => {
@@ -96,23 +96,7 @@ test.describe('Diagram Editor', () => {
     await expect(textArea).toHaveValue(mermaidCode);
   });
 
-  test('should have AI generation functionality', async ({ page }) => {
-    // Look for AI input and button
-    const aiInput = page.locator('input[placeholder*="Describe your diagram"]');
-    const aiButton = page.locator('button:has-text("Generate")');
 
-    // Check if AI components are present
-    await expect(aiInput).toBeVisible();
-    await expect(aiButton).toBeVisible();
-
-    // Test AI input functionality
-    await aiInput.fill('user login process');
-    await expect(aiButton).toBeEnabled();
-
-    // Clear input and check button is disabled
-    await aiInput.clear();
-    await expect(aiButton).toBeDisabled();
-  });
 
   test('should be responsive on different screen sizes', async ({ page }) => {
     // Test tablet size

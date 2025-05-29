@@ -159,69 +159,54 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
   const currentCategory = nodeCategories[activeCategory as keyof typeof nodeCategories]
 
   return (
-    <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Node Palette</h3>
-
-        {/* Category Tabs */}
-        <div className="flex flex-wrap gap-1">
-          {Object.entries(nodeCategories).map(([key, category]) => (
-            <button
-              key={key}
-              onClick={() => setActiveCategory(key)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeCategory === key
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              <span className="mr-1">{category.icon}</span>
-              {category.label}
-            </button>
-          ))}
-        </div>
+    <div className="w-full flex flex-col h-full">
+      {/* Category Tabs */}
+      <div className="flex flex-wrap gap-1 mb-3">
+        {Object.entries(nodeCategories).map(([key, category]) => (
+          <button
+            key={key}
+            onClick={() => setActiveCategory(key)}
+            className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+              activeCategory === key
+                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <span className="mr-1">{category.icon}</span>
+            {category.label}
+          </button>
+        ))}
       </div>
 
       {/* Node List */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         <div className="space-y-2">
           {currentCategory.nodes.map((template) => (
             <div
               key={template.type}
-              className="p-3 border border-gray-200 rounded-lg cursor-move hover:bg-gray-50 transition-all hover:shadow-md group"
+              className="p-2 border border-gray-200 rounded-lg cursor-move hover:bg-gray-50 transition-all hover:shadow-sm group"
               draggable
               onDragStart={(e) => onDragStart(e, template.type, template.data)}
               onClick={() => onNodeAdd(template.type, template.data)}
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <div
-                  className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-medium"
+                  className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-medium"
                   style={{ backgroundColor: template.data.color }}
                 >
                   {template.icon}
                 </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900 group-hover:text-gray-700">
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 group-hover:text-gray-700 truncate">
                     {template.label}
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">
+                  <div className="text-xs text-gray-500 truncate">
                     {template.description}
                   </div>
-                </div>
-                <div className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Drag or Click
                 </div>
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="p-3 border-t border-gray-200 bg-gray-50">
-        <div className="text-xs text-gray-500 text-center">
-          💡 Drag nodes to canvas or click to add at center
         </div>
       </div>
     </div>

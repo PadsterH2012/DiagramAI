@@ -107,7 +107,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
   }, [])
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white" data-testid="unified-diagram-editor">
       {/* Tab Navigation */}
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8 px-6">

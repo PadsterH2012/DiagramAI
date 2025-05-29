@@ -191,18 +191,27 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
         connectionMode={ConnectionMode.Loose}
         fitView
         attributionPosition="bottom-left"
-        className="bg-gray-50"
+        className="bg-white"
         nodesDraggable={!readOnly}
         nodesConnectable={!readOnly}
         elementsSelectable={!readOnly}
         selectNodesOnDrag={false}
       >
-        <Background color="#aaa" gap={16} />
-        <Controls />
+        <Background
+          color="#e5e7eb"
+          gap={20}
+          size={1}
+          variant="dots"
+        />
+        <Controls
+          position="top-right"
+          className="bg-white border border-gray-200 rounded-lg shadow-sm"
+        />
         <MiniMap
           nodeColor="#3b82f6"
-          maskColor="rgba(0, 0, 0, 0.1)"
+          maskColor="rgba(255, 255, 255, 0.8)"
           position="bottom-right"
+          className="bg-white border border-gray-200 rounded-lg shadow-sm"
         />
       </ReactFlow>
     </div>

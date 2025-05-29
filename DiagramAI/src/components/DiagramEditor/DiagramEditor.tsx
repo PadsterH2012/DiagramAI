@@ -3,7 +3,8 @@
 import React, { useState, useCallback } from 'react'
 import { Node, Edge } from '@xyflow/react'
 import { ReactFlowEditor } from './ReactFlowEditor'
-import { NodePalette } from './NodePalette'
+import { SlideOutMenu } from './SlideOutMenu'
+import { MovableChatbox } from './MovableChatbox'
 import { NodePropertiesPanel } from './NodePropertiesPanel'
 import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel'
 
@@ -28,6 +29,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   const [selectedEdges, setSelectedEdges] = useState<Edge[]>([])
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false)
   const [showHelpPanel, setShowHelpPanel] = useState(false)
+  const [showChatbox, setShowChatbox] = useState(false)
   const [clipboard, setClipboard] = useState<{ nodes: Node[], edges: Edge[] } | null>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
@@ -263,10 +265,10 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   }, [])
 
   return (
-    <div className="flex h-full bg-gray-50">
-      {/* Left Panel - Node Palette */}
+    <div className="flex h-full bg-white relative">
+      {/* Slide-out Menu */}
       {!readOnly && (
-        <NodePalette onNodeAdd={handleNodeAdd} />
+        <SlideOutMenu onNodeAdd={handleNodeAdd} />
       )}
 
       {/* Main Editor Area */}
@@ -329,6 +331,17 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
               {/* View Actions */}
               <div className="flex items-center space-x-1">
                 <button
+                  onClick={() => setShowChatbox(!showChatbox)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    showChatbox
+                      ? 'bg-green-100 text-green-700 border border-green-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  }`}
+                  title="AI Assistant"
+                >
+                  🤖 AI Chat
+                </button>
+                <button
                   onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     showPropertiesPanel
@@ -377,17 +390,22 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
         </div>
 
         {/* React Flow Editor */}
-        <div className="flex-1 relative">
-          <ReactFlowEditor
-            initialNodes={currentNodes}
-            initialEdges={currentEdges}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={handleEdgesChange}
-            onNodeSelect={handleNodeSelect}
-            onNodeDoubleClick={handleNodeDoubleClick}
-            onSelectionChange={handleSelectionChange}
-            readOnly={readOnly}
-          />
+        <div className="flex-1 relative bg-white">
+          {/* Grid Background with Padding */}
+          <div className="absolute inset-0 p-6">
+            <div className="w-full h-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+              <ReactFlowEditor
+                initialNodes={currentNodes}
+                initialEdges={currentEdges}
+                onNodesChange={handleNodesChange}
+                onEdgesChange={handleEdgesChange}
+                onNodeSelect={handleNodeSelect}
+                onNodeDoubleClick={handleNodeDoubleClick}
+                onSelectionChange={handleSelectionChange}
+                readOnly={readOnly}
+              />
+            </div>
+          </div>
 
           {/* Node Properties Panel */}
           {showPropertiesPanel && (
@@ -407,6 +425,12 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
       <KeyboardShortcutsPanel
         isOpen={showHelpPanel}
         onClose={() => setShowHelpPanel(false)}
+      />
+
+      {/* Movable Chatbox */}
+      <MovableChatbox
+        isOpen={showChatbox}
+        onToggle={() => setShowChatbox(!showChatbox)}
       />
     </div>
   )
