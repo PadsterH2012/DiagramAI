@@ -27,17 +27,39 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
       try {
         setRenderError(null)
         
-        // For now, just show the syntax as text
-        // In a full implementation, you would use mermaid.js here
-        previewRef.current!.innerHTML = `
-          <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div class="text-blue-800 font-medium mb-2">Mermaid Preview</div>
-            <pre class="text-sm text-blue-600 whitespace-pre-wrap">${syntax}</pre>
-            <div class="text-xs text-blue-500 mt-2">
-              💡 Full Mermaid rendering will be implemented in the next phase
+        // Import and render with mermaid.js
+        const mermaid = await import('mermaid')
+
+        // Initialize mermaid
+        mermaid.default.initialize({
+          startOnLoad: false,
+          theme: theme === 'dark' ? 'dark' : 'default',
+          securityLevel: 'loose',
+          fontFamily: 'Inter, system-ui, sans-serif',
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true
+          }
+        })
+
+        // Generate unique ID for this diagram
+        const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
+        try {
+          // Render the mermaid diagram
+          const result = await mermaid.default.render(diagramId, syntax)
+
+          previewRef.current!.innerHTML = `
+            <div class="w-full h-full flex flex-col">
+              <div class="text-gray-700 font-medium mb-2 text-sm">✅ Mermaid Diagram</div>
+              <div class="flex-1 flex justify-center items-center overflow-auto">
+                ${result.svg}
+              </div>
             </div>
-          </div>
-        `
+          `
+        } catch (renderError) {
+          throw new Error(`Mermaid syntax error: ${renderError instanceof Error ? renderError.message : 'Invalid diagram syntax'}`)
+        }
         
       } catch (error) {
         console.error('Mermaid render error:', error)

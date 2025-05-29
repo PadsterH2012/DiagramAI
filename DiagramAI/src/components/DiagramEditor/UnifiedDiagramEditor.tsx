@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { Node, Edge } from '@xyflow/react'
 import { DiagramEditor } from './DiagramEditor'
 import { MermaidEditor } from './MermaidEditor'
+import { diagramService, DiagramData } from '../../services/diagramService'
 
 interface UnifiedDiagramEditorProps {
   initialNodes?: Node[]
@@ -30,12 +31,41 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
     C --> E[End]
     D --> E`)
 
-  const handleSave = useCallback(() => {
-    onSave?.({
-      nodes,
-      edges,
-      mermaidSyntax
-    })
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+
+  const handleSave = useCallback(async () => {
+    setSaveStatus('saving')
+    try {
+      const diagramData: DiagramData = {
+        title: `Diagram ${new Date().toLocaleDateString()}`,
+        description: 'Auto-saved diagram',
+        content: {
+          nodes,
+          edges
+        },
+        format: 'reactflow',
+        tags: ['auto-save'],
+        isPublic: false
+      }
+
+      const result = await diagramService.autoSave(diagramData)
+
+      if (result.success) {
+        onSave?.({
+          nodes,
+          edges,
+          mermaidSyntax
+        })
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+      } else {
+        throw new Error(result.error || 'Save failed')
+      }
+    } catch (error) {
+      console.error('Save error:', error)
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+    }
   }, [nodes, edges, mermaidSyntax, onSave])
 
   const handleNodesChange = useCallback((newNodes: Node[]) => {
@@ -140,9 +170,21 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
           )}
           <button
             onClick={handleSave}
-            className="btn-primary text-sm"
+            disabled={saveStatus === 'saving'}
+            className={`text-sm px-4 py-2 rounded-md font-medium transition-colors ${
+              saveStatus === 'saving'
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : saveStatus === 'saved'
+                ? 'bg-green-600 text-white'
+                : saveStatus === 'error'
+                ? 'bg-red-600 text-white'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
           >
-            💾 Save
+            {saveStatus === 'saving' && '⏳ Saving...'}
+            {saveStatus === 'saved' && '✅ Saved!'}
+            {saveStatus === 'error' && '❌ Error'}
+            {saveStatus === 'idle' && '💾 Save'}
           </button>
         </div>
       </div>

@@ -96,7 +96,7 @@ test.describe('Security Tests', () => {
     }
     
     // Page should load successfully regardless
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
   });
 
   test('should prevent clickjacking attacks', async ({ page }) => {
@@ -166,7 +166,7 @@ test.describe('Security Tests', () => {
       await aiInput.fill(input);
       
       // Application should handle gracefully without crashing
-      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('h1').first()).toBeVisible();
       
       // Try to generate diagram
       const generateButton = page.locator('button:has-text("Generate")');
@@ -187,7 +187,7 @@ test.describe('Security Tests', () => {
     // In a real application, this would check for CSRF tokens
     
     // For now, we'll just verify that the application loads correctly
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
     
     // Test that forms don't accept requests from other origins
     // This would typically be tested with actual API endpoints

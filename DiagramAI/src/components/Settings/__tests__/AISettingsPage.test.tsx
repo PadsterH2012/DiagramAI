@@ -1,0 +1,224 @@
+import React from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import { AISettingsPage } from '../AISettingsPage'
+import { SettingsStorage } from '../../../services/settingsStorage'
+import { AIProviderService } from '../../../services/aiProviderService'
+
+// Mock the services
+jest.mock('../../../services/settingsStorage')
+jest.mock('../../../services/aiProviderService')
+
+const mockSettingsStorage = SettingsStorage as jest.Mocked<typeof SettingsStorage>
+const mockAIProviderService = AIProviderService as jest.Mocked<typeof AIProviderService>
+
+describe('AISettingsPage', () => {
+  beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks()
+    
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+        clear: jest.fn(),
+      },
+      writable: true,
+    })
+
+    // Default mock implementations
+    mockSettingsStorage.loadSettings.mockResolvedValue({
+      providers: {}
+    })
+    
+    mockSettingsStorage.saveSettings.mockResolvedValue()
+    mockSettingsStorage.clearSettings.mockResolvedValue()
+  })
+
+  it('renders all AI provider cards', async () => {
+    render(<AISettingsPage />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+      expect(screen.getByText('Anthropic')).toBeInTheDocument()
+      expect(screen.getByText('OpenRouter')).toBeInTheDocument()
+    })
+  })
+
+  it('loads settings on mount', async () => {
+    const mockSettings = {
+      providers: {
+        openai: {
+          apiKey: 'test-key',
+          selectedModel: 'gpt-4',
+          isValidated: true,
+          availableModels: [
+            { id: 'gpt-4', name: 'GPT-4', description: 'Most capable model' }
+          ]
+        }
+      }
+    }
+
+    mockSettingsStorage.loadSettings.mockResolvedValue(mockSettings)
+
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(mockSettingsStorage.loadSettings).toHaveBeenCalled()
+    })
+  })
+
+  it('validates API key when validate button is clicked', async () => {
+    mockAIProviderService.validateApiKey.mockResolvedValue({
+      isValid: true,
+      models: [
+        { id: 'gpt-4', name: 'GPT-4', description: 'Most capable model' }
+      ]
+    })
+
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+    })
+
+    // Find the first API key input (OpenAI)
+    const apiKeyInputs = screen.getAllByPlaceholderText(/Enter your .* API key/)
+    const openaiInput = apiKeyInputs[0]
+    
+    // Enter API key
+    fireEvent.change(openaiInput, { target: { value: 'test-api-key' } })
+
+    // Click validate button
+    const validateButtons = screen.getAllByText('Validate')
+    fireEvent.click(validateButtons[0])
+
+    await waitFor(() => {
+      expect(mockAIProviderService.validateApiKey).toHaveBeenCalledWith('openai', 'test-api-key')
+    })
+  })
+
+  it('shows error message for invalid API key', async () => {
+    mockAIProviderService.validateApiKey.mockResolvedValue({
+      isValid: false,
+      error: 'Invalid API key'
+    })
+
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+    })
+
+    // Find the first API key input (OpenAI)
+    const apiKeyInputs = screen.getAllByPlaceholderText(/Enter your .* API key/)
+    const openaiInput = apiKeyInputs[0]
+    
+    // Enter invalid API key
+    fireEvent.change(openaiInput, { target: { value: 'invalid-key' } })
+
+    // Click validate button
+    const validateButtons = screen.getAllByText('Validate')
+    fireEvent.click(validateButtons[0])
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid API key')).toBeInTheDocument()
+    })
+  })
+
+  it('saves settings automatically when provider is updated', async () => {
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+    })
+
+    // Simulate successful validation
+    mockAIProviderService.validateApiKey.mockResolvedValue({
+      isValid: true,
+      models: [
+        { id: 'gpt-4', name: 'GPT-4', description: 'Most capable model' }
+      ]
+    })
+
+    // Find the first API key input (OpenAI)
+    const apiKeyInputs = screen.getAllByPlaceholderText(/Enter your .* API key/)
+    const openaiInput = apiKeyInputs[0]
+    
+    // Enter API key
+    fireEvent.change(openaiInput, { target: { value: 'test-api-key' } })
+
+    // Click validate button
+    const validateButtons = screen.getAllByText('Validate')
+    fireEvent.click(validateButtons[0])
+
+    await waitFor(() => {
+      expect(mockSettingsStorage.saveSettings).toHaveBeenCalled()
+    })
+  })
+
+  it('clears all settings when clear button is clicked', async () => {
+    // Mock window.confirm
+    window.confirm = jest.fn(() => true)
+
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Clear All Settings')).toBeInTheDocument()
+    })
+
+    // Click clear all settings button
+    fireEvent.click(screen.getByText('Clear All Settings'))
+
+    await waitFor(() => {
+      expect(mockSettingsStorage.clearSettings).toHaveBeenCalled()
+      expect(mockSettingsStorage.loadSettings).toHaveBeenCalledTimes(2) // Once on mount, once after clear
+    })
+  })
+
+  it('shows loading state initially', () => {
+    render(<AISettingsPage />)
+    
+    expect(screen.getByText('Loading settings...')).toBeInTheDocument()
+  })
+
+  it('shows save status messages', async () => {
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+    })
+
+    // Simulate a save operation that triggers status update
+    mockAIProviderService.validateApiKey.mockResolvedValue({
+      isValid: true,
+      models: []
+    })
+
+    const apiKeyInputs = screen.getAllByPlaceholderText(/Enter your .* API key/)
+    const openaiInput = apiKeyInputs[0]
+    
+    fireEvent.change(openaiInput, { target: { value: 'test-key' } })
+    
+    const validateButtons = screen.getAllByText('Validate')
+    fireEvent.click(validateButtons[0])
+
+    // Should show saving status
+    await waitFor(() => {
+      expect(screen.getByText('Saving settings...')).toBeInTheDocument()
+    })
+  })
+
+  it('displays help section with provider links', async () => {
+    render(<AISettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('💡 Getting Started')).toBeInTheDocument()
+      expect(screen.getByText(/platform.openai.com/)).toBeInTheDocument()
+      expect(screen.getByText(/console.anthropic.com/)).toBeInTheDocument()
+      expect(screen.getByText(/openrouter.ai/)).toBeInTheDocument()
+    })
+  })
+})

@@ -4,6 +4,8 @@ import React, { useState, useCallback } from 'react'
 import { Node, Edge } from '@xyflow/react'
 import { ReactFlowEditor } from './ReactFlowEditor'
 import { NodePalette } from './NodePalette'
+import { NodePropertiesPanel } from './NodePropertiesPanel'
+import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel'
 
 interface DiagramEditorProps {
   initialNodes?: Node[]
@@ -21,6 +23,13 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   const [nodes, setNodes] = useState<Node[]>(initialNodes)
   const [edges, setEdges] = useState<Edge[]>(initialEdges)
   const [selectedTool, setSelectedTool] = useState<string>('select')
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null)
+  const [selectedNodes, setSelectedNodes] = useState<Node[]>([])
+  const [selectedEdges, setSelectedEdges] = useState<Edge[]>([])
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(false)
+  const [showHelpPanel, setShowHelpPanel] = useState(false)
+  const [clipboard, setClipboard] = useState<{ nodes: Node[], edges: Edge[] } | null>(null)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
   // Sample initial nodes for demo
   const defaultNodes: Node[] = [
@@ -85,8 +94,162 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     setNodes((prevNodes) => [...prevNodes, newNode])
   }, [])
 
-  const handleSave = useCallback(() => {
-    onSave?.(currentNodes, currentEdges)
+  const handleNodeUpdate = useCallback((nodeId: string, updates: any) => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, ...updates } }
+          : node
+      )
+    )
+  }, [])
+
+  const handleNodeSelect = useCallback((node: Node | null) => {
+    setSelectedNode(node)
+    if (node) {
+      setShowPropertiesPanel(true)
+    }
+  }, [])
+
+  const handleNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node) => {
+    setSelectedNode(node)
+    setShowPropertiesPanel(true)
+  }, [])
+
+  // Selection handlers
+  const handleSelectionChange = useCallback((selection: { nodes: Node[], edges: Edge[] }) => {
+    setSelectedNodes(selection.nodes)
+    setSelectedEdges(selection.edges)
+    if (selection.nodes.length === 1) {
+      setSelectedNode(selection.nodes[0])
+    } else {
+      setSelectedNode(null)
+    }
+  }, [])
+
+  // Delete functionality
+  const handleDelete = useCallback(() => {
+    if (selectedNodes.length > 0 || selectedEdges.length > 0) {
+      const selectedNodeIds = selectedNodes.map(node => node.id)
+      const selectedEdgeIds = selectedEdges.map(edge => edge.id)
+
+      // Remove selected nodes and edges
+      setNodes(prevNodes => prevNodes.filter(node => !selectedNodeIds.includes(node.id)))
+      setEdges(prevEdges => prevEdges.filter(edge =>
+        !selectedEdgeIds.includes(edge.id) &&
+        !selectedNodeIds.includes(edge.source) &&
+        !selectedNodeIds.includes(edge.target)
+      ))
+
+      // Clear selection
+      setSelectedNodes([])
+      setSelectedEdges([])
+      setSelectedNode(null)
+    }
+  }, [selectedNodes, selectedEdges])
+
+  // Copy functionality
+  const handleCopy = useCallback(() => {
+    if (selectedNodes.length > 0) {
+      const relatedEdges = edges.filter(edge =>
+        selectedNodes.some(node => node.id === edge.source) &&
+        selectedNodes.some(node => node.id === edge.target)
+      )
+
+      setClipboard({
+        nodes: selectedNodes,
+        edges: relatedEdges
+      })
+    }
+  }, [selectedNodes, edges])
+
+  // Paste functionality
+  const handlePaste = useCallback(() => {
+    if (clipboard) {
+      const nodeIdMap = new Map<string, string>()
+
+      // Create new nodes with new IDs
+      const newNodes = clipboard.nodes.map(node => {
+        const newId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        nodeIdMap.set(node.id, newId)
+        return {
+          ...node,
+          id: newId,
+          position: {
+            x: node.position.x + 50, // Offset pasted nodes
+            y: node.position.y + 50
+          },
+          selected: false
+        }
+      })
+
+      // Create new edges with updated node references
+      const newEdges = clipboard.edges.map(edge => ({
+        ...edge,
+        id: `edge-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        source: nodeIdMap.get(edge.source) || edge.source,
+        target: nodeIdMap.get(edge.target) || edge.target,
+        selected: false
+      }))
+
+      setNodes(prevNodes => [...prevNodes, ...newNodes])
+      setEdges(prevEdges => [...prevEdges, ...newEdges])
+
+      // Select the pasted nodes
+      setSelectedNodes(newNodes)
+      setSelectedEdges(newEdges)
+    }
+  }, [clipboard])
+
+  // Keyboard shortcuts
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+      return // Don't handle shortcuts when typing in inputs
+    }
+
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      event.preventDefault()
+      handleDelete()
+    } else if (event.key === '?' || event.key === 'F1') {
+      event.preventDefault()
+      setShowHelpPanel(!showHelpPanel)
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      setSelectedNodes([])
+      setSelectedEdges([])
+      setSelectedNode(null)
+      setShowHelpPanel(false)
+    } else if (event.ctrlKey || event.metaKey) {
+      if (event.key === 'c') {
+        event.preventDefault()
+        handleCopy()
+      } else if (event.key === 'v') {
+        event.preventDefault()
+        handlePaste()
+      } else if (event.key === 'a') {
+        event.preventDefault()
+        setSelectedNodes(nodes)
+        setSelectedEdges(edges)
+      } else if (event.key === 's') {
+        event.preventDefault()
+        handleSave()
+      }
+    }
+  }, [handleDelete, handleCopy, handlePaste, nodes, edges])
+
+  // Add keyboard event listeners
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  const handleSave = useCallback(async () => {
+    try {
+      await onSave?.(currentNodes, currentEdges)
+      setLastSaved(new Date())
+    } catch (error) {
+      console.error('Save failed:', error)
+    }
   }, [currentNodes, currentEdges, onSave])
 
   const handleClear = useCallback(() => {
@@ -119,44 +282,132 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
               <span className="text-sm text-gray-600">
                 Connections: {currentEdges.length}
               </span>
+              {selectedNodes.length > 0 && (
+                <span className="text-sm text-blue-600 font-medium">
+                  Selected: {selectedNodes.length} node{selectedNodes.length !== 1 ? 's' : ''}
+                  {selectedEdges.length > 0 && `, ${selectedEdges.length} edge${selectedEdges.length !== 1 ? 's' : ''}`}
+                </span>
+              )}
+              {lastSaved && (
+                <span className="text-xs text-green-600">
+                  Last saved: {lastSaved.toLocaleTimeString()}
+                </span>
+              )}
             </div>
           </div>
           
           {!readOnly && (
             <div className="flex items-center space-x-2">
-              <button
-                onClick={handleReset}
-                className="btn-secondary text-sm"
-              >
-                Reset Demo
-              </button>
-              <button
-                onClick={handleClear}
-                className="btn-secondary text-sm"
-              >
-                Clear All
-              </button>
-              <button
-                onClick={handleSave}
-                className="btn-primary text-sm"
-              >
-                Save Diagram
-              </button>
+              {/* Edit Actions */}
+              <div className="flex items-center space-x-1 border-r border-gray-200 pr-2">
+                <button
+                  onClick={handleCopy}
+                  disabled={selectedNodes.length === 0}
+                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  title="Copy (Ctrl+C)"
+                >
+                  📋 Copy
+                </button>
+                <button
+                  onClick={handlePaste}
+                  disabled={!clipboard}
+                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  title="Paste (Ctrl+V)"
+                >
+                  📄 Paste
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={selectedNodes.length === 0 && selectedEdges.length === 0}
+                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-red-100 text-red-700 hover:bg-red-200"
+                  title="Delete (Del)"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+
+              {/* View Actions */}
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    showPropertiesPanel
+                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  }`}
+                >
+                  🎨 Properties
+                </button>
+                <button
+                  onClick={() => setShowHelpPanel(!showHelpPanel)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    showHelpPanel
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  }`}
+                  title="Keyboard Shortcuts (? or F1)"
+                >
+                  ❓ Help
+                </button>
+              </div>
+
+              {/* Diagram Actions */}
+              <div className="flex items-center space-x-1 border-l border-gray-200 pl-2">
+                <button
+                  onClick={handleReset}
+                  className="btn-secondary text-sm"
+                >
+                  Reset Demo
+                </button>
+                <button
+                  onClick={handleClear}
+                  className="btn-secondary text-sm"
+                >
+                  Clear All
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="btn-primary text-sm"
+                >
+                  💾 Save Diagram
+                </button>
+              </div>
             </div>
           )}
         </div>
 
         {/* React Flow Editor */}
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <ReactFlowEditor
             initialNodes={currentNodes}
             initialEdges={currentEdges}
             onNodesChange={handleNodesChange}
             onEdgesChange={handleEdgesChange}
+            onNodeSelect={handleNodeSelect}
+            onNodeDoubleClick={handleNodeDoubleClick}
+            onSelectionChange={handleSelectionChange}
             readOnly={readOnly}
           />
+
+          {/* Node Properties Panel */}
+          {showPropertiesPanel && (
+            <NodePropertiesPanel
+              selectedNode={selectedNode}
+              onNodeUpdate={handleNodeUpdate}
+              onClose={() => {
+                setShowPropertiesPanel(false)
+                setSelectedNode(null)
+              }}
+            />
+          )}
         </div>
       </div>
+
+      {/* Keyboard Shortcuts Help Panel */}
+      <KeyboardShortcutsPanel
+        isOpen={showHelpPanel}
+        onClose={() => setShowHelpPanel(false)}
+      />
     </div>
   )
 }

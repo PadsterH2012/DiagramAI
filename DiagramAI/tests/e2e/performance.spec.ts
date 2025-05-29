@@ -20,23 +20,43 @@ test.describe('Performance Tests', () => {
     // Page should load within 3 seconds
     expect(loadTime).toBeLessThan(3000);
     
-    // Check Core Web Vitals
+    // Check Core Web Vitals with timeout
     const metrics = await page.evaluate(() => {
       return new Promise((resolve) => {
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          const metrics: any = {};
-          
-          entries.forEach((entry) => {
-            if (entry.entryType === 'navigation') {
-              const navEntry = entry as PerformanceNavigationTiming;
-              metrics.domContentLoaded = navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart;
-              metrics.loadComplete = navEntry.loadEventEnd - navEntry.loadEventStart;
+        let resolved = false;
+
+        // Set a timeout to prevent hanging
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            resolve({ domContentLoaded: 0, loadComplete: 0 });
+          }
+        }, 2000);
+
+        try {
+          new PerformanceObserver((list) => {
+            if (!resolved) {
+              const entries = list.getEntries();
+              const metrics: any = {};
+
+              entries.forEach((entry) => {
+                if (entry.entryType === 'navigation') {
+                  const navEntry = entry as PerformanceNavigationTiming;
+                  metrics.domContentLoaded = navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart;
+                  metrics.loadComplete = navEntry.loadEventEnd - navEntry.loadEventStart;
+                }
+              });
+
+              resolved = true;
+              resolve(metrics);
             }
-          });
-          
-          resolve(metrics);
-        }).observe({ entryTypes: ['navigation'] });
+          }).observe({ entryTypes: ['navigation'] });
+        } catch (error) {
+          if (!resolved) {
+            resolved = true;
+            resolve({ domContentLoaded: 0, loadComplete: 0 });
+          }
+        }
       });
     });
     

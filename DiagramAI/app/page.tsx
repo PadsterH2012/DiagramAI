@@ -126,7 +126,11 @@ export default function HomePage() {
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <div className="status-indicator status-info mb-2">🔧 Setup</div>
                 <h3 className="font-semibold">AI Services</h3>
-                <p className="text-sm text-gray-600">Configuration Required</p>
+                <p className="text-sm text-gray-600">
+                  <a href="/settings" className="text-blue-600 hover:text-blue-800 underline">
+                    Configure API Keys
+                  </a>
+                </p>
               </div>
             </div>
           </div>

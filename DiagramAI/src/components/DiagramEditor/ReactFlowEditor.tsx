@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useRef } from 'react'
 import {
   ReactFlow,
   Node,
@@ -13,6 +13,8 @@ import {
   addEdge,
   Connection,
   ConnectionMode,
+  useReactFlow,
+  ReactFlowProvider,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
@@ -21,26 +23,38 @@ import { ProcessNode } from './Nodes/ProcessNode'
 import { DecisionNode } from './Nodes/DecisionNode'
 import { StartNode } from './Nodes/StartNode'
 import { EndNode } from './Nodes/EndNode'
+import { InputNode } from './Nodes/InputNode'
+import { DatabaseNode } from './Nodes/DatabaseNode'
+import { CloudNode } from './Nodes/CloudNode'
 
 interface ReactFlowEditorProps {
   initialNodes?: Node[]
   initialEdges?: Edge[]
   onNodesChange?: (nodes: Node[]) => void
   onEdgesChange?: (edges: Edge[]) => void
+  onNodeSelect?: (node: Node | null) => void
+  onNodeDoubleClick?: (event: React.MouseEvent, node: Node) => void
+  onSelectionChange?: (selection: { nodes: Node[], edges: Edge[] }) => void
   readOnly?: boolean
   collaborativeMode?: boolean
 }
 
-export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = ({
+// Main component that uses useReactFlow hook
+const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
   initialNodes = [],
   initialEdges = [],
   onNodesChange,
   onEdgesChange,
+  onNodeSelect,
+  onNodeDoubleClick,
+  onSelectionChange,
   readOnly = false,
   collaborativeMode = false,
 }) => {
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(initialEdges)
+  const reactFlowWrapper = useRef<HTMLDivElement>(null)
+  const { screenToFlowPosition } = useReactFlow()
 
   // Custom node types
   const nodeTypes = useMemo(() => ({
@@ -48,6 +62,18 @@ export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = ({
     decision: DecisionNode,
     start: StartNode,
     end: EndNode,
+    input: InputNode,
+    output: InputNode, // Reuse InputNode with different styling
+    database: DatabaseNode,
+    document: ProcessNode, // Reuse ProcessNode with different styling
+    server: ProcessNode, // Reuse ProcessNode with different styling
+    api: ProcessNode, // Reuse ProcessNode with different styling
+    cloud: CloudNode,
+    user: ProcessNode, // Reuse ProcessNode with different styling
+    rectangle: ProcessNode, // Reuse ProcessNode with different styling
+    circle: StartNode, // Reuse StartNode with different styling
+    diamond: DecisionNode, // Reuse DecisionNode with different styling
+    note: ProcessNode, // Reuse ProcessNode with different styling
   }), [])
 
   const onConnect = useCallback(
@@ -55,8 +81,23 @@ export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = ({
       const newEdge = {
         ...params,
         id: `edge-${Date.now()}`,
-        type: 'default',
+        type: 'smoothstep',
         animated: false,
+        style: {
+          stroke: '#374151',
+          strokeWidth: 2,
+        },
+        markerEnd: {
+          type: 'arrowclosed',
+          color: '#374151',
+          width: 20,
+          height: 20,
+        },
+        labelStyle: {
+          fill: '#374151',
+          fontWeight: 600,
+          fontSize: 12,
+        },
       }
       setEdges((eds) => addEdge(newEdge, eds))
       onEdgesChange?.(edges)
@@ -80,14 +121,72 @@ export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = ({
     [edges, onEdgesChange, onEdgesChangeInternal]
   )
 
+  const onSelectionChangeHandler = useCallback(
+    ({ nodes: selectedNodes, edges: selectedEdges }: { nodes: Node[], edges: Edge[] }) => {
+      const selectedNode = selectedNodes.length > 0 ? selectedNodes[0] : null
+      onNodeSelect?.(selectedNode)
+      onSelectionChange?.({ nodes: selectedNodes, edges: selectedEdges })
+    },
+    [onNodeSelect, onSelectionChange]
+  )
+
+  // Drag and Drop handlers
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }, [])
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault()
+
+      const type = event.dataTransfer.getData('application/reactflow')
+
+      if (!type) return
+
+      try {
+        const nodeData = JSON.parse(type)
+
+        // Use screenToFlowPosition to convert screen coordinates to flow coordinates
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        })
+
+        const newNode: Node = {
+          id: `${nodeData.type}-${Date.now()}`,
+          type: nodeData.type,
+          position,
+          data: {
+            label: nodeData.data?.label || `New ${nodeData.type}`,
+            ...nodeData.data
+          },
+        }
+
+        setNodes((nds) => nds.concat(newNode))
+        onNodesChange?.(nodes.concat(newNode))
+      } catch (error) {
+        console.error('Error parsing dropped node data:', error)
+      }
+    },
+    [screenToFlowPosition, nodes, onNodesChange, setNodes]
+  )
+
   return (
-    <div className="w-full h-full">
+    <div
+      className="w-full h-full"
+      ref={reactFlowWrapper}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChangeHandler}
         onEdgesChange={onEdgesChangeHandler}
         onConnect={onConnect}
+        onSelectionChange={onSelectionChangeHandler}
+        onNodeDoubleClick={onNodeDoubleClick}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
@@ -96,15 +195,25 @@ export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = ({
         nodesDraggable={!readOnly}
         nodesConnectable={!readOnly}
         elementsSelectable={!readOnly}
+        selectNodesOnDrag={false}
       >
         <Background color="#aaa" gap={16} />
         <Controls />
-        <MiniMap 
+        <MiniMap
           nodeColor="#3b82f6"
           maskColor="rgba(0, 0, 0, 0.1)"
           position="bottom-right"
         />
       </ReactFlow>
     </div>
+  )
+}
+
+// Export the main component wrapped with ReactFlow provider
+export const ReactFlowEditor: React.FC<ReactFlowEditorProps> = (props) => {
+  return (
+    <ReactFlowProvider>
+      <ReactFlowEditorWithProvider {...props} />
+    </ReactFlowProvider>
   )
 }

@@ -20,18 +20,22 @@ This file tracks active issues that require resolution. Issues should be address
 
 ### Issue #001
 **Status**: OPEN
-**GitHub Issue**: [#GITHUB_ISSUE_NUMBER](https://github.com/[owner]/[repo]/issues/[number])
-**Summary**: [Brief descriptive name]
-**Phase Discovered**: [Module X.Y - Phase Name]
-**Description**: [Detailed description of the issue]
-**Impact**: [How this affects the project]
-**Proposed Resolution**: [Suggested approach to fix]
-**Priority**: [HIGH/MEDIUM/LOW]
-**Date Logged**: [YYYY-MM-DD]
-**Last Updated**: [YYYY-MM-DD]
-**GitHub Status**: [open/closed/in-progress]
-**Assigned To**: [GitHub username or "unassigned"]
-**Blocker**: [YES/NO - Does this block progress?]
+**GitHub Issue**: [To be created]
+**Summary**: Project Plan Mismatch - Rental Property App vs DiagramAI Documentation
+**Phase Discovered**: Module 8.1 - Project Foundation Setup
+**Description**: Critical mismatch discovered between project_plan.txt (specifies "Rental Property App using AI data gathering") and all existing documentation/LLD files (designed for "DiagramAI" - diagram generation platform). All planning modules (0-7) were executed for DiagramAI, but the actual project requirement is for a rental property management application.
+**Impact**: Cannot proceed with Module 8 implementation as LLD specifications are for wrong project. All database schemas, API designs, UI/UX specifications are for diagram editing, not property management.
+**Proposed Resolution**:
+1. Clarify with user which project is correct
+2. If Rental Property App is correct: Re-execute Modules 1-7 for correct project
+3. If DiagramAI is correct: Update project_plan.txt to match existing documentation
+4. Ensure project identity consistency across all files
+**Priority**: HIGH
+**Date Logged**: 2025-05-29
+**Last Updated**: 2025-05-29
+**GitHub Status**: pending
+**Assigned To**: unassigned
+**Blocker**: YES - Cannot proceed with implementation until resolved
 
 ---
 
