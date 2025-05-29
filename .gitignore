@@ -1,1 +1,32 @@
-.env
+# Project Instruction System (never commit)
+project_instructions/
+
+# Simulate mode logs (instruction system infrastructure)
+simulate/
+
+# Archive and temporary files
+archivebin/
+*.tmp
+*.bak
+*.backup
+
+# System and debug files (keep in working files but exclude from commits when no longer needed)
+# Uncomment these lines when files are no longer needed for development:
+# project_working_files/system_info.env
+# project_working_files/debug_log.md
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
