@@ -1,0 +1,217 @@
+// DiagramAI Database Schema
+// Generated from Database LLD specifications
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT MODELS (from db_lld_01.md)
+// ============================================================================
+
+model User {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String    @unique @db.VarChar(255)
+  username          String    @unique @db.VarChar(50)
+  passwordHash      String    @map("password_hash") @db.VarChar(255)
+  firstName         String?   @map("first_name") @db.VarChar(100)
+  lastName          String?   @map("last_name") @db.VarChar(100)
+  displayName       String?   @map("display_name") @db.VarChar(150)
+  avatarUrl         String?   @map("avatar_url")
+  emailVerified     Boolean   @default(false) @map("email_verified")
+  isActive          Boolean   @default(true) @map("is_active")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  
+  // Relations
+  profile                UserProfile?
+  sessions               UserSession[]
+  passwordResetTokens    PasswordResetToken[]
+  diagrams               Diagram[]
+  diagramVersions        DiagramVersion[]
+  collaboratorInvitations DiagramCollaborator[] @relation("InvitedBy")
+  collaborations         DiagramCollaborator[] @relation("Collaborator")
+  comments               DiagramComment[]
+  resolvedComments       DiagramComment[] @relation("ResolvedBy")
+  
+  @@map("users")
+}
+
+model UserProfile {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                  String   @unique @map("user_id") @db.Uuid
+  bio                     String?
+  location                String?  @db.VarChar(100)
+  websiteUrl              String?  @map("website_url")
+  timezone                String   @default("UTC") @db.VarChar(50)
+  languagePreference      String   @default("en") @map("language_preference") @db.VarChar(10)
+  themePreference         String   @default("light") @map("theme_preference") @db.VarChar(20)
+  notificationPreferences Json     @default("{}") @map("notification_preferences")
+  privacySettings         Json     @default("{}") @map("privacy_settings")
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_profiles")
+}
+
+model UserSession {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  sessionToken     String    @unique @map("session_token") @db.VarChar(255)
+  refreshToken     String?   @unique @map("refresh_token") @db.VarChar(255)
+  deviceInfo       Json?     @map("device_info")
+  ipAddress        String?   @map("ip_address") @db.Inet
+  userAgent        String?   @map("user_agent")
+  isActive         Boolean   @default(true) @map("is_active")
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  lastAccessedAt   DateTime  @default(now()) @map("last_accessed_at") @db.Timestamptz
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_sessions")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash") @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  usedAt    DateTime? @map("used_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("password_reset_tokens")
+}
+
+// ============================================================================
+// SYSTEM CONFIGURATION MODELS (from db_lld_01.md)
+// ============================================================================
+
+model ApplicationSetting {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  settingKey   String   @unique @map("setting_key") @db.VarChar(100)
+  settingValue Json     @map("setting_value")
+  settingType  String   @map("setting_type") @db.VarChar(20)
+  description  String?
+  isPublic     Boolean  @default(false) @map("is_public")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  
+  @@map("application_settings")
+}
+
+// ============================================================================
+// DIAGRAM MODELS (from db_lld_02.md)
+// ============================================================================
+
+model Diagram {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  title            String    @db.VarChar(255)
+  description      String?
+  content          Json
+  format           String    @db.VarChar(20)
+  contentHash      String    @map("content_hash") @db.VarChar(64)
+  tags             String[]  @default([])
+  isPublic         Boolean   @default(false) @map("is_public")
+  isTemplate       Boolean   @default(false) @map("is_template")
+  templateCategory String?   @map("template_category") @db.VarChar(50)
+  viewCount        Int       @default(0) @map("view_count")
+  forkCount        Int       @default(0) @map("fork_count")
+  likeCount        Int       @default(0) @map("like_count")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  lastAccessedAt   DateTime  @default(now()) @map("last_accessed_at") @db.Timestamptz
+
+  // Relations
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions      DiagramVersion[]
+  collaborators DiagramCollaborator[]
+  comments      DiagramComment[]
+
+  @@map("diagrams")
+}
+
+model DiagramVersion {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  diagramId       String    @map("diagram_id") @db.Uuid
+  versionNumber   Int       @map("version_number")
+  content         Json
+  format          String    @db.VarChar(20)
+  contentHash     String    @map("content_hash") @db.VarChar(64)
+  changeSummary   String?   @map("change_summary") @db.VarChar(500)
+  changeType      String    @default("manual") @map("change_type") @db.VarChar(20)
+  parentVersionId String?   @map("parent_version_id") @db.Uuid
+  createdBy       String    @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  diagram       Diagram          @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  author        User             @relation(fields: [createdBy], references: [id])
+  parentVersion DiagramVersion?  @relation("VersionHistory", fields: [parentVersionId], references: [id])
+  childVersions DiagramVersion[] @relation("VersionHistory")
+
+  @@unique([diagramId, versionNumber])
+  @@map("diagram_versions")
+}
+
+model DiagramCollaborator {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  diagramId       String    @map("diagram_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  permissionLevel String    @map("permission_level") @db.VarChar(20)
+  canEdit         Boolean   @default(false) @map("can_edit")
+  canComment      Boolean   @default(true) @map("can_comment")
+  canShare        Boolean   @default(false) @map("can_share")
+  canDelete       Boolean   @default(false) @map("can_delete")
+  invitedBy       String    @map("invited_by") @db.Uuid
+  invitedAt       DateTime  @default(now()) @map("invited_at") @db.Timestamptz
+  acceptedAt      DateTime? @map("accepted_at") @db.Timestamptz
+  expiresAt       DateTime? @map("expires_at") @db.Timestamptz
+  status          String    @default("pending") @db.VarChar(20)
+
+  // Relations
+  diagram   Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  user      User    @relation("Collaborator", fields: [userId], references: [id], onDelete: Cascade)
+  inviter   User    @relation("InvitedBy", fields: [invitedBy], references: [id])
+
+  @@unique([diagramId, userId])
+  @@map("diagram_collaborators")
+}
+
+model DiagramComment {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  diagramId       String    @map("diagram_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  parentCommentId String?   @map("parent_comment_id") @db.Uuid
+  content         String
+  contentType     String    @default("text") @map("content_type") @db.VarChar(20)
+  positionData    Json?     @map("position_data")
+  isResolved      Boolean   @default(false) @map("is_resolved")
+  resolvedBy      String?   @map("resolved_by") @db.Uuid
+  resolvedAt      DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  diagram       Diagram          @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resolver      User?            @relation("ResolvedBy", fields: [resolvedBy], references: [id])
+  parentComment DiagramComment?  @relation("CommentThread", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       DiagramComment[] @relation("CommentThread")
+
+  @@map("diagram_comments")
+}
