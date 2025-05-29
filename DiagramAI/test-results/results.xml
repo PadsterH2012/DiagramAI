@@ -1,119 +1,38 @@
-<testsuites id="" name="" tests="16" failures="2" skipped="0" errors="0" time="32.995261">
-<testsuite name="diagram-editor.spec.ts" timestamp="2025-05-29T11:50:54.315Z" hostname="chromium" tests="10" failures="2" skipped="0" time="44.732" errors="0">
-<testcase name="Diagram Editor › should load the editor page successfully" classname="diagram-editor.spec.ts" time="1.194">
+<testsuites id="" name="" tests="16" failures="0" skipped="0" errors="0" time="7.463741">
+<testsuite name="diagram-editor.spec.ts" timestamp="2025-05-29T11:56:52.778Z" hostname="chromium" tests="10" failures="0" skipped="0" time="12.539" errors="0">
+<testcase name="Diagram Editor › should load the editor page successfully" classname="diagram-editor.spec.ts" time="1.191">
 </testcase>
-<testcase name="Diagram Editor › should have both Visual and Mermaid editor tabs" classname="diagram-editor.spec.ts" time="1.428">
+<testcase name="Diagram Editor › should have both Visual and Mermaid editor tabs" classname="diagram-editor.spec.ts" time="1.354">
 </testcase>
-<testcase name="Diagram Editor › should display React Flow visual editor" classname="diagram-editor.spec.ts" time="6.134">
-<failure message="diagram-editor.spec.ts:32:7 should display React Flow visual editor" type="FAILURE">
-<![CDATA[  [chromium] › diagram-editor.spec.ts:32:7 › Diagram Editor › should display React Flow visual editor 
-
-    Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
-
-    Locator: locator('.node-palette')
-    Expected: visible
-    Received: <element(s) not found>
-    Call log:
-      - expect.toBeVisible with timeout 5000ms
-      - waiting for locator('.node-palette')
-
-
-      38 |
-      39 |     // Check for node palette
-    > 40 |     await expect(page.locator('.node-palette')).toBeVisible();
-         |                                                 ^
-      41 |
-      42 |     // Check for different node types in palette
-      43 |     await expect(page.locator('.palette-node').filter({ hasText: 'Start' })).toBeVisible();
-        at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts:40:49
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/video.webm]]
-
-[[ATTACHMENT|diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/error-context.md]]
-]]>
-</system-out>
+<testcase name="Diagram Editor › should display React Flow visual editor" classname="diagram-editor.spec.ts" time="1.21">
 </testcase>
-<testcase name="Diagram Editor › should allow drag and drop of nodes" classname="diagram-editor.spec.ts" time="30.888">
-<failure message="diagram-editor.spec.ts:49:7 should allow drag and drop of nodes" type="FAILURE">
-<![CDATA[  [chromium] › diagram-editor.spec.ts:49:7 › Diagram Editor › should allow drag and drop of nodes ──
-
-    Test timeout of 30000ms exceeded.
-
-    Error: locator.dragTo: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('.palette-node').filter({ hasText: 'Start' }).first()
-
-
-      59 |
-      60 |     // Drag start node to the canvas
-    > 61 |     await startNode.dragTo(reactFlowPane, {
-         |                     ^
-      62 |       targetPosition: { x: 200, y: 200 }
-      63 |     });
-      64 |
-        at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts:61:21
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ../../test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/test-failed-1.png]]
-
-[[ATTACHMENT|diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/video.webm]]
-
-[[ATTACHMENT|diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/error-context.md]]
-]]>
-</system-out>
+<testcase name="Diagram Editor › should have interactive node palette" classname="diagram-editor.spec.ts" time="1.2">
 </testcase>
-<testcase name="Diagram Editor › should display Mermaid text editor" classname="diagram-editor.spec.ts" time="0.713">
+<testcase name="Diagram Editor › should display Mermaid text editor" classname="diagram-editor.spec.ts" time="1.187">
 </testcase>
-<testcase name="Diagram Editor › should allow text input in Mermaid editor" classname="diagram-editor.spec.ts" time="0.783">
+<testcase name="Diagram Editor › should allow text input in Mermaid editor" classname="diagram-editor.spec.ts" time="1.296">
 </testcase>
-<testcase name="Diagram Editor › should have AI generation functionality" classname="diagram-editor.spec.ts" time="0.751">
+<testcase name="Diagram Editor › should have AI generation functionality" classname="diagram-editor.spec.ts" time="1.265">
 </testcase>
-<testcase name="Diagram Editor › should be responsive on different screen sizes" classname="diagram-editor.spec.ts" time="0.79">
+<testcase name="Diagram Editor › should be responsive on different screen sizes" classname="diagram-editor.spec.ts" time="1.245">
 </testcase>
-<testcase name="Diagram Editor › should handle keyboard navigation" classname="diagram-editor.spec.ts" time="0.72">
+<testcase name="Diagram Editor › should handle keyboard navigation" classname="diagram-editor.spec.ts" time="1.046">
 </testcase>
-<testcase name="Diagram Editor › should load without JavaScript errors" classname="diagram-editor.spec.ts" time="1.331">
+<testcase name="Diagram Editor › should load without JavaScript errors" classname="diagram-editor.spec.ts" time="1.545">
 </testcase>
 </testsuite>
-<testsuite name="homepage.spec.ts" timestamp="2025-05-29T11:50:54.315Z" hostname="chromium" tests="6" failures="0" skipped="0" time="4.904" errors="0">
-<testcase name="Homepage › should load the homepage successfully" classname="homepage.spec.ts" time="0.634">
+<testsuite name="homepage.spec.ts" timestamp="2025-05-29T11:56:52.778Z" hostname="chromium" tests="6" failures="0" skipped="0" time="6.15" errors="0">
+<testcase name="Homepage › should load the homepage successfully" classname="homepage.spec.ts" time="0.869">
 </testcase>
-<testcase name="Homepage › should have working navigation links" classname="homepage.spec.ts" time="1.286">
+<testcase name="Homepage › should have working navigation links" classname="homepage.spec.ts" time="1.716">
 </testcase>
-<testcase name="Homepage › should be responsive on mobile devices" classname="homepage.spec.ts" time="0.594">
+<testcase name="Homepage › should be responsive on mobile devices" classname="homepage.spec.ts" time="0.825">
 </testcase>
-<testcase name="Homepage › should have proper meta tags for SEO" classname="homepage.spec.ts" time="0.56">
+<testcase name="Homepage › should have proper meta tags for SEO" classname="homepage.spec.ts" time="0.772">
 </testcase>
-<testcase name="Homepage › should load without console errors" classname="homepage.spec.ts" time="1.206">
+<testcase name="Homepage › should load without console errors" classname="homepage.spec.ts" time="1.337">
 </testcase>
-<testcase name="Homepage › should have accessible content" classname="homepage.spec.ts" time="0.624">
+<testcase name="Homepage › should have accessible content" classname="homepage.spec.ts" time="0.631">
 </testcase>
 </testsuite>
 </testsuites>

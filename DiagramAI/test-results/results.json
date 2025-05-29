@@ -97,12 +97,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1194,
+                      "duration": 1191,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:55.413Z",
+                      "startTime": "2025-05-29T11:56:53.855Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -131,12 +131,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 1428,
+                      "duration": 1354,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:55.377Z",
+                      "startTime": "2025-05-29T11:56:53.856Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -151,7 +151,7 @@
             },
             {
               "title": "should display React Flow visual editor",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -164,58 +164,18 @@
                     {
                       "workerIndex": 2,
                       "parallelIndex": 2,
-                      "status": "failed",
-                      "duration": 6134,
-                      "error": {
-                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.node-palette')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.node-palette')\u001b[22m\n",
-                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.node-palette')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.node-palette')\u001b[22m\n\n    at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts:40:49",
-                        "location": {
-                          "file": "/mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts",
-                          "column": 49,
-                          "line": 40
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 38 |\u001b[39m\n \u001b[90m 39 |\u001b[39m     \u001b[90m// Check for node palette\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.node-palette'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[90m// Check for different node types in palette\u001b[39m\n \u001b[90m 43 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.palette-node'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[32m'Start'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts",
-                            "column": 49,
-                            "line": 40
-                          },
-                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.node-palette')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.node-palette')\u001b[22m\n\n\n\u001b[0m \u001b[90m 38 |\u001b[39m\n \u001b[90m 39 |\u001b[39m     \u001b[90m// Check for node palette\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.node-palette'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[90m// Check for different node types in palette\u001b[39m\n \u001b[90m 43 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.palette-node'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[32m'Start'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts:40:49\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 1210,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:55.394Z",
+                      "startTime": "2025-05-29T11:56:53.848Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/video.webm"
-                        },
-                        {
-                          "name": "_error-context-0",
-                          "contentType": "text/markdown",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-526df-ay-React-Flow-visual-editor-chromium/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts",
-                        "column": 49,
-                        "line": 40
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3fd4bd8771c947d63432-21d7c5d1a8e25966c068",
@@ -224,8 +184,8 @@
               "column": 7
             },
             {
-              "title": "should allow drag and drop of nodes",
-              "ok": false,
+              "title": "should have interactive node palette",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -238,53 +198,21 @@
                     {
                       "workerIndex": 3,
                       "parallelIndex": 3,
-                      "status": "timedOut",
-                      "duration": 30888,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
-                        {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "/mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts",
-                            "column": 21,
-                            "line": 61
-                          },
-                          "message": "Error: locator.dragTo: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.palette-node').filter({ hasText: 'Start' }).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 59 |\u001b[39m\n \u001b[90m 60 |\u001b[39m     \u001b[90m// Drag start node to the canvas\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 61 |\u001b[39m     \u001b[36mawait\u001b[39m startNode\u001b[33m.\u001b[39mdragTo(reactFlowPane\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 62 |\u001b[39m       targetPosition\u001b[33m:\u001b[39m { x\u001b[33m:\u001b[39m \u001b[35m200\u001b[39m\u001b[33m,\u001b[39m y\u001b[33m:\u001b[39m \u001b[35m200\u001b[39m }\n \u001b[90m 63 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 64 |\u001b[39m\u001b[0m\n\u001b[2m    at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/diagram-editor.spec.ts:61:21\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 1200,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:55.403Z",
+                      "startTime": "2025-05-29T11:56:53.883Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/video.webm"
-                        },
-                        {
-                          "name": "_error-context-1",
-                          "contentType": "text/markdown",
-                          "path": "/mnt/network_repo/DiagramAI-1/DiagramAI/test-results/diagram-editor-Diagram-Edi-aab8e-llow-drag-and-drop-of-nodes-chromium/error-context.md"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
-              "id": "3fd4bd8771c947d63432-a362011220298c3e8c0c",
+              "id": "3fd4bd8771c947d63432-d4e169c81df25c88f31b",
               "file": "diagram-editor.spec.ts",
               "line": 49,
               "column": 7
@@ -302,15 +230,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 713,
+                      "duration": 1187,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:56.748Z",
+                      "startTime": "2025-05-29T11:56:55.192Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -336,15 +264,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 783,
+                      "duration": 1296,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:56.950Z",
+                      "startTime": "2025-05-29T11:56:55.192Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -370,15 +298,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 751,
+                      "duration": 1265,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:57.468Z",
+                      "startTime": "2025-05-29T11:56:55.232Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -407,12 +335,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 790,
+                      "duration": 1245,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:57.742Z",
+                      "startTime": "2025-05-29T11:56:55.367Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -438,15 +366,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 720,
+                      "duration": 1046,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:58.225Z",
+                      "startTime": "2025-05-29T11:56:56.387Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -472,15 +400,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1331,
+                      "duration": 1545,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:58.538Z",
+                      "startTime": "2025-05-29T11:56:56.498Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -523,15 +451,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 634,
+                      "duration": 869,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:58.954Z",
+                      "startTime": "2025-05-29T11:56:56.509Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -557,15 +485,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 1286,
+                      "duration": 1716,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:59.593Z",
+                      "startTime": "2025-05-29T11:56:56.622Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -591,15 +519,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 594,
+                      "duration": 825,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:50:59.879Z",
+                      "startTime": "2025-05-29T11:56:57.385Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -625,15 +553,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 560,
+                      "duration": 772,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:51:00.478Z",
+                      "startTime": "2025-05-29T11:56:57.453Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -662,12 +590,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1206,
+                      "duration": 1337,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:51:00.884Z",
+                      "startTime": "2025-05-29T11:56:58.061Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -693,15 +621,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 624,
+                      "duration": 631,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-29T11:51:01.043Z",
+                      "startTime": "2025-05-29T11:56:58.224Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -721,11 +649,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-05-29T11:50:53.500Z",
-    "duration": 32995.261,
-    "expected": 14,
+    "startTime": "2025-05-29T11:56:51.991Z",
+    "duration": 7463.741,
+    "expected": 16,
     "skipped": 0,
-    "unexpected": 2,
+    "unexpected": 0,
     "flaky": 0
   }
 }
