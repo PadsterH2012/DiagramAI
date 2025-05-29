@@ -28,9 +28,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // For now, return mock data since we don't have authentication
-    // In production, this would filter by user ID
+    // Get diagrams for the default user or all public diagrams
+    // In production, this would filter by authenticated user ID
     const diagrams = await prisma.diagram.findMany({
+      where: {
+        OR: [
+          { isPublic: true },
+          {
+            user: {
+              email: 'default@diagramai.dev'
+            }
+          }
+        ]
+      },
       orderBy: { updatedAt: 'desc' },
       take: 20,
       select: {
@@ -74,13 +84,27 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
     // Generate content hash for versioning
     const contentHash = generateContentHash(JSON.stringify(content))
 
-    // For now, use a default user ID since we don't have authentication
-    // In production, this would come from the authenticated user
-    const defaultUserId = '00000000-0000-0000-0000-000000000000'
+    // Get or create a default user for development
+    let defaultUser = await prisma.user.findFirst({
+      where: { email: 'default@diagramai.dev' }
+    })
+
+    if (!defaultUser) {
+      // Create a default user for development
+      defaultUser = await prisma.user.create({
+        data: {
+          email: 'default@diagramai.dev',
+          username: 'default_user',
+          passwordHash: 'dev_only_hash', // Not a real password hash
+          displayName: 'Default User',
+          emailVerified: true,
+        }
+      })
+    }
 
     const diagram = await prisma.diagram.create({
       data: {
-        userId: defaultUserId,
+        userId: defaultUser.id,
         title,
         description: description || null,
         content,
@@ -108,7 +132,7 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
     })
   } catch (error) {
     console.error('Create diagram error:', error)
-    
+
     // Handle Prisma errors
     if (error instanceof Error && error.message.includes('Foreign key constraint')) {
       return res.status(400).json({
