@@ -2,7 +2,7 @@
 project_instructions/
 
 # Simulate mode logs (instruction system infrastructure)
-simulate/
+project_instructions/simulate/
 
 # Archive and temporary files
 archivebin/
