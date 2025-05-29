@@ -74,9 +74,9 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     { id: 'e3-5', source: '3', target: '5', label: 'No' },
   ]
 
-  // Use default nodes/edges if none provided
-  const currentNodes = nodes.length > 0 ? nodes : defaultNodes
-  const currentEdges = edges.length > 0 ? edges : defaultEdges
+  // Use current state, fall back to defaults only if no initial nodes provided and state is empty
+  const currentNodes = nodes.length > 0 ? nodes : (initialNodes.length > 0 ? initialNodes : defaultNodes)
+  const currentEdges = edges.length > 0 ? edges : (initialEdges.length > 0 ? initialEdges : defaultEdges)
 
   const handleNodesChange = useCallback((newNodes: Node[]) => {
     setNodes(newNodes)
@@ -390,21 +390,18 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
         </div>
 
         {/* React Flow Editor */}
-        <div className="flex-1 relative bg-white">
-          {/* Grid Background with Padding */}
-          <div className="absolute inset-0 p-6">
-            <div className="w-full h-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-              <ReactFlowEditor
-                initialNodes={currentNodes}
-                initialEdges={currentEdges}
-                onNodesChange={handleNodesChange}
-                onEdgesChange={handleEdgesChange}
-                onNodeSelect={handleNodeSelect}
-                onNodeDoubleClick={handleNodeDoubleClick}
-                onSelectionChange={handleSelectionChange}
-                readOnly={readOnly}
-              />
-            </div>
+        <div className="flex-1 relative bg-white p-6">
+          <div className="w-full h-full bg-white border border-gray-200 rounded-lg shadow-sm">
+            <ReactFlowEditor
+              initialNodes={currentNodes}
+              initialEdges={currentEdges}
+              onNodesChange={handleNodesChange}
+              onEdgesChange={handleEdgesChange}
+              onNodeSelect={handleNodeSelect}
+              onNodeDoubleClick={handleNodeDoubleClick}
+              onSelectionChange={handleSelectionChange}
+              readOnly={readOnly}
+            />
           </div>
 
           {/* Node Properties Panel */}

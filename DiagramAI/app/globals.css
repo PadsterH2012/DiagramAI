@@ -72,3 +72,83 @@ body {
 .status-info {
   @apply bg-blue-100 text-blue-800;
 }
+
+/* ReactFlow Selection Box Styling */
+.react-flow__selection {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px dashed #3b82f6 !important;
+  border-radius: 4px !important;
+}
+
+/* ReactFlow Node Selection Styling */
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #3b82f6 !important;
+}
+
+/* ReactFlow Edge Selection Styling */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #3b82f6 !important;
+  stroke-width: 3px !important;
+}
+
+/* ReactFlow Cursor Styling */
+.react-flow__pane {
+  cursor: default !important;
+}
+
+.react-flow__pane.selection {
+  cursor: crosshair !important;
+}
+
+/* Pan mode cursor */
+.react-flow__pane[data-pan-mode="true"] {
+  cursor: grab !important;
+}
+
+.react-flow__pane[data-pan-mode="true"]:active {
+  cursor: grabbing !important;
+}
+
+/* When dragging nodes, show grab cursor */
+.react-flow__node:active {
+  cursor: grabbing !important;
+}
+
+.react-flow__node {
+  cursor: grab !important;
+}
+
+/* Default pointer for selection areas */
+.react-flow__selection-area {
+  cursor: crosshair !important;
+}
+
+/* Mermaid Editor Styling */
+.mermaid-editor textarea {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0.5px;
+  background-color: #fafafa !important;
+  color: #2d3748 !important;
+}
+
+.mermaid-editor textarea::placeholder {
+  color: #a0aec0 !important;
+  font-style: italic;
+}
+
+.mermaid-editor textarea:focus {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Mermaid syntax highlighting simulation with CSS */
+.mermaid-syntax-highlight {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(59, 130, 246, 0.05) 20%,
+    transparent 40%
+  );
+}

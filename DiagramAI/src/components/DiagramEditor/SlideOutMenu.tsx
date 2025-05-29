@@ -35,9 +35,15 @@ export const SlideOutMenu: React.FC<SlideOutMenuProps> = ({ onNodeAdd }) => {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-20 z-30"
+          className="fixed inset-0 bg-black bg-opacity-20 z-30 pointer-events-none"
           onClick={toggleMenu}
-        />
+        >
+          {/* Clickable area only on the right side (not covering the menu) */}
+          <div
+            className="absolute top-0 left-80 right-0 bottom-0 pointer-events-auto"
+            onClick={toggleMenu}
+          />
+        </div>
       )}
 
       {/* Slide-out Menu */}

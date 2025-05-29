@@ -27,6 +27,12 @@ class DiagramService {
   private baseUrl = '/api/diagrams'
 
   async saveDiagram(diagramData: DiagramData): Promise<SaveResult> {
+    // In development, use local storage to avoid database dependency
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 Development mode: Saving to local storage')
+      return this.saveToLocalStorage(diagramData)
+    }
+
     try {
       const response = await fetch(this.baseUrl, {
         method: 'POST',
@@ -48,7 +54,7 @@ class DiagramService {
       }
 
       const result = await response.json()
-      
+
       return {
         success: true,
         diagramId: result.data.id,
@@ -56,10 +62,9 @@ class DiagramService {
       }
     } catch (error) {
       console.error('Save diagram error:', error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-      }
+      // Fallback to local storage if database fails
+      console.log('🔧 Database save failed, falling back to local storage')
+      return this.saveToLocalStorage(diagramData)
     }
   }
 
@@ -94,9 +99,14 @@ class DiagramService {
   }
 
   async loadDiagram(diagramId: string): Promise<DiagramData | null> {
+    // In development, use local storage
+    if (process.env.NODE_ENV === 'development') {
+      return this.loadFromLocalStorage(diagramId)
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/${diagramId}`)
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -105,14 +115,20 @@ class DiagramService {
       return result.data
     } catch (error) {
       console.error('Load diagram error:', error)
-      return null
+      // Fallback to local storage
+      return this.loadFromLocalStorage(diagramId)
     }
   }
 
   async listDiagrams(): Promise<DiagramData[]> {
+    // In development, use local storage
+    if (process.env.NODE_ENV === 'development') {
+      return this.listFromLocalStorage()
+    }
+
     try {
       const response = await fetch(this.baseUrl)
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -121,7 +137,8 @@ class DiagramService {
       return result.data || []
     } catch (error) {
       console.error('List diagrams error:', error)
-      return []
+      // Fallback to local storage
+      return this.listFromLocalStorage()
     }
   }
 
@@ -202,14 +219,20 @@ class DiagramService {
 
   // Auto-save functionality
   async autoSave(diagramData: DiagramData): Promise<SaveResult> {
-    // Try database first, fallback to local storage
-    const result = await this.saveDiagram(diagramData)
-    
-    if (!result.success) {
-      // Fallback to local storage
+    // In development, use local storage first to avoid database dependency
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 Development mode: Saving to local storage')
       return this.saveToLocalStorage(diagramData)
     }
-    
+
+    // In production, try database first, fallback to local storage
+    const result = await this.saveDiagram(diagramData)
+
+    if (!result.success) {
+      console.log('🔧 Database save failed, falling back to local storage')
+      return this.saveToLocalStorage(diagramData)
+    }
+
     return result
   }
 }

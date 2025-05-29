@@ -149,6 +149,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
   }
 
   const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {
+    // Set both the standard text/plain and our custom format
+    event.dataTransfer.setData('text/plain', nodeType)
     event.dataTransfer.setData('application/reactflow', JSON.stringify({
       type: nodeType,
       data: nodeData

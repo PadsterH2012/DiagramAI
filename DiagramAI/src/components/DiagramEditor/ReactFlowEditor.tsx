@@ -15,6 +15,7 @@ import {
   ConnectionMode,
   useReactFlow,
   ReactFlowProvider,
+  SelectionMode,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
@@ -53,6 +54,54 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
 }) => {
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(initialEdges)
+  const [isDragOver, setIsDragOver] = React.useState(false)
+  const [interactionMode, setInteractionMode] = React.useState<'pan' | 'select'>('select')
+
+  // Global drag detection
+  React.useEffect(() => {
+    const handleGlobalDragStart = (e: DragEvent) => {
+      // Check if the drag has the types we expect from our node palette
+      const types = Array.from(e.dataTransfer?.types || [])
+      if (types.includes('text/plain') || types.includes('application/reactflow')) {
+        setIsDragOver(true)
+      }
+    }
+
+    const handleGlobalDragEnd = () => {
+      setIsDragOver(false)
+    }
+
+    document.addEventListener('dragstart', handleGlobalDragStart)
+    document.addEventListener('dragend', handleGlobalDragEnd)
+
+    return () => {
+      document.removeEventListener('dragstart', handleGlobalDragStart)
+      document.removeEventListener('dragend', handleGlobalDragEnd)
+    }
+  }, [])
+
+  // Keyboard shortcuts for mode switching
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'v' && !e.ctrlKey && !e.metaKey) {
+        setInteractionMode('select')
+      } else if (e.key === 'h' && !e.ctrlKey && !e.metaKey) {
+        setInteractionMode('pan')
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  // Sync with parent state when initialNodes/initialEdges change
+  React.useEffect(() => {
+    setNodes(initialNodes)
+  }, [initialNodes, setNodes])
+
+  React.useEffect(() => {
+    setEdges(initialEdges)
+  }, [initialEdges, setEdges])
   const reactFlowWrapper = useRef<HTMLDivElement>(null)
   const { screenToFlowPosition } = useReactFlow()
 
@@ -123,29 +172,51 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
 
   const onSelectionChangeHandler = useCallback(
     ({ nodes: selectedNodes, edges: selectedEdges }: { nodes: Node[], edges: Edge[] }) => {
+      console.log('🔧 Selection changed:', {
+        selectedNodes: selectedNodes.length,
+        selectedEdges: selectedEdges.length,
+        mode: interactionMode
+      })
       const selectedNode = selectedNodes.length > 0 ? selectedNodes[0] : null
       onNodeSelect?.(selectedNode)
       onSelectionChange?.({ nodes: selectedNodes, edges: selectedEdges })
     },
-    [onNodeSelect, onSelectionChange]
+    [onNodeSelect, onSelectionChange, interactionMode]
   )
 
   // Drag and Drop handlers
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
+    // Don't need to set isDragOver here since global handler manages it
   }, [])
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault()
+      // Don't manually reset isDragOver - global dragend handler will do it
 
-      const type = event.dataTransfer.getData('application/reactflow')
+      // Try to get data from both formats
+      let nodeType = event.dataTransfer.getData('text/plain')
+      let nodeDataStr = event.dataTransfer.getData('application/reactflow')
 
-      if (!type) return
+      // If we have the JSON data, use it; otherwise fall back to simple type
+      if (!nodeType && !nodeDataStr) {
+        return
+      }
 
       try {
-        const nodeData = JSON.parse(type)
+        let nodeData: any = {}
+
+        if (nodeDataStr) {
+          // Parse the full node data
+          const parsedData = JSON.parse(nodeDataStr)
+          nodeType = parsedData.type
+          nodeData = parsedData.data || {}
+        } else {
+          // Use simple type with default data
+          nodeData = { label: `New ${nodeType}`, color: '#6b7280' }
+        }
 
         // Use screenToFlowPosition to convert screen coordinates to flow coordinates
         const position = screenToFlowPosition({
@@ -154,31 +225,56 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
         })
 
         const newNode: Node = {
-          id: `${nodeData.type}-${Date.now()}`,
-          type: nodeData.type,
+          id: `${nodeType}-${Date.now()}`,
+          type: nodeType,
           position,
           data: {
-            label: nodeData.data?.label || `New ${nodeData.type}`,
-            ...nodeData.data
+            label: nodeData.label || `New ${nodeType}`,
+            ...nodeData
           },
         }
 
-        setNodes((nds) => nds.concat(newNode))
-        onNodesChange?.(nodes.concat(newNode))
+
+
+        // Update local state
+        setNodes((prevNodes) => [...prevNodes, newNode])
+
+        // Notify parent in a separate effect to avoid state update during render
+        setTimeout(() => {
+          onNodesChange?.([...nodes, newNode])
+        }, 0)
       } catch (error) {
         console.error('Error parsing dropped node data:', error)
       }
     },
-    [screenToFlowPosition, nodes, onNodesChange, setNodes]
+    [screenToFlowPosition, onNodesChange, setNodes]
   )
+
+  const onDragLeave = useCallback((event: React.DragEvent) => {
+    // Global dragend handler manages the state, so we don't need to do anything here
+    event.preventDefault()
+  }, [])
 
   return (
     <div
-      className="w-full h-full"
+      className="w-full h-full relative"
       ref={reactFlowWrapper}
-      onDrop={onDrop}
-      onDragOver={onDragOver}
     >
+      {/* Invisible overlay to capture drag events - only for node drops from sidebar */}
+      {isDragOver && (
+        <div
+          className="absolute inset-0 z-50"
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragEnter={(e) => {
+            e.preventDefault()
+          }}
+          onDragLeave={onDragLeave}
+          style={{
+            pointerEvents: 'auto'
+          }}
+        />
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -192,10 +288,21 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
         fitView
         attributionPosition="bottom-left"
         className="bg-white"
-        nodesDraggable={!readOnly}
+        data-pan-mode={interactionMode === 'pan'}
+        nodesDraggable={!readOnly && interactionMode === 'select'}
         nodesConnectable={!readOnly}
-        elementsSelectable={!readOnly}
+        elementsSelectable={!readOnly && interactionMode === 'select'}
         selectNodesOnDrag={false}
+        selectionMode={interactionMode === 'select' ? SelectionMode.Partial : undefined}
+        multiSelectionKeyCode={interactionMode === 'select' ? "Shift" : null}
+        selectionKeyCode={null}
+        deleteKeyCode={interactionMode === 'select' ? "Delete" : null}
+        panOnDrag={interactionMode === 'pan'}
+        panOnScroll={false}
+        selectionOnDrag={interactionMode === 'select'}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onDragLeave={onDragLeave}
       >
         <Background
           color="#e5e7eb"
@@ -207,6 +314,36 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
           position="top-right"
           className="bg-white border border-gray-200 rounded-lg shadow-sm"
         />
+
+        {/* Mode Toggle Toolbar */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-white border border-gray-200 rounded-lg shadow-sm p-1 flex space-x-1">
+          <button
+            onClick={() => setInteractionMode('select')}
+            className={`p-2 rounded-md transition-colors ${
+              interactionMode === 'select'
+                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            title="Selection Mode (Create selection boxes) - Press 'V'"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 2h6v6H2V2zm8 0h6v6h-6V2zm8 0h6v6h-6V2zM2 10h6v6H2v-6zm8 0h6v6h-6v-6zm8 0h6v6h-6v-6zM2 18h6v6H2v-6zm8 0h6v6h-6v-6zm8 0h6v6h-6v-6z"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => setInteractionMode('pan')}
+            className={`p-2 rounded-md transition-colors ${
+              interactionMode === 'pan'
+                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            title="Pan Mode (Move the canvas) - Press 'H'"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 1L8 6h3v6H5V9l-5 5 5 5v-3h6v6h-3l5 5 5-5h-3v-6h6v3l5-5-5-5v3h-6V6h3l-5-5z"/>
+            </svg>
+          </button>
+        </div>
         <MiniMap
           nodeColor="#3b82f6"
           maskColor="rgba(255, 255, 255, 0.8)"
