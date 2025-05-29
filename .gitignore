@@ -1,14 +1,26 @@
-# Project Instruction System (never commit)
-project_instructions/
+# MAIN REPOSITORY: Project Instruction System Development
+# This repository IS the instruction system, so we version control the core system files
+# but exclude temporary working files, user-specific content, and archives
 
-# Simulate mode logs (instruction system infrastructure)
-project_instructions/simulate/
-
-# Archive and temporary files
+# Archive and temporary files (never commit)
 archivebin/
 *.tmp
 *.bak
 *.backup
+
+# Simulate mode logs and temporary instruction system files
+project_instructions/simulate/
+project_instructions/
+
+# Update request working directories (temporary processing folders)
+project_instructions/update_request_here/*/
+!project_instructions/update_request_here/README.md
+!project_instructions/update_request_here/update_request_template.txt
+!project_instructions/update_request_here/.gitignore
+
+# User-submitted update request files (exclude actual requests for privacy)
+project_instructions/update_request_here/*.txt
+!project_instructions/update_request_here/update_request_template.txt
 
 # System and debug files (keep in working files but exclude from commits when no longer needed)
 # Uncomment these lines when files are no longer needed for development:
