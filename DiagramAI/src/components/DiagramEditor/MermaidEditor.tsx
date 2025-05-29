@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 
 interface MermaidEditorProps {
   initialSyntax?: string
@@ -18,6 +18,17 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
   const [syntax, setSyntax] = useState(initialSyntax)
   const [renderError, setRenderError] = useState<string | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+
+  // Resizable panel state
+  const [leftPanelWidth, setLeftPanelWidth] = useState(50) // percentage
+  const [isResizing, setIsResizing] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Pan functionality state
+  const [isPanning, setIsPanning] = useState(false)
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 })
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
 
   // Render Mermaid diagram
   useEffect(() => {
@@ -83,6 +94,91 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
     onSyntaxChange?.(newSyntax)
   }
 
+  // Resizable panel handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
+  }, [])
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isResizing || !containerRef.current) return
+
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
+
+    // Constrain between 20% and 80%
+    const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth))
+    setLeftPanelWidth(constrainedWidth)
+  }, [isResizing])
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false)
+  }, [])
+
+  // Pan functionality handlers
+  const handlePanMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return // Only left mouse button
+    setIsPanning(true)
+    setIsDragging(false)
+    setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y })
+  }, [panOffset])
+
+  const handlePanMouseMove = useCallback((e: MouseEvent) => {
+    if (!isPanning) return
+
+    setIsDragging(true)
+    const newOffset = {
+      x: e.clientX - panStart.x,
+      y: e.clientY - panStart.y
+    }
+    setPanOffset(newOffset)
+  }, [isPanning, panStart])
+
+  const handlePanMouseUp = useCallback(() => {
+    setIsPanning(false)
+    // Small delay to prevent click events when dragging
+    setTimeout(() => setIsDragging(false), 100)
+  }, [])
+
+  // Global mouse event listeners
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'col-resize'
+      document.body.style.userSelect = 'none'
+    } else {
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [isResizing, handleMouseMove, handleMouseUp])
+
+  useEffect(() => {
+    if (isPanning) {
+      document.addEventListener('mousemove', handlePanMouseMove)
+      document.addEventListener('mouseup', handlePanMouseUp)
+      document.body.style.cursor = isDragging ? 'grabbing' : 'grab'
+      document.body.style.userSelect = 'none'
+    } else {
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handlePanMouseMove)
+      document.removeEventListener('mouseup', handlePanMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [isPanning, isDragging, handlePanMouseMove, handlePanMouseUp])
+
   const insertTemplate = (template: string) => {
     setSyntax(template)
     onSyntaxChange?.(template)
@@ -118,10 +214,13 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
   }
 
   return (
-    <div className="flex h-full mermaid-editor">
+    <div ref={containerRef} className="flex h-full mermaid-editor relative">
       {/* Editor Panel */}
-      <div className="w-1/2 border-r border-gray-200">
-        <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3">
+      <div
+        className="border-r border-gray-200 flex flex-col"
+        style={{ width: `${leftPanelWidth}%` }}
+      >
+        <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3 flex-shrink-0">
           <span className="text-sm font-medium text-gray-700">Mermaid Syntax</span>
           <div className="flex items-center space-x-1">
             <button
@@ -154,9 +253,9 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
             </button>
           </div>
         </div>
-        <div className="relative w-full h-[calc(100%-2rem)]">
+        <div className="relative flex-1 overflow-hidden">
           <textarea
-            className="w-full h-full p-4 font-mono text-sm border-none resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 leading-relaxed"
+            className="w-full h-full p-4 font-mono text-sm border-none resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 leading-relaxed overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
             value={syntax}
             onChange={handleSyntaxChange}
             readOnly={readOnly}
@@ -199,16 +298,55 @@ sequenceDiagram
         </div>
       </div>
 
-      {/* Preview Panel */}
-      <div className="w-1/2">
-        <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center px-3">
-          <span className="text-sm font-medium text-gray-700">Preview</span>
-          {renderError && (
-            <span className="ml-2 text-xs text-red-600">⚠️ Syntax Error</span>
-          )}
+      {/* Resizable Separator */}
+      <div
+        className={`absolute top-0 bottom-0 w-1 bg-gray-300 hover:bg-blue-400 cursor-col-resize transition-colors z-10 ${
+          isResizing ? 'bg-blue-500' : ''
+        }`}
+        style={{ left: `${leftPanelWidth}%`, transform: 'translateX(-50%)' }}
+        onMouseDown={handleMouseDown}
+        title="Drag to resize panels"
+      >
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-8 bg-gray-400 rounded-sm flex items-center justify-center">
+          <div className="w-0.5 h-4 bg-white rounded-full mx-0.5"></div>
+          <div className="w-0.5 h-4 bg-white rounded-full mx-0.5"></div>
         </div>
-        <div className="h-[calc(100%-2rem)] overflow-auto p-4 bg-white">
-          <div ref={previewRef} className="w-full h-full flex items-center justify-center" />
+      </div>
+
+      {/* Preview Panel */}
+      <div
+        className="flex flex-col"
+        style={{ width: `${100 - leftPanelWidth}%` }}
+      >
+        <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3 flex-shrink-0">
+          <span className="text-sm font-medium text-gray-700">Preview</span>
+          <div className="flex items-center space-x-2">
+            {renderError && (
+              <span className="text-xs text-red-600">⚠️ Syntax Error</span>
+            )}
+            <button
+              onClick={() => setPanOffset({ x: 0, y: 0 })}
+              className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+              title="Reset Pan Position"
+            >
+              🎯 Reset
+            </button>
+            <span className="text-xs text-gray-500">
+              {isDragging ? '✋ Dragging' : '👆 Click & drag to pan'}
+            </span>
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto bg-white relative scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <div
+            className={`w-full h-full p-4 ${isPanning ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'}`}
+            onMouseDown={handlePanMouseDown}
+            style={{
+              transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
+              transition: isPanning ? 'none' : 'transform 0.2s ease-out'
+            }}
+          >
+            <div ref={previewRef} className="w-full h-full flex items-center justify-center min-h-[400px]" />
+          </div>
         </div>
       </div>
     </div>
