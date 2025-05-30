@@ -4,9 +4,30 @@
 
 ### Prerequisites
 - Docker and Docker Compose installed
-- Ports 3000, 5432, 6379, and 8080 available
+- Ports 3000, 5433, 6379, and 8080 available (Note: PostgreSQL uses 5433 to avoid conflicts)
 
 ### Option 1: Use Published Docker Image (Recommended)
+
+```bash
+# 1. Download the production docker-compose file
+curl -fsSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/docker-compose.prod.yml -o docker-compose.prod.yml
+
+# 2. Download required configuration files
+mkdir -p scripts
+curl -fsSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/init-db.sql -o scripts/init-db.sql
+curl -fsSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/redis.conf -o redis.conf
+
+# 3. Start all services using the production compose file
+docker compose -f docker-compose.prod.yml up -d
+
+# 4. Check status
+docker compose -f docker-compose.prod.yml ps
+
+# 5. View logs
+docker compose -f docker-compose.prod.yml logs -f app
+```
+
+### Option 2: Clone Repository (Alternative)
 
 ```bash
 # 1. Clone the repository (for docker-compose files)
@@ -14,43 +35,7 @@ git clone https://github.com/PadsterH2012/DiagramAI.git
 cd DiagramAI/DiagramAI
 
 # 2. Start all services using the production compose file
-docker-compose -f docker-compose.prod.yml up -d
-
-# 3. Check status
-docker-compose -f docker-compose.prod.yml ps
-
-# 4. View logs
-docker-compose -f docker-compose.prod.yml logs -f app
-```
-
-### Option 2: Pull Image Manually
-
-```bash
-# 1. Pull the latest image
-docker pull padster2012/diagramai:latest
-
-# 2. Start dependencies manually
-docker run -d --name diagramai-db \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=diagramai \
-  -p 5432:5432 \
-  postgres:15-alpine
-
-docker run -d --name diagramai-redis \
-  -p 6379:6379 \
-  redis:7-alpine
-
-# 3. Start DiagramAI
-docker run -d --name diagramai-app \
-  -p 3000:3000 \
-  -e DATABASE_URL="postgresql://postgres:password@localhost:5432/diagramai" \
-  -e REDIS_URL="redis://localhost:6379" \
-  -e NEXTAUTH_SECRET="your-production-secret-key" \
-  -e NEXTAUTH_URL="http://localhost:3000" \
-  --link diagramai-db:db \
-  --link diagramai-redis:redis \
-  padster2012/diagramai:latest
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 ## Available Services
@@ -59,7 +44,7 @@ After starting with docker-compose:
 
 - **DiagramAI Application**: http://localhost:3000
 - **Database Admin (Adminer)**: http://localhost:8080
-- **PostgreSQL**: localhost:5432
+- **PostgreSQL**: localhost:5433 (external), 5432 (internal)
 - **Redis**: localhost:6379
 
 ## Environment Variables
@@ -118,7 +103,42 @@ docker-compose -f docker-compose.prod.yml restart app
 ### Database issues
 ```bash
 # Connect to database
-docker-compose -f docker-compose.prod.yml exec db psql -U postgres -d diagramai
+docker compose -f docker-compose.prod.yml exec db psql -U postgres -d diagramai_dev
+
+# Or connect from host
+psql -h localhost -p 5433 -U postgres -d diagramai_dev
+```
+
+## Common Issues and Solutions
+
+### Database Connection Errors
+If you see "database error" in health checks:
+
+1. **Database name mismatch**: Ensure `POSTGRES_DB=diagramai_dev` matches the DATABASE_URL
+2. **Port conflicts**: If port 5432 is in use, the compose file uses 5433 externally
+3. **Init script issues**: Ensure `scripts/init-db.sql` exists and is a file (not directory)
+
+```bash
+# Fix init script issue
+rm -rf scripts
+mkdir -p scripts
+curl -fsSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/init-db.sql -o scripts/init-db.sql
+```
+
+### Image Pull Errors
+If you see "pull access denied for diagramai-fixed":
+
+The docker-compose.prod.yml should use `padster2012/diagramai:latest`, not `diagramai-fixed`.
+
+### Port Conflicts
+If you get "port already in use" errors:
+
+```bash
+# Check what's using the ports
+ss -tlnp | grep 5432
+ss -tlnp | grep 5433
+
+# The compose file uses 5433 externally to avoid conflicts
 ```
 
 ## Security Notes
