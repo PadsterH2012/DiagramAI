@@ -2,8 +2,8 @@
 # Multi-stage build for optimal production image
 
 # Stage 1: Dependencies
-FROM node:18-alpine AS deps
-RUN apk add --no-cache libc6-compat
+FROM node:18-alpine3.20 AS deps
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # Copy package files
@@ -12,7 +12,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
 # Stage 2: Builder
-FROM node:18-alpine AS builder
+FROM node:18-alpine3.20 AS builder
 WORKDIR /app
 
 # Accept build arguments
@@ -39,13 +39,16 @@ RUN npx prisma generate
 RUN npm run build
 
 # Stage 3: Runner
-FROM node:18-alpine AS runner
+FROM node:18-alpine3.20 AS runner
 WORKDIR /app
 
 # Accept build arguments for runtime
 ARG VERSION_STRING=1.0.0
 ARG BUILD_DATE
 ARG GIT_COMMIT
+
+# Install OpenSSL for Prisma engines
+RUN apk add --no-cache openssl
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
