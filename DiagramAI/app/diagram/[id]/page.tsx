@@ -40,7 +40,7 @@ interface Diagram {
 export default function DiagramViewPage() {
   const params = useParams()
   const router = useRouter()
-  const id = params.id as string
+  const id = params?.id as string
   const [diagram, setDiagram] = useState<Diagram | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
