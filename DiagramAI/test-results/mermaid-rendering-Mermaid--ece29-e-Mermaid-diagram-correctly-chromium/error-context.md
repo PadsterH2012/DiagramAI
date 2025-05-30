@@ -6,14 +6,11 @@
 # Error details
 
 ```
-Error: locator.textContent: Error: strict mode violation: locator('h1') resolved to 2 elements:
-    1) <h1 class="text-xl font-bold text-gray-900">DiagramAI</h1> aka getByRole('heading', { name: 'DiagramAI' })
-    2) <h1 class="text-2xl font-bold text-gray-900">Simple Mermaid Test</h1> aka getByRole('heading', { name: 'Simple Mermaid Test' })
+Error: expect(received).toBe(expected) // Object.is equality
 
-Call log:
-  - waiting for locator('h1')
-
-    at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/mermaid-rendering.spec.ts:21:44
+Expected: true
+Received: false
+    at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/mermaid-rendering.spec.ts:28:25
 ```
 
 # Page snapshot
@@ -37,9 +34,8 @@ Call log:
   - text: 📝 Mermaid 🌐 Public
   - link "Edit Diagram":
     - /url: /editor?id=f50ff3c6-f439-4952-9370-49d686372c22
-  - paragraph: ❌ Rendering Error
-  - paragraph: Failed to render diagram
-  - group: View Mermaid Syntax
+  - text: "❌ Rendering Error Cannot render Mermaid: Failed to render diagram"
+  - button "🔄 Retry Rendering"
   - heading "Diagram Information" [level=3]
   - text: Created:May 30, 2025 at 07:58 AM Last Modified:May 30, 2025 at 07:58 AM Format:mermaid Visibility:Public
 - contentinfo:
@@ -69,16 +65,16 @@ Call log:
    17 |     // Wait for the page to load completely
    18 |     await page.waitForTimeout(2000)
    19 |     
-   20 |     // Check if the page title is correct
->  21 |     const title = await page.locator('h1').textContent()
-      |                                            ^ Error: locator.textContent: Error: strict mode violation: locator('h1') resolved to 2 elements:
+   20 |     // Check if the page title is correct (be more specific)
+   21 |     const title = await page.locator('h1').nth(1).textContent()
    22 |     console.log('Page title:', title)
    23 |     expect(title).toContain('Simple Mermaid Test')
    24 |     
    25 |     // Check if Mermaid View indicator is present
    26 |     const mermaidView = await page.locator('text=Mermaid View').isVisible()
    27 |     console.log('Mermaid View indicator visible:', mermaidView)
-   28 |     expect(mermaidView).toBe(true)
+>  28 |     expect(mermaidView).toBe(true)
+      |                         ^ Error: expect(received).toBe(expected) // Object.is equality
    29 |     
    30 |     // Check for any error messages
    31 |     const errorMessage = await page.locator('text=Rendering Error').isVisible()
@@ -128,8 +124,8 @@ Call log:
    75 |     // Wait for the page to load completely
    76 |     await page.waitForTimeout(3000)
    77 |     
-   78 |     // Check if the page title is correct
-   79 |     const title = await page.locator('h1').textContent()
+   78 |     // Check if the page title is correct (be more specific)
+   79 |     const title = await page.locator('h1').nth(1).textContent()
    80 |     console.log('Page title:', title)
    81 |     expect(title).toContain('AI Agent Architecture Demo')
    82 |     
@@ -172,4 +168,11 @@ Call log:
   119 |       console.log('SVG content preview:', svgContent.substring(0, 300) + '...')
   120 |       expect(svgContent.length).toBeGreaterThan(500) // Complex diagram should have more content
   121 |     }
+  122 |     
+  123 |     // Check for specific elements in the complex diagram
+  124 |     const pageContent = await page.content()
+  125 |     console.log('Page contains "AI Agent":', pageContent.includes('AI Agent'))
+  126 |     console.log('Page contains "MCP Server":', pageContent.includes('MCP Server'))
+  127 |     console.log('Page contains "DiagramAI Backend":', pageContent.includes('DiagramAI Backend'))
+  128 |     
 ```

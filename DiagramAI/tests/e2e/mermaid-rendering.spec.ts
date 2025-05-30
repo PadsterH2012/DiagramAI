@@ -17,8 +17,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     // Wait for the page to load completely
     await page.waitForTimeout(2000)
     
-    // Check if the page title is correct
-    const title = await page.locator('h1').textContent()
+    // Check if the page title is correct (be more specific)
+    const title = await page.locator('h1').nth(1).textContent()
     console.log('Page title:', title)
     expect(title).toContain('Simple Mermaid Test')
     
@@ -75,8 +75,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     // Wait for the page to load completely
     await page.waitForTimeout(3000)
     
-    // Check if the page title is correct
-    const title = await page.locator('h1').textContent()
+    // Check if the page title is correct (be more specific)
+    const title = await page.locator('h1').nth(1).textContent()
     console.log('Page title:', title)
     expect(title).toContain('AI Agent Architecture Demo')
     
@@ -134,42 +134,102 @@ test.describe('Mermaid Diagram Rendering', () => {
     console.log('Screenshot saved to tests/screenshots/complex-mermaid-test.png')
   })
 
-  test('should display console logs and errors', async ({ page }) => {
-    console.log('Capturing browser console logs...')
-    
+  test('should capture and analyze specific Mermaid errors', async ({ page }) => {
+    console.log('Capturing detailed browser console logs and errors...')
+
     const logs: string[] = []
     const errors: string[] = []
-    
-    // Capture console logs
+    const mermaidLogs: string[] = []
+    const criticalErrors: string[] = []
+
+    // Capture console logs with detailed filtering
     page.on('console', msg => {
       const logMessage = `[${msg.type()}] ${msg.text()}`
       logs.push(logMessage)
+
+      // Filter Mermaid-specific logs
+      if (logMessage.includes('MermaidViewer') || logMessage.includes('Mermaid') || logMessage.includes('mermaid')) {
+        mermaidLogs.push(logMessage)
+        console.log('🔍 MERMAID LOG:', logMessage)
+      }
+
+      // Filter critical errors
+      if (logMessage.includes('CRITICAL') || logMessage.includes('zero dimensions') || logMessage.includes('Element in DOM')) {
+        criticalErrors.push(logMessage)
+        console.log('🚨 CRITICAL ERROR:', logMessage)
+      }
+
       console.log('Browser console:', logMessage)
     })
-    
+
     // Capture page errors
     page.on('pageerror', error => {
       const errorMessage = `Page error: ${error.message}`
       errors.push(errorMessage)
-      console.log('Browser error:', errorMessage)
+      console.log('🔥 Browser error:', errorMessage)
     })
-    
+
     // Navigate to simple diagram and capture logs
     await page.goto('http://localhost:3000/diagram/f50ff3c6-f439-4952-9370-49d686372c22')
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(3000)
-    
-    console.log('\n=== BROWSER CONSOLE LOGS ===')
+    await page.waitForTimeout(4000) // Wait longer to capture all logs
+
+    // Check for specific error indicators in the UI
+    const renderingError = await page.locator('text=Rendering Error').isVisible()
+    const errorMessage = await page.locator('text=Cannot render Mermaid').isVisible()
+    const zeroDimensionsError = await page.locator('text=element has zero dimensions').isVisible()
+
+    console.log('\n=== UI ERROR INDICATORS ===')
+    console.log('Rendering Error visible:', renderingError)
+    console.log('Cannot render Mermaid visible:', errorMessage)
+    console.log('Zero dimensions error visible:', zeroDimensionsError)
+
+    // Capture error details if visible
+    if (renderingError) {
+      try {
+        const errorDetails = await page.locator('.text-red-600').textContent()
+        console.log('Error details from UI:', errorDetails)
+      } catch (e) {
+        console.log('Could not capture error details from UI')
+      }
+    }
+
+    console.log('\n=== MERMAID-SPECIFIC LOGS ===')
+    mermaidLogs.forEach(log => console.log(log))
+
+    console.log('\n=== CRITICAL ERRORS ===')
+    criticalErrors.forEach(error => console.log(error))
+
+    console.log('\n=== ALL BROWSER CONSOLE LOGS ===')
     logs.forEach(log => console.log(log))
-    
+
     console.log('\n=== BROWSER ERRORS ===')
     if (errors.length > 0) {
       errors.forEach(error => console.log(error))
     } else {
       console.log('No browser errors detected')
     }
-    
-    // The test should not fail due to console logs, but we want to see them
+
+    // Analyze the logs for specific patterns
+    const hasZeroDimensions = logs.some(log => log.includes('dimensions: 0 x 0'))
+    const hasElementNotInDOM = logs.some(log => log.includes('Element in DOM: false'))
+    const hasCriticalError = logs.some(log => log.includes('CRITICAL'))
+    const hasRenderingError = logs.some(log => log.includes('Mermaid rendering error'))
+
+    console.log('\n=== ERROR ANALYSIS ===')
+    console.log('Has zero dimensions error:', hasZeroDimensions)
+    console.log('Has element not in DOM error:', hasElementNotInDOM)
+    console.log('Has critical error:', hasCriticalError)
+    console.log('Has rendering error:', hasRenderingError)
+
+    // Take screenshot for visual verification
+    await page.screenshot({
+      path: 'DiagramAI/tests/screenshots/mermaid-error-analysis.png',
+      fullPage: true
+    })
+    console.log('Screenshot saved to tests/screenshots/mermaid-error-analysis.png')
+
+    // The test passes but provides comprehensive error analysis
     expect(true).toBe(true)
   })
 })

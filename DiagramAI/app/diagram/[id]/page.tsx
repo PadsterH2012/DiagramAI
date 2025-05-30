@@ -4,15 +4,26 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { useWebSocket } from '@/hooks/useWebSocket'
 
-// Dynamically import components to avoid SSR issues
+// Pre-load components with optimized loading
 const ReactFlowViewer = dynamic(() => import('@/components/ReactFlowViewer'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-full">Loading ReactFlow...</div>
+  loading: () => (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  )
 })
-const MermaidViewer = dynamic(() => import('@/components/MermaidViewer'), {
+
+const MermaidViewerFixed = dynamic(() => import('@/components/MermaidViewerFixed'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-full">Loading Mermaid...</div>
+  loading: () => (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span className="ml-2 text-gray-600">Loading Mermaid...</span>
+    </div>
+  )
 })
 
 interface Diagram {
@@ -29,20 +40,44 @@ interface Diagram {
 export default function DiagramViewPage() {
   const params = useParams()
   const router = useRouter()
+  const id = params.id as string
   const [diagram, setDiagram] = useState<Diagram | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [wsError, setWsError] = useState<string | null>(null)
+
+  // Real-time WebSocket connection
+  const { isConnected, lastUpdate } = useWebSocket({
+    diagramId: id,
+    onDiagramUpdate: (update) => {
+      console.log('🔄 Real-time diagram update received:', update)
+      if (update.changes && update.changes.length > 0) {
+        const change = update.changes[0]
+        console.log('🔍 Change data:', change)
+        if (change.type === 'content_updated') {
+          console.log('🔄 Content updated, refreshing diagram...')
+          // Refresh diagram data when content changes
+          fetchDiagram()
+        }
+      }
+    },
+    onError: (error) => {
+      console.error('🔌 WebSocket error:', error)
+      setWsError(error)
+    }
+  })
 
   useEffect(() => {
-    if (params.id) {
-      fetchDiagram(params.id as string)
+    if (id) {
+      fetchDiagram(id)
     }
-  }, [params.id])
+  }, [id])
 
-  const fetchDiagram = async (id: string) => {
+  const fetchDiagram = async (diagramId?: string) => {
+    const targetId = diagramId || id
     try {
       setLoading(true)
-      const response = await fetch(`/api/diagrams/${id}`)
+      const response = await fetch(`/api/diagrams/${targetId}`)
       const result = await response.json()
       
       if (result.success) {
@@ -129,11 +164,18 @@ export default function DiagramViewPage() {
                 {diagram.format === 'reactflow' ? '🎨 Visual' : '📝 Mermaid'}
               </span>
               <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                diagram.isPublic 
-                  ? 'bg-green-100 text-green-800' 
+                diagram.isPublic
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-yellow-100 text-yellow-800'
               }`}>
                 {diagram.isPublic ? '🌐 Public' : '🔒 Private'}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                isConnected
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              }`}>
+                {isConnected ? '🔗 Live' : '❌ Offline'}
               </span>
               <Link 
                 href={`/editor?id=${diagram.id}`}
@@ -149,11 +191,21 @@ export default function DiagramViewPage() {
       {/* Diagram Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="h-[calc(100vh-200px)]">
+          <div
+            style={{
+              height: '600px',
+              minHeight: '400px',
+              width: '100%',
+              position: 'relative',
+              display: 'block',
+              backgroundColor: '#f8f9fa',
+              border: '2px solid #007bff'
+            }}
+          >
             {diagram.format === 'reactflow' ? (
               <ReactFlowViewer content={diagram.content} />
             ) : (
-              <MermaidViewer content={diagram.content} />
+              <MermaidViewerFixed content={diagram.content} />
             )}
           </div>
         </div>

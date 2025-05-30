@@ -87,33 +87,61 @@ export default function MermaidViewer({ content }: MermaidViewerProps) {
         // Clear previous content
         container.innerHTML = ''
 
-        // Create div with proper dimensions and visibility
+        // Create div with explicit dimensions (this is the key!)
         const mermaidDiv = document.createElement('div')
         mermaidDiv.className = 'mermaid'
         mermaidDiv.textContent = mermaidSyntax
 
-        // Ensure the div has proper dimensions and is visible
-        mermaidDiv.style.width = '100%'
-        mermaidDiv.style.height = 'auto'
-        mermaidDiv.style.minHeight = '200px'
-        mermaidDiv.style.visibility = 'visible'
-        mermaidDiv.style.display = 'block'
+        // Force explicit dimensions and ensure they're applied
+        mermaidDiv.style.cssText = `
+          width: 800px !important;
+          height: 400px !important;
+          max-width: 100% !important;
+          visibility: visible !important;
+          display: block !important;
+          position: relative !important;
+          background: rgba(255,0,0,0.1) !important;
+          border: 2px solid red !important;
+        `
 
         container.appendChild(mermaidDiv)
 
         console.log('Created mermaid div with content:', mermaidSyntax)
 
-        // Wait a moment for the DOM to settle
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // Force multiple reflows to ensure styles are applied
+        mermaidDiv.offsetHeight
+        container.offsetHeight
+
+        // Wait longer for DOM to settle
+        await new Promise(resolve => setTimeout(resolve, 300))
 
         // Verify the element is properly attached and has dimensions
         const rect = mermaidDiv.getBoundingClientRect()
         console.log('Mermaid div dimensions:', rect.width, 'x', rect.height)
+        console.log('Mermaid div computed style width:', window.getComputedStyle(mermaidDiv).width)
+        console.log('Mermaid div computed style height:', window.getComputedStyle(mermaidDiv).height)
+
+        // Also check the container dimensions and parent chain
+        const containerRect = container.getBoundingClientRect()
+        console.log('Container dimensions:', containerRect.width, 'x', containerRect.height)
+        console.log('Container computed style:', window.getComputedStyle(container).width, 'x', window.getComputedStyle(container).height)
+
+        // Check parent chain
+        let parent = container.parentElement
+        let level = 0
+        while (parent && level < 5) {
+          const parentRect = parent.getBoundingClientRect()
+          const parentStyle = window.getComputedStyle(parent)
+          console.log(`Parent ${level}:`, parentRect.width, 'x', parentRect.height, 'display:', parentStyle.display, 'position:', parentStyle.position)
+          parent = parent.parentElement
+          level++
+        }
 
         if (rect.width === 0 || rect.height === 0) {
-          console.warn('Mermaid div has zero dimensions, forcing size')
-          mermaidDiv.style.width = '800px'
-          mermaidDiv.style.height = '400px'
+          console.error('CRITICAL: Mermaid div STILL has zero dimensions after forcing!')
+          console.log('Element parent:', mermaidDiv.parentElement)
+          console.log('Element in DOM:', document.contains(mermaidDiv))
+          throw new Error('Cannot render Mermaid: element has zero dimensions')
         }
 
         // Use mermaid.init() with the properly sized element
@@ -191,7 +219,7 @@ export default function MermaidViewer({ content }: MermaidViewerProps) {
   }
 
   return (
-    <div style={{ width: '100%', height: '600px', position: 'relative' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', minHeight: '400px' }}>
       {/* Viewer Controls */}
       <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, background: 'rgba(255,255,255,0.9)', borderRadius: '8px', padding: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666' }}>
@@ -220,6 +248,7 @@ export default function MermaidViewer({ content }: MermaidViewerProps) {
         style={{
           width: '100%',
           height: '100%',
+          minHeight: '400px',
           padding: '16px',
           overflow: 'auto',
           background: 'linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%)',

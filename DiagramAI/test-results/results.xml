@@ -1,0 +1,46 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="6.067476000000001">
+<testsuite name="mermaid-rendering.spec.ts" timestamp="2025-05-30T09:05:40.153Z" hostname="chromium" tests="1" failures="1" skipped="0" time="4.161" errors="0">
+<testcase name="Mermaid Diagram Rendering › should render simple Mermaid diagram correctly" classname="mermaid-rendering.spec.ts" time="4.161">
+<failure message="mermaid-rendering.spec.ts:10:7 should render simple Mermaid diagram correctly" type="FAILURE">
+<![CDATA[  [chromium] › mermaid-rendering.spec.ts:10:7 › Mermaid Diagram Rendering › should render simple Mermaid diagram correctly 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      26 |     const mermaidView = await page.locator('text=Mermaid View').isVisible()
+      27 |     console.log('Mermaid View indicator visible:', mermaidView)
+    > 28 |     expect(mermaidView).toBe(true)
+         |                         ^
+      29 |     
+      30 |     // Check for any error messages
+      31 |     const errorMessage = await page.locator('text=Rendering Error').isVisible()
+        at /mnt/network_repo/DiagramAI-1/DiagramAI/tests/e2e/mermaid-rendering.spec.ts:28:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[Testing simple Mermaid diagram...
+Page title: Simple Mermaid Test
+Mermaid View indicator visible: [33mfalse[39m
+
+[[ATTACHMENT|mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/video.webm]]
+
+[[ATTACHMENT|mermaid-rendering-Mermaid--ece29-e-Mermaid-diagram-correctly-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
