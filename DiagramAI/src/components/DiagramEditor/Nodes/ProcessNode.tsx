@@ -10,9 +10,9 @@ interface ProcessNodeData {
   icon?: string
 }
 
-export const ProcessNode = memo<NodeProps>(({ data, selected, id }) => {
+export const ProcessNode = memo(({ data, selected, id }: NodeProps & { data: ProcessNodeData }) => {
   const [isEditing, setIsEditing] = useState(false)
-  const [label, setLabel] = useState((data as ProcessNodeData)?.label || '')
+  const [label, setLabel] = useState(data.label || '')
 
   const handleDoubleClick = () => {
     setIsEditing(true)
@@ -44,12 +44,12 @@ export const ProcessNode = memo<NodeProps>(({ data, selected, id }) => {
       />
 
       <div className="flex items-center space-x-3">
-        {(data as ProcessNodeData)?.icon && (
+        {data.icon && (
           <div
             className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-medium shadow-sm"
-            style={{ backgroundColor: (data as ProcessNodeData)?.color || '#3b82f6' }}
+            style={{ backgroundColor: data.color || '#3b82f6' }}
           >
-            <span className="text-base">{(data as ProcessNodeData)?.icon}</span>
+            <span className="text-base">{data.icon}</span>
           </div>
         )}
         <div className="flex-1">
@@ -71,9 +71,9 @@ export const ProcessNode = memo<NodeProps>(({ data, selected, id }) => {
               {label}
             </div>
           )}
-          {(data as ProcessNodeData)?.description && (
+          {data.description && (
             <div className="text-xs text-gray-600 mt-1">
-              {(data as ProcessNodeData)?.description}
+              {data.description}
             </div>
           )}
         </div>
