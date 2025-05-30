@@ -257,7 +257,7 @@ pipeline {
                             dir('DiagramAI') {
                                 // Archive coverage reports
                                 publishHTML([
-                                    allowMissing: false,
+                                    allowMissing: true,
                                     alwaysLinkToLastBuild: true,
                                     keepAll: true,
                                     reportDir: 'coverage/lcov-report',
