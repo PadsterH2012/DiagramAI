@@ -26,8 +26,8 @@ test.describe('Debug Mermaid Test', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(3000)
     
-    // Check if page loaded
-    const title = await page.locator('h1').textContent()
+    // Check if page loaded (use nth(1) to skip header H1)
+    const title = await page.locator('h1').nth(1).textContent()
     console.log('Page title:', title)
     expect(title).toBe('Debug Mermaid Page')
     
@@ -36,8 +36,8 @@ test.describe('Debug Mermaid Test', () => {
     const containerVisible = await container.isVisible()
     console.log('Blue container visible:', containerVisible)
     
-    // Check for mermaid div (green border)
-    const mermaidDiv = await page.locator('div[style*="border: 3px solid green"]')
+    // Check for mermaid div (green border - updated to 2px)
+    const mermaidDiv = await page.locator('div[style*="border: 2px solid green"]')
     const mermaidVisible = await mermaidDiv.isVisible()
     console.log('Green mermaid div visible:', mermaidVisible)
     
@@ -63,17 +63,19 @@ test.describe('Debug Mermaid Test', () => {
       console.log('No browser errors detected')
     }
     
-    // Analyze debug logs
-    const hasContainerFound = logs.some(log => log.includes('🔧 DEBUG: Container found'))
-    const hasContainerInDOM = logs.some(log => log.includes('🔧 DEBUG: Container in DOM: true'))
-    const hasMermaidSuccess = logs.some(log => log.includes('🔧 DEBUG: Mermaid init SUCCESS!'))
-    const hasDimensionsOK = logs.some(log => log.includes('🔧 DEBUG: Dimensions OK'))
-    
+    // Analyze debug logs (updated for new patterns)
+    const hasContainerFound = logs.some(log => log.includes('🔧 ROBUST: Container found') || log.includes('🔧 DEBUG: Container found'))
+    const hasContainerInDOM = logs.some(log => log.includes('🔧 ROBUST: Container in DOM: true') || log.includes('🔧 DEBUG: Container in DOM: true'))
+    const hasMermaidSuccess = logs.some(log => log.includes('🔧 ROBUST: Mermaid service render SUCCESS!') || log.includes('🔧 DEBUG: Mermaid init SUCCESS!'))
+    const hasDimensionsOK = logs.some(log => log.includes('🔧 ROBUST: Dimensions OK') || log.includes('🔧 DEBUG: Dimensions OK'))
+    const hasMermaidService = logs.some(log => log.includes('🔧 MermaidService:'))
+
     console.log('\n=== DEBUG ANALYSIS ===')
     console.log('Container found:', hasContainerFound)
     console.log('Container in DOM:', hasContainerInDOM)
     console.log('Dimensions OK:', hasDimensionsOK)
     console.log('Mermaid success:', hasMermaidSuccess)
+    console.log('MermaidService logs:', hasMermaidService)
     
     // The test passes - we're just debugging
     expect(true).toBe(true)

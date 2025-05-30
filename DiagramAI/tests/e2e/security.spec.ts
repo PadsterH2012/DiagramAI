@@ -12,8 +12,12 @@ test.describe('Security Tests', () => {
 
   test('should prevent XSS attacks in AI input', async ({ page }) => {
     await page.goto('/editor');
-    
-    const aiInput = page.locator('input[placeholder*="Describe your diagram"]');
+
+    // Open AI chatbox first
+    await page.click('button[title*="Open AI Assistant"]');
+    await page.waitForTimeout(500);
+
+    const aiInput = page.locator('textarea[placeholder*="Ask me about your diagram"]');
     
     // Test various XSS payloads
     const xssPayloads = [
@@ -148,8 +152,12 @@ test.describe('Security Tests', () => {
 
   test('should handle malformed input gracefully', async ({ page }) => {
     await page.goto('/editor');
-    
-    const aiInput = page.locator('input[placeholder*="Describe your diagram"]');
+
+    // Open AI chatbox first
+    await page.click('button[title*="Open AI Assistant"]');
+    await page.waitForTimeout(500);
+
+    const aiInput = page.locator('textarea[placeholder*="Ask me about your diagram"]');
     
     // Test with various malformed inputs
     const malformedInputs = [
@@ -168,15 +176,12 @@ test.describe('Security Tests', () => {
       // Application should handle gracefully without crashing
       await expect(page.locator('h1').first()).toBeVisible();
       
-      // Try to generate diagram
-      const generateButton = page.locator('button:has-text("Generate")');
-      if (await generateButton.isEnabled()) {
-        await generateButton.click();
-        await page.waitForTimeout(1000);
-        
-        // Page should still be functional
-        await expect(page.locator('.react-flow')).toBeVisible();
-      }
+      // Try to send message (using Enter key since there's no Generate button in chatbox)
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(1000);
+
+      // Page should still be functional
+      await expect(page.locator('.react-flow')).toBeVisible();
     }
   });
 

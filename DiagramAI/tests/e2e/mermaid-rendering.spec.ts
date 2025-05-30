@@ -22,18 +22,18 @@ test.describe('Mermaid Diagram Rendering', () => {
     console.log('Page title:', title)
     expect(title).toContain('Simple Mermaid Test')
     
-    // Check if Mermaid View indicator is present
-    const mermaidView = await page.locator('text=Mermaid View').isVisible()
+    // Check if Mermaid View indicator is present (updated for new component)
+    const mermaidView = await page.locator('text=Mermaid View').or(page.locator('text=Mermaid View (Fixed)')).isVisible()
     console.log('Mermaid View indicator visible:', mermaidView)
     expect(mermaidView).toBe(true)
     
-    // Check for any error messages
-    const errorMessage = await page.locator('text=Rendering Error').isVisible()
+    // Check for any error messages (updated for new error format)
+    const errorMessage = await page.locator('text=❌ Rendering Error').or(page.locator('text=Rendering Error')).isVisible()
     console.log('Error message visible:', errorMessage)
     expect(errorMessage).toBe(false)
-    
-    // Check if loading indicator is gone
-    const loadingIndicator = await page.locator('text=Rendering diagram...').isVisible()
+
+    // Check if loading indicator is gone (updated for new loading text)
+    const loadingIndicator = await page.locator('text=Loading Mermaid...').or(page.locator('text=Rendering diagram...')).isVisible()
     console.log('Loading indicator visible:', loadingIndicator)
     expect(loadingIndicator).toBe(false)
     
@@ -80,13 +80,13 @@ test.describe('Mermaid Diagram Rendering', () => {
     console.log('Page title:', title)
     expect(title).toContain('AI Agent Architecture Demo')
     
-    // Check if Mermaid View indicator is present
-    const mermaidView = await page.locator('text=Mermaid View').isVisible()
+    // Check if Mermaid View indicator is present (updated for new component)
+    const mermaidView = await page.locator('text=Mermaid View').or(page.locator('text=Mermaid View (Fixed)')).isVisible()
     console.log('Mermaid View indicator visible:', mermaidView)
     expect(mermaidView).toBe(true)
     
-    // Check for any error messages
-    const errorMessage = await page.locator('text=Rendering Error').isVisible()
+    // Check for any error messages (updated for new error format)
+    const errorMessage = await page.locator('text=❌ Rendering Error').or(page.locator('text=Rendering Error')).isVisible()
     console.log('Error message visible:', errorMessage)
     
     if (errorMessage) {
@@ -101,8 +101,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     
     expect(errorMessage).toBe(false)
     
-    // Check if loading indicator is gone
-    const loadingIndicator = await page.locator('text=Rendering diagram...').isVisible()
+    // Check if loading indicator is gone (updated for new loading text)
+    const loadingIndicator = await page.locator('text=Loading Mermaid...').or(page.locator('text=Rendering diagram...')).isVisible()
     console.log('Loading indicator visible:', loadingIndicator)
     expect(loadingIndicator).toBe(false)
     
@@ -147,14 +147,16 @@ test.describe('Mermaid Diagram Rendering', () => {
       const logMessage = `[${msg.type()}] ${msg.text()}`
       logs.push(logMessage)
 
-      // Filter Mermaid-specific logs
-      if (logMessage.includes('MermaidViewer') || logMessage.includes('Mermaid') || logMessage.includes('mermaid')) {
+      // Filter Mermaid-specific logs (updated patterns)
+      if (logMessage.includes('MermaidViewer') || logMessage.includes('Mermaid') || logMessage.includes('mermaid') ||
+          logMessage.includes('🔧 ROBUST:') || logMessage.includes('🔧 FIXED:') || logMessage.includes('🔧 MermaidService:')) {
         mermaidLogs.push(logMessage)
         console.log('🔍 MERMAID LOG:', logMessage)
       }
 
-      // Filter critical errors
-      if (logMessage.includes('CRITICAL') || logMessage.includes('zero dimensions') || logMessage.includes('Element in DOM')) {
+      // Filter critical errors (updated patterns)
+      if (logMessage.includes('CRITICAL') || logMessage.includes('zero dimensions') || logMessage.includes('Element in DOM') ||
+          logMessage.includes('🔧 ROBUST: FAILED') || logMessage.includes('Cannot render Mermaid')) {
         criticalErrors.push(logMessage)
         console.log('🚨 CRITICAL ERROR:', logMessage)
       }
@@ -174,8 +176,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(4000) // Wait longer to capture all logs
 
-    // Check for specific error indicators in the UI
-    const renderingError = await page.locator('text=Rendering Error').isVisible()
+    // Check for specific error indicators in the UI (updated for new error format)
+    const renderingError = await page.locator('text=❌ Rendering Error').or(page.locator('text=Rendering Error')).isVisible()
     const errorMessage = await page.locator('text=Cannot render Mermaid').isVisible()
     const zeroDimensionsError = await page.locator('text=element has zero dimensions').isVisible()
 

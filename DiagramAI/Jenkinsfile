@@ -1,0 +1,462 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Node.js version
+        NODE_VERSION = '18'
+        
+        // Application configuration
+        NODE_ENV = 'test'
+        CI = 'true'
+        
+        // Database configuration for testing
+        DATABASE_URL = 'postgresql://postgres:password@localhost:5432/diagramai_test'
+        POSTGRES_USER = 'postgres'
+        POSTGRES_PASSWORD = 'password'
+        POSTGRES_DB = 'diagramai_test'
+        
+        // Test configuration
+        NEXTAUTH_SECRET = 'test-secret-key-for-ci'
+        NEXTAUTH_URL = 'http://localhost:3000'
+        
+        // Disable telemetry
+        NEXT_TELEMETRY_DISABLED = '1'
+        
+        // Test result paths
+        UNIT_TEST_RESULTS = 'coverage/lcov.info'
+        E2E_TEST_RESULTS = 'test-results/results.xml'
+        PLAYWRIGHT_REPORT = 'playwright-report'
+        
+        // Build artifacts
+        BUILD_DIR = '.next'
+        DIST_DIR = 'dist'
+    }
+    
+    options {
+        // Build timeout
+        timeout(time: 45, unit: 'MINUTES')
+        
+        // Keep builds
+        buildDiscarder(logRotator(
+            numToKeepStr: '10',
+            daysToKeepStr: '30'
+        ))
+        
+        // Disable concurrent builds
+        disableConcurrentBuilds()
+        
+        // Timestamps in console output
+        timestamps()
+    }
+    
+    stages {
+        stage('🔧 Environment Setup') {
+            steps {
+                script {
+                    echo "🚀 Starting DiagramAI CI/CD Pipeline"
+                    echo "📋 Build Information:"
+                    echo "   - Build Number: ${env.BUILD_NUMBER}"
+                    echo "   - Branch: ${env.BRANCH_NAME ?: 'main'}"
+                    echo "   - Node Version: ${NODE_VERSION}"
+                    echo "   - Workspace: ${env.WORKSPACE}"
+                }
+                
+                // Clean workspace
+                cleanWs()
+                
+                // Checkout code
+                checkout scm
+                
+                // Setup Node.js environment
+                script {
+                    def nodeHome = tool name: "NodeJS-${NODE_VERSION}", type: 'nodejs'
+                    env.PATH = "${nodeHome}/bin:${env.PATH}"
+                }
+                
+                // Verify Node.js installation
+                sh '''
+                    echo "🔍 Verifying Node.js installation..."
+                    node --version
+                    npm --version
+                    echo "✅ Node.js environment ready"
+                '''
+            }
+        }
+        
+        stage('🐳 Infrastructure Setup') {
+            parallel {
+                stage('Database Setup') {
+                    steps {
+                        script {
+                            echo "🗄️ Setting up test database..."
+                            
+                            // Start PostgreSQL using Docker
+                            sh '''
+                                # Stop any existing containers
+                                docker stop diagramai-test-db || true
+                                docker rm diagramai-test-db || true
+                                
+                                # Start PostgreSQL container
+                                docker run -d \
+                                    --name diagramai-test-db \
+                                    -e POSTGRES_USER=${POSTGRES_USER} \
+                                    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+                                    -e POSTGRES_DB=${POSTGRES_DB} \
+                                    -p 5432:5432 \
+                                    postgres:15-alpine
+                                
+                                # Wait for database to be ready
+                                echo "⏳ Waiting for database to be ready..."
+                                timeout 60 bash -c 'until docker exec diagramai-test-db pg_isready -U ${POSTGRES_USER}; do sleep 2; done'
+                                echo "✅ Database is ready"
+                            '''
+                        }
+                    }
+                }
+                
+                stage('Redis Setup') {
+                    steps {
+                        script {
+                            echo "🔴 Setting up Redis for testing..."
+                            
+                            sh '''
+                                # Stop any existing Redis containers
+                                docker stop diagramai-test-redis || true
+                                docker rm diagramai-test-redis || true
+                                
+                                # Start Redis container
+                                docker run -d \
+                                    --name diagramai-test-redis \
+                                    -p 6379:6379 \
+                                    redis:7-alpine
+                                
+                                # Wait for Redis to be ready
+                                echo "⏳ Waiting for Redis to be ready..."
+                                timeout 30 bash -c 'until docker exec diagramai-test-redis redis-cli ping | grep -q PONG; do sleep 2; done'
+                                echo "✅ Redis is ready"
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('📦 Dependencies Installation') {
+            steps {
+                script {
+                    echo "📦 Installing dependencies..."
+                }
+                
+                // Change to DiagramAI directory
+                dir('DiagramAI') {
+                    // Install dependencies using npm ci for reproducible builds
+                    sh '''
+                        echo "🔍 Checking package.json..."
+                        if [ ! -f package.json ]; then
+                            echo "❌ package.json not found!"
+                            exit 1
+                        fi
+                        
+                        echo "📥 Installing dependencies with npm ci..."
+                        npm ci --prefer-offline --no-audit
+                        
+                        echo "🎭 Installing Playwright browsers..."
+                        npx playwright install --with-deps chromium
+                        
+                        echo "✅ Dependencies installed successfully"
+                    '''
+                    
+                    // Verify critical dependencies
+                    sh '''
+                        echo "🔍 Verifying critical dependencies..."
+                        npm list next jest @playwright/test --depth=0
+                        echo "✅ Critical dependencies verified"
+                    '''
+                }
+            }
+        }
+        
+        stage('🏗️ Build Application') {
+            steps {
+                script {
+                    echo "🏗️ Building Next.js application..."
+                }
+                
+                dir('DiagramAI') {
+                    // Generate Prisma client
+                    sh '''
+                        echo "🔧 Generating Prisma client..."
+                        npx prisma generate
+                    '''
+                    
+                    // Build the application
+                    sh '''
+                        echo "🏗️ Building Next.js application..."
+                        npm run build
+                        
+                        echo "🔍 Verifying build artifacts..."
+                        if [ ! -d ".next" ]; then
+                            echo "❌ Build failed - .next directory not found!"
+                            exit 1
+                        fi
+                        
+                        if [ ! -f ".next/BUILD_ID" ]; then
+                            echo "❌ Build failed - BUILD_ID not found!"
+                            exit 1
+                        fi
+                        
+                        echo "✅ Build completed successfully"
+                        echo "📊 Build size:"
+                        du -sh .next/
+                    '''
+                }
+            }
+        }
+        
+        stage('🧪 Testing Suite') {
+            parallel {
+                stage('Unit Tests (33 tests)') {
+                    steps {
+                        script {
+                            echo "🧪 Running unit tests..."
+                        }
+                        
+                        dir('DiagramAI') {
+                            sh '''
+                                echo "🧪 Running unit tests with coverage..."
+                                npm run test:unit -- --coverage --ci --watchAll=false --testResultsProcessor=jest-junit
+                                
+                                echo "📊 Unit test results:"
+                                if [ -f coverage/lcov-report/index.html ]; then
+                                    echo "✅ Coverage report generated"
+                                fi
+                            '''
+                        }
+                    }
+                    post {
+                        always {
+                            dir('DiagramAI') {
+                                // Archive coverage reports
+                                publishHTML([
+                                    allowMissing: false,
+                                    alwaysLinkToLastBuild: true,
+                                    keepAll: true,
+                                    reportDir: 'coverage/lcov-report',
+                                    reportFiles: 'index.html',
+                                    reportName: 'Unit Test Coverage Report'
+                                ])
+                            }
+                        }
+                    }
+                }
+                
+                stage('Integration Tests (10 tests)') {
+                    steps {
+                        script {
+                            echo "🔗 Running integration tests..."
+                        }
+                        
+                        dir('DiagramAI') {
+                            // Run database migrations for integration tests
+                            sh '''
+                                echo "🗄️ Running database migrations..."
+                                npx prisma migrate deploy --schema=./prisma/schema.prisma
+                            '''
+                            
+                            sh '''
+                                echo "🔗 Running integration tests..."
+                                npm run test:integration -- --ci --watchAll=false --testResultsProcessor=jest-junit
+                                
+                                echo "📊 Integration test results completed"
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('🌐 End-to-End Tests (38 tests)') {
+            steps {
+                script {
+                    echo "🌐 Running E2E tests..."
+                }
+                
+                dir('DiagramAI') {
+                    // Start the application for E2E testing
+                    sh '''
+                        echo "🚀 Starting application for E2E testing..."
+                        
+                        # Start the application in background
+                        npm run start &
+                        APP_PID=$!
+                        echo $APP_PID > app.pid
+                        
+                        # Wait for application to be ready
+                        echo "⏳ Waiting for application to be ready..."
+                        timeout 120 bash -c 'until curl -f http://localhost:3000/api/health 2>/dev/null; do sleep 2; done' || {
+                            echo "❌ Application failed to start within timeout"
+                            kill $APP_PID 2>/dev/null || true
+                            exit 1
+                        }
+                        
+                        echo "✅ Application is ready for E2E testing"
+                    '''
+                    
+                    // Run E2E tests
+                    sh '''
+                        echo "🌐 Running Playwright E2E tests..."
+                        npm run test:e2e -- --reporter=junit
+                        
+                        echo "📊 E2E test results completed"
+                    '''
+                }
+            }
+            post {
+                always {
+                    dir('DiagramAI') {
+                        // Stop the application
+                        sh '''
+                            if [ -f app.pid ]; then
+                                APP_PID=$(cat app.pid)
+                                echo "🛑 Stopping application (PID: $APP_PID)..."
+                                kill $APP_PID 2>/dev/null || true
+                                rm -f app.pid
+                            fi
+                        '''
+                        
+                        // Archive E2E test results
+                        publishHTML([
+                            allowMissing: true,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: 'playwright-report',
+                            reportFiles: 'index.html',
+                            reportName: 'E2E Test Report'
+                        ])
+                        
+                        // Archive test artifacts
+                        archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'tests/screenshots/**/*', allowEmptyArchive: true
+                    }
+                }
+            }
+        }
+        
+        stage('📊 Test Results Validation') {
+            steps {
+                script {
+                    echo "📊 Validating test results..."
+                    
+                    dir('DiagramAI') {
+                        // Parse and validate test results
+                        def testResults = sh(
+                            script: '''
+                                echo "🔍 Analyzing test results..."
+                                
+                                # Count unit tests
+                                UNIT_TESTS=$(npm run test:unit -- --passWithNoTests --silent | grep -o "[0-9]\\+ passing" | head -1 | grep -o "[0-9]\\+" || echo "0")
+                                
+                                # Count integration tests  
+                                INTEGRATION_TESTS=$(npm run test:integration -- --passWithNoTests --silent | grep -o "[0-9]\\+ passing" | head -1 | grep -o "[0-9]\\+" || echo "0")
+                                
+                                # Count E2E tests from Playwright report
+                                E2E_TESTS=$(grep -o "[0-9]\\+ passed" test-results/results.xml 2>/dev/null | grep -o "[0-9]\\+" || echo "0")
+                                
+                                TOTAL_TESTS=$((UNIT_TESTS + INTEGRATION_TESTS + E2E_TESTS))
+                                
+                                echo "📊 Test Results Summary:"
+                                echo "   - Unit Tests: $UNIT_TESTS/33"
+                                echo "   - Integration Tests: $INTEGRATION_TESTS/10" 
+                                echo "   - E2E Tests: $E2E_TESTS/38"
+                                echo "   - Total: $TOTAL_TESTS/81"
+                                
+                                # Validate 100% success rate requirement
+                                if [ "$UNIT_TESTS" -eq 33 ] && [ "$INTEGRATION_TESTS" -eq 10 ] && [ "$E2E_TESTS" -eq 38 ]; then
+                                    echo "✅ ALL TESTS PASSED - 100% SUCCESS RATE ACHIEVED!"
+                                    echo "SUCCESS"
+                                else
+                                    echo "❌ PIPELINE FAILED - NOT ALL TESTS PASSED"
+                                    echo "   Required: 33 unit + 10 integration + 38 E2E = 81 total"
+                                    echo "   Actual: $UNIT_TESTS unit + $INTEGRATION_TESTS integration + $E2E_TESTS E2E = $TOTAL_TESTS total"
+                                    echo "FAILURE"
+                                fi
+                            ''',
+                            returnStdout: true
+                        ).trim()
+                        
+                        // Check if all tests passed
+                        if (!testResults.contains('SUCCESS')) {
+                            error("❌ PIPELINE FAILED: Not all tests passed. Required 100% success rate (81/81 tests).")
+                        }
+                        
+                        echo "✅ Test validation completed successfully - 100% success rate achieved!"
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                echo "🧹 Starting cleanup process..."
+            }
+            
+            // Cleanup Docker containers
+            sh '''
+                echo "🐳 Cleaning up Docker containers..."
+                docker stop diagramai-test-db diagramai-test-redis 2>/dev/null || true
+                docker rm diagramai-test-db diagramai-test-redis 2>/dev/null || true
+                echo "✅ Docker cleanup completed"
+            '''
+            
+            // Archive build artifacts
+            dir('DiagramAI') {
+                archiveArtifacts artifacts: '.next/**/*', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'coverage/**/*', allowEmptyArchive: true
+            }
+            
+            // Clean workspace
+            cleanWs(
+                cleanWhenNotBuilt: false,
+                deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true
+            )
+        }
+        
+        success {
+            script {
+                echo "🎉 PIPELINE SUCCESS: All 81 tests passed (100% success rate)!"
+                echo "✅ DiagramAI build completed successfully"
+                
+                // Send success notification (customize as needed)
+                // emailext (
+                //     subject: "✅ DiagramAI Build Success - ${env.BUILD_NUMBER}",
+                //     body: "All tests passed successfully. Build artifacts are ready for deployment.",
+                //     to: "${env.CHANGE_AUTHOR_EMAIL ?: 'team@diagramai.com'}"
+                // )
+            }
+        }
+        
+        failure {
+            script {
+                echo "❌ PIPELINE FAILED: Not all tests passed"
+                echo "💡 Check the test results above to identify which tests failed"
+                
+                // Send failure notification (customize as needed)
+                // emailext (
+                //     subject: "❌ DiagramAI Build Failed - ${env.BUILD_NUMBER}",
+                //     body: "Pipeline failed. Check Jenkins console output for details.",
+                //     to: "${env.CHANGE_AUTHOR_EMAIL ?: 'team@diagramai.com'}"
+                // )
+            }
+        }
+        
+        unstable {
+            script {
+                echo "⚠️ PIPELINE UNSTABLE: Some tests may have issues"
+            }
+        }
+    }
+}

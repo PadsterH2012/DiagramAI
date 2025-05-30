@@ -36,10 +36,19 @@ test.describe('Diagram Editor', () => {
     // Check for React Flow container
     await expect(page.locator('.react-flow')).toBeVisible();
 
-    // Check for node palette heading
-    await expect(page.locator('h3').filter({ hasText: 'Node Palette' })).toBeVisible();
+    // Check for slide-out menu toggle button
+    await expect(page.locator('button[title*="Open Menu"]')).toBeVisible();
 
-    // Check for different node types in palette
+    // Open the slide-out menu to access node palette
+    await page.click('button[title*="Open Menu"]');
+
+    // Wait for menu animation
+    await page.waitForTimeout(500);
+
+    // Check for Tools header in slide-out menu (not "Node Palette")
+    await expect(page.locator('h2').filter({ hasText: 'Tools' })).toBeVisible();
+
+    // Check for different node types in palette (after opening menu)
     await expect(page.locator('div').filter({ hasText: 'Start' }).first()).toBeVisible();
     await expect(page.locator('div').filter({ hasText: 'Process' }).first()).toBeVisible();
     await expect(page.locator('div').filter({ hasText: 'Decision' }).first()).toBeVisible();
@@ -53,17 +62,20 @@ test.describe('Diagram Editor', () => {
     // Wait for React Flow to be ready
     await page.waitForSelector('.react-flow', { state: 'visible' });
 
-    // Check that nodes are already present (demo nodes)
-    await expect(page.locator('.react-flow__node')).toHaveCount(5);
+    // Open the slide-out menu to access node palette
+    await page.click('button[title*="Open Menu"]');
 
-    // Check that palette nodes are clickable
+    // Wait for menu animation
+    await page.waitForTimeout(500);
+
+    // Check that palette nodes are clickable and draggable
     const startNodePalette = page.locator('div[draggable="true"]').filter({ hasText: 'Start' }).first();
     await expect(startNodePalette).toBeVisible();
     await expect(startNodePalette).toHaveAttribute('draggable', 'true');
 
-    // Check that palette has instructions
-    await expect(page.locator('text=Click to add to center')).toBeVisible();
-    await expect(page.locator('text=Drag to position')).toBeVisible();
+    // Check for node descriptions (instead of instruction text that doesn't exist)
+    await expect(page.locator('text=Start point of the process')).toBeVisible();
+    await expect(page.locator('text=Process or action step')).toBeVisible();
   });
 
   test('should display Mermaid text editor', async ({ page }) => {

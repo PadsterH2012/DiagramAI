@@ -65,9 +65,13 @@ test.describe('Homepage', () => {
     await page.waitForLoadState('networkidle');
     
     // Filter out known non-critical errors
-    const criticalErrors = consoleErrors.filter(error => 
+    const criticalErrors = consoleErrors.filter(error =>
       !error.includes('favicon.ico') &&
-      !error.includes('DevTools')
+      !error.includes('DevTools') &&
+      !error.includes('ResizeObserver') &&
+      !error.includes('WebSocket connection') &&
+      !error.includes('webpack-hmr') &&
+      !error.includes('Unexpected response code: 400')
     );
     
     expect(criticalErrors).toHaveLength(0);

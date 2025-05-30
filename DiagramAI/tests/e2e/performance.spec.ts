@@ -112,17 +112,20 @@ ${Array.from({ length: 50 }, (_, i) => `    A${i}[Node ${i}] --> A${i + 1}[Node 
 
   test('should maintain responsiveness during AI generation', async ({ page }) => {
     await page.goto('/editor');
-    
-    // Find AI input
-    const aiInput = page.locator('input[placeholder*="Describe your diagram"]');
-    const generateButton = page.locator('button:has-text("Generate")');
-    
+
+    // Open AI chatbox first
+    await page.click('button[title*="Open AI Assistant"]');
+    await page.waitForTimeout(500);
+
+    // Find AI input (textarea in chatbox)
+    const aiInput = page.locator('textarea[placeholder*="Ask me about your diagram"]');
+
     await aiInput.fill('complex business process with multiple decision points');
-    
+
     const startTime = Date.now();
-    
-    // Click generate
-    await generateButton.click();
+
+    // Send message (using arrow button or Enter key)
+    await page.keyboard.press('Enter');
     
     // Check that UI remains responsive
     await page.click('button:has-text("Mermaid Code")');
@@ -201,11 +204,14 @@ ${Array.from({ length: 50 }, (_, i) => `    A${i}[Node ${i}] --> A${i + 1}[Node 
       await page.click('button:has-text("Visual Editor")');
       await page.waitForTimeout(100);
       
-      // Add some content
-      const aiInput = page.locator('input[placeholder*="Describe your diagram"]');
-      await aiInput.fill(`test diagram ${i}`);
+      // Add some content to Mermaid editor instead (since AI input requires opening chatbox)
+      await page.click('button:has-text("Mermaid Code")');
+      await page.waitForTimeout(200); // Wait for tab switch
+
+      const mermaidInput = page.locator('textarea').first();
+      await mermaidInput.fill(`graph TD\n  A${i}[Test ${i}] --> B${i}[End ${i}]`);
       await page.waitForTimeout(100);
-      await aiInput.clear();
+      await mermaidInput.clear();
     }
     
     const finalMemory = await page.evaluate(() => {

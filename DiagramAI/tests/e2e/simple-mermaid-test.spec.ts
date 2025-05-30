@@ -26,8 +26,8 @@ test.describe('Simple Mermaid Test', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(3000)
     
-    // Check if page loaded
-    const title = await page.locator('h1').textContent()
+    // Check if page loaded (use nth(1) to skip header H1)
+    const title = await page.locator('h1').nth(1).textContent()
     console.log('Page title:', title)
     expect(title).toBe('Mermaid Test Page')
     

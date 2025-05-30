@@ -12,19 +12,32 @@ jest.mock('@xyflow/react', () => ({
   Background: () => <div data-testid="react-flow-background" />,
   Controls: () => <div data-testid="react-flow-controls" />,
   MiniMap: () => <div data-testid="react-flow-minimap" />,
-  useNodesState: () => [[], jest.fn()],
-  useEdgesState: () => [[], jest.fn()],
+  ReactFlowProvider: ({ children }: any) => <div>{children}</div>,
+  useNodesState: () => [[], jest.fn(), jest.fn()],
+  useEdgesState: () => [[], jest.fn(), jest.fn()],
   addEdge: jest.fn(),
   useReactFlow: () => ({
     getNodes: jest.fn(() => []),
     getEdges: jest.fn(() => []),
     setNodes: jest.fn(),
     setEdges: jest.fn(),
+    screenToFlowPosition: jest.fn((pos) => pos),
   }),
   ConnectionMode: {
     Loose: 'loose',
     Strict: 'strict',
   },
+  SelectionMode: {
+    Partial: 'partial',
+    Full: 'full',
+  },
+  Position: {
+    Top: 'top',
+    Bottom: 'bottom',
+    Left: 'left',
+    Right: 'right',
+  },
+  Handle: ({ children, ...props }: any) => <div data-testid="handle" {...props}>{children}</div>,
 }));
 
 // Mock the node components
@@ -42,6 +55,52 @@ jest.mock('@/components/DiagramEditor/Nodes/StartNode', () => ({
 
 jest.mock('@/components/DiagramEditor/Nodes/EndNode', () => ({
   EndNode: () => <div data-testid="end-node">End Node</div>,
+}));
+
+jest.mock('@/components/DiagramEditor/Nodes/InputNode', () => ({
+  InputNode: () => <div data-testid="input-node">Input Node</div>,
+}));
+
+jest.mock('@/components/DiagramEditor/Nodes/DatabaseNode', () => ({
+  DatabaseNode: () => <div data-testid="database-node">Database Node</div>,
+}));
+
+jest.mock('@/components/DiagramEditor/Nodes/CloudNode', () => ({
+  CloudNode: () => <div data-testid="cloud-node">Cloud Node</div>,
+}));
+
+// Mock other components used by DiagramEditor
+jest.mock('@/components/DiagramEditor/SlideOutMenu', () => ({
+  SlideOutMenu: ({ onNodeAdd }: any) => (
+    <div data-testid="slide-out-menu">
+      <button onClick={() => onNodeAdd('process', { label: 'Test' })}>Add Node</button>
+    </div>
+  ),
+}));
+
+jest.mock('@/components/DiagramEditor/MovableChatbox', () => ({
+  MovableChatbox: ({ isOpen, onToggle }: any) => (
+    isOpen ? <div data-testid="movable-chatbox">Chatbox</div> : null
+  ),
+}));
+
+jest.mock('@/components/DiagramEditor/NodePropertiesPanel', () => ({
+  NodePropertiesPanel: ({ selectedNode, onClose }: any) => (
+    <div data-testid="node-properties-panel">
+      <button onClick={onClose}>Close</button>
+      {selectedNode && <div>Node: {selectedNode.id}</div>}
+    </div>
+  ),
+}));
+
+jest.mock('@/components/DiagramEditor/KeyboardShortcutsPanel', () => ({
+  KeyboardShortcutsPanel: ({ isOpen, onClose }: any) => (
+    isOpen ? (
+      <div data-testid="keyboard-shortcuts-panel">
+        <button onClick={onClose}>Close</button>
+      </div>
+    ) : null
+  ),
 }));
 
 describe('DiagramEditor', () => {
