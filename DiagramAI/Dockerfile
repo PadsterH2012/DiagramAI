@@ -8,6 +8,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
+# Skip husky install during Docker build
+ENV HUSKY=0
 RUN npm ci --only=production && npm cache clean --force
 
 # Stage 2: Builder
@@ -26,6 +28,7 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV HUSKY=0
 ENV APP_VERSION=${VERSION_STRING}
 ENV BUILD_DATE=${BUILD_DATE}
 ENV GIT_COMMIT=${GIT_COMMIT}
