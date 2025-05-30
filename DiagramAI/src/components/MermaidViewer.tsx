@@ -73,7 +73,7 @@ export default function MermaidViewer({ content }: MermaidViewerProps) {
           journey: {
             useMaxWidth: true,
           },
-          gitgraph: {
+          gitGraph: {
             useMaxWidth: true,
           },
         })
