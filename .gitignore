@@ -11,6 +11,7 @@ archivebin/
 # Simulate mode logs and temporary instruction system files
 project_instructions/simulate/
 project_instructions/
+project_working_files/
 
 # Update request working directories (temporary processing folders)
 project_instructions/update_request_here/*/
