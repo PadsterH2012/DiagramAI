@@ -69,8 +69,21 @@ pipeline {
                 
                 // Setup Node.js environment
                 script {
-                    def nodeHome = tool name: "NodeJS-${NODE_VERSION}", type: 'nodejs'
-                    env.PATH = "${nodeHome}/bin:${env.PATH}"
+                    // Try to find available Node.js installation
+                    try {
+                        def nodeHome = tool name: "NodeJS-${NODE_VERSION}", type: 'nodejs'
+                        env.PATH = "${nodeHome}/bin:${env.PATH}"
+                    } catch (Exception e) {
+                        echo "⚠️ NodeJS-${NODE_VERSION} tool not found, trying alternatives..."
+                        try {
+                            def nodeHome = tool name: "NodeJS", type: 'nodejs'
+                            env.PATH = "${nodeHome}/bin:${env.PATH}"
+                        } catch (Exception e2) {
+                            echo "⚠️ Using system Node.js installation"
+                            // Verify system Node.js is available
+                            sh 'which node || (echo "❌ Node.js not found in system PATH" && exit 1)'
+                        }
+                    }
                 }
                 
                 // Verify Node.js installation
