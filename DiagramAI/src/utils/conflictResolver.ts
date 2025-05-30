@@ -167,11 +167,11 @@ export class ConflictResolver extends EventEmitter {
   cleanupResolvedConflicts(olderThanMs: number = 3600000): void { // 1 hour default
     const cutoff = new Date(Date.now() - olderThanMs);
     
-    for (const [id, conflict] of this.activeConflicts) {
+    this.activeConflicts.forEach((conflict, id) => {
       if (conflict.resolved && conflict.timestamp < cutoff) {
         this.activeConflicts.delete(id);
       }
-    }
+    });
   }
 
   private detectConflict(operation: ConflictingOperation): ConflictEvent | null {

@@ -107,7 +107,7 @@ export const AISettingsPage: React.FC = () => {
   const handleValidateApiKey = async (providerId: string, apiKey: string) => {
     try {
       const provider = providers.find(p => p.id === providerId)
-      if (!provider) return
+      if (!provider) return { isValid: false, error: 'Provider not found' }
 
       // Validate API key and fetch available models
       const result = await AIProviderService.validateApiKey(providerId as any, apiKey)

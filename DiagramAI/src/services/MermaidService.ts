@@ -55,7 +55,7 @@ class MermaidService {
         journey: {
           useMaxWidth: true,
         },
-        gitgraph: {
+        gitGraph: {
           useMaxWidth: true,
         },
       })

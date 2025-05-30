@@ -77,7 +77,6 @@ export default function ReactFlowViewer({ content }: ReactFlowViewerProps) {
           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         >
           <Background
-            variant="dots"
             gap={20}
             size={1}
             color="#e5e7eb"

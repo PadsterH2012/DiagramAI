@@ -122,8 +122,8 @@ async function updateDiagram(req: NextApiRequest, res: NextApiResponse, id: stri
     })
 
     // Broadcast real-time update to WebSocket subscribers
-    if (global.wsService && content !== undefined) {
-      global.wsService.broadcastDiagramUpdate(id, {
+    if ((global as any).wsService && content !== undefined) {
+      (global as any).wsService.broadcastDiagramUpdate(id, {
         type: 'content_updated',
         content: content,
         timestamp: new Date().toISOString()

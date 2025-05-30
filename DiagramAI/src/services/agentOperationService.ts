@@ -215,7 +215,7 @@ export class AgentOperationService {
         agentAccessible: true
       },
       include: include_metadata ? {
-        user: { select: { id: true, name: true } },
+        user: { select: { id: true, username: true } },
         versions: { take: 5, orderBy: { createdAt: 'desc' } }
       } : undefined
     })
@@ -237,8 +237,8 @@ export class AgentOperationService {
 
     if (include_metadata) {
       result.metadata = {
-        user: diagram.user,
-        versions: diagram.versions,
+        user: (diagram as any).user,
+        versions: (diagram as any).versions,
         view_count: diagram.viewCount,
         is_public: diagram.isPublic,
         is_template: diagram.isTemplate

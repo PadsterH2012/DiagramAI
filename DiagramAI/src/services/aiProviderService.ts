@@ -54,7 +54,7 @@ class AIProviderServiceClass {
           owned_by: model.owned_by,
           pricing: this.getOpenAIModelPricing(model.id)
         }))
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a: any, b: any) => a.name.localeCompare(b.name))
 
       return {
         isValid: true,
@@ -174,7 +174,7 @@ class AIProviderServiceClass {
             output: parseFloat(model.pricing.completion) * 1000000
           } : undefined
         }))
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a: any, b: any) => a.name.localeCompare(b.name))
 
       return {
         isValid: true,
