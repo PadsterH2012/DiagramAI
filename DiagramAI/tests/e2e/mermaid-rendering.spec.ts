@@ -18,8 +18,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     await page.waitForTimeout(2000)
 
     // Check if this is an error page (diagram not found)
-    const errorMessage = await page.locator('text=❌').first().isVisible()
-    if (errorMessage) {
+    const diagramNotFound = await page.locator('text=❌').first().isVisible()
+    if (diagramNotFound) {
       console.log('⚠️ Diagram not found - this is expected in test environment')
       const errorText = await page.locator('text=❌').first().textContent()
       console.log('Error message:', errorText)
@@ -89,8 +89,8 @@ test.describe('Mermaid Diagram Rendering', () => {
     await page.waitForTimeout(3000)
 
     // Check if this is an error page (diagram not found)
-    const errorMessage = await page.locator('text=❌').first().isVisible()
-    if (errorMessage) {
+    const complexDiagramNotFound = await page.locator('text=❌').first().isVisible()
+    if (complexDiagramNotFound) {
       console.log('⚠️ Diagram not found - this is expected in test environment')
       const errorText = await page.locator('text=❌').first().textContent()
       console.log('Error message:', errorText)
