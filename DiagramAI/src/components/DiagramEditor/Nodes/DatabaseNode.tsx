@@ -10,7 +10,7 @@ interface DatabaseNodeData {
   icon?: string
 }
 
-export const DatabaseNode = memo<NodeProps<any, DatabaseNodeData>>(({ data, selected, id }) => {
+export const DatabaseNode = memo<NodeProps<DatabaseNodeData>>(({ data, selected, id }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [label, setLabel] = useState(data.label)
 
