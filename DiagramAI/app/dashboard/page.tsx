@@ -1,41 +1,64 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
+interface Diagram {
+  id: string
+  title: string
+  description?: string
+  format: 'reactflow' | 'mermaid'
+  isPublic: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 export default function DashboardPage() {
-  const [diagrams] = useState([
-    {
-      id: 1,
-      title: 'User Authentication Flow',
-      type: 'flowchart',
-      lastModified: '2 hours ago',
-      status: 'published',
-      collaborators: 3,
-    },
-    {
-      id: 2,
-      title: 'Database Architecture',
-      type: 'entity-relationship',
-      lastModified: '1 day ago',
-      status: 'draft',
-      collaborators: 1,
-    },
-    {
-      id: 3,
-      title: 'API Integration Sequence',
-      type: 'sequence',
-      lastModified: '3 days ago',
-      status: 'published',
-      collaborators: 5,
-    },
-  ])
+  const [diagrams, setDiagrams] = useState<Diagram[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchDiagrams()
+  }, [])
+
+  const fetchDiagrams = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/diagrams')
+      const result = await response.json()
+
+      if (result.success) {
+        setDiagrams(result.data)
+      } else {
+        setError(result.error?.message || 'Failed to fetch diagrams')
+      }
+    } catch (err) {
+      setError('Failed to connect to server')
+      console.error('Error fetching diagrams:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffHours < 1) return 'Just now'
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+    return date.toLocaleDateString()
+  }
 
   const stats = [
-    { label: 'Total Diagrams', value: '12', change: '+3 this week' },
-    { label: 'Collaborators', value: '8', change: '+2 new' },
-    { label: 'AI Generations', value: '47', change: '+12 today' },
-    { label: 'Exports', value: '23', change: '+5 this week' },
+    { label: 'Total Diagrams', value: diagrams.length.toString(), change: `${diagrams.filter(d => new Date(d.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length} this week` },
+    { label: 'ReactFlow Diagrams', value: diagrams.filter(d => d.format === 'reactflow').length.toString(), change: 'Visual editor' },
+    { label: 'Mermaid Diagrams', value: diagrams.filter(d => d.format === 'mermaid').length.toString(), change: 'Text-based' },
+    { label: 'Public Diagrams', value: diagrams.filter(d => d.isPublic).length.toString(), change: 'Shared' },
   ]
 
   return (
@@ -77,41 +100,90 @@ export default function DashboardPage() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Diagrams</h2>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-lg font-semibold text-gray-900">Recent Diagrams</h2>
+                  <button
+                    onClick={fetchDiagrams}
+                    className="text-sm text-blue-600 hover:text-blue-800"
+                    disabled={loading}
+                  >
+                    {loading ? '🔄' : '↻'} Refresh
+                  </button>
+                </div>
               </div>
-              <div className="divide-y divide-gray-200">
-                {diagrams.map((diagram) => (
-                  <div key={diagram.id} className="px-6 py-4 hover:bg-gray-50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-sm font-medium text-gray-900">{diagram.title}</h3>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <span className="text-xs text-gray-500 capitalize">{diagram.type}</span>
-                          <span className="text-xs text-gray-500">{diagram.lastModified}</span>
-                          <span className={`status-indicator text-xs ${
-                            diagram.status === 'published' ? 'status-success' : 'status-warning'
-                          }`}>
-                            {diagram.status}
-                          </span>
+
+              {loading ? (
+                <div className="px-6 py-8 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-gray-500 mt-2">Loading diagrams...</p>
+                </div>
+              ) : error ? (
+                <div className="px-6 py-8 text-center">
+                  <p className="text-red-600 mb-2">❌ {error}</p>
+                  <button
+                    onClick={fetchDiagrams}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    Try again
+                  </button>
+                </div>
+              ) : diagrams.length === 0 ? (
+                <div className="px-6 py-8 text-center">
+                  <p className="text-gray-500 mb-2">📊 No diagrams yet</p>
+                  <p className="text-sm text-gray-400 mb-4">Create your first diagram or have an AI agent create one for you!</p>
+                  <Link href="/editor" className="btn-primary inline-block">
+                    Create Diagram
+                  </Link>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {diagrams.map((diagram) => (
+                    <div key={diagram.id} className="px-6 py-4 hover:bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-sm font-medium text-gray-900">{diagram.title}</h3>
+                          {diagram.description && (
+                            <p className="text-xs text-gray-600 mt-1">{diagram.description}</p>
+                          )}
+                          <div className="flex items-center space-x-4 mt-1">
+                            <span className="text-xs text-gray-500 capitalize">
+                              {diagram.format === 'reactflow' ? '🎨 Visual' : '📝 Mermaid'}
+                            </span>
+                            <span className="text-xs text-gray-500">{formatDate(diagram.updatedAt)}</span>
+                            <span className={`status-indicator text-xs ${
+                              diagram.isPublic ? 'status-success' : 'status-warning'
+                            }`}>
+                              {diagram.isPublic ? 'Public' : 'Private'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Link
+                            href={`/editor?id=${diagram.id}`}
+                            className="text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            Edit
+                          </Link>
+                          <Link
+                            href={`/diagram/${diagram.id}`}
+                            className="text-green-600 hover:text-green-800 text-sm"
+                          >
+                            View
+                          </Link>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-xs text-gray-500">
-                          👥 {diagram.collaborators}
-                        </span>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm">
-                          Edit
-                        </button>
-                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="px-6 py-4 border-t border-gray-200">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  View all diagrams →
-                </button>
-              </div>
+                  ))}
+                </div>
+              )}
+
+              {diagrams.length > 0 && (
+                <div className="px-6 py-4 border-t border-gray-200">
+                  <Link href="/diagrams" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    View all diagrams →
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 

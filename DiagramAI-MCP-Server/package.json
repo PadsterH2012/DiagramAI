@@ -1,24 +1,20 @@
 {
   "name": "diagramai-mcp-server",
   "version": "1.0.0",
-  "description": "Model Context Protocol server for DiagramAI integration",
+  "description": "Streamlined MCP server for DiagramAI agent integration",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "watch": "ts-node --watch src/index.ts",
-    "clean": "rm -rf dist",
-    "test": "jest",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write src/**/*.ts"
+    "dev": "ts-node --esm src/index.ts",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "mcp",
     "model-context-protocol",
     "diagramai",
-    "ai-agents",
-    "websocket"
+    "ai-agents"
   ],
   "author": "DiagramAI Team",
   "license": "MIT",
@@ -32,14 +28,8 @@
     "@types/node": "^20.0.0",
     "@types/ws": "^8.5.0",
     "@types/uuid": "^9.0.0",
-    "@types/jest": "^29.5.0",
     "typescript": "^5.0.0",
-    "ts-node": "^10.9.0",
-    "jest": "^29.7.0",
-    "eslint": "^8.57.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "prettier": "^3.2.0"
+    "ts-node": "^10.9.0"
   },
   "engines": {
     "node": ">=18.0.0"

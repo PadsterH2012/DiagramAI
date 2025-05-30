@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma'
 import { v4 as uuidv4 } from 'uuid'
+import { createHash } from 'crypto'
 import { ConflictResolver, ConflictingOperation, ConflictEvent, ConflictResolutionStrategy } from '../utils/conflictResolver'
 
 export interface AgentOperationRequest {
@@ -177,8 +178,7 @@ export class AgentOperationService {
     }
 
     // Generate content hash
-    const contentHash = require('crypto')
-      .createHash('sha256')
+    const contentHash = createHash('sha256')
       .update(JSON.stringify(content))
       .digest('hex')
 
@@ -465,8 +465,7 @@ export class AgentOperationService {
   }
 
   private async updateDiagramContent(diagramUuid: string, content: any) {
-    const contentHash = require('crypto')
-      .createHash('sha256')
+    const contentHash = createHash('sha256')
       .update(JSON.stringify(content))
       .digest('hex')
 
