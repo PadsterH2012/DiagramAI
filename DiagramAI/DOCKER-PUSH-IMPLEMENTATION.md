@@ -100,14 +100,29 @@ docker run -p 3000:3000 diagramai:dev
 - DockerHub repository shows new images
 
 ### Common Issues
-1. **Authentication Failed**: Check `dockerhub` credentials in Jenkins
-2. **Build Failed**: Ensure all 72 tests pass before Docker stage
-3. **Image Too Large**: Multi-stage build should keep image size reasonable
+1. **Docker Stage Skipped**:
+   - **Cause**: Not on `main` branch or `BRANCH_NAME` is null/undefined
+   - **Solution**: Use `FORCE_DOCKER_PUSH` parameter or ensure branch is `main`
+   - **Debug**: Check "Docker Configuration" output in Environment Setup stage
+
+2. **Authentication Failed**: Check `dockerhub` credentials in Jenkins
+
+3. **Build Failed**: Ensure all 72 tests pass before Docker stage
+
+4. **Image Too Large**: Multi-stage build should keep image size reasonable
+
+### Force Docker Push (Testing)
+To test Docker push on any branch:
+1. Go to Jenkins job
+2. Click "Build with Parameters"
+3. Check "FORCE_DOCKER_PUSH" checkbox
+4. Click "Build"
 
 ### Logs to Check
 - Jenkins console output for Docker build/push stages
 - DockerHub repository for successful pushes
 - Container health checks: `http://localhost:3000/api/health`
+- Environment Setup stage for Docker configuration debug info
 
 ## Next Steps
 
