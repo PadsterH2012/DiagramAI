@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="24" failures="0" errors="0" time="3.541">
-  <testsuite name="AIService" errors="0" failures="0" skipped="0" timestamp="2025-05-30T13:24:49" time="1.242" tests="16">
+<testsuites name="jest tests" tests="24" failures="0" errors="0" time="2.484">
+  <testsuite name="AIService" errors="0" failures="0" skipped="0" timestamp="2025-05-30T13:28:50" time="0.723" tests="16">
     <testcase classname="AIService generateDiagram should generate a flowchart diagram from a simple prompt" name="AIService generateDiagram should generate a flowchart diagram from a simple prompt" time="0.008">
     </testcase>
     <testcase classname="AIService generateDiagram should generate appropriate nodes and edges for login flow" name="AIService generateDiagram should generate appropriate nodes and edges for login flow" time="0.001">
     </testcase>
     <testcase classname="AIService generateDiagram should generate sequence diagram when requested" name="AIService generateDiagram should generate sequence diagram when requested" time="0.001">
     </testcase>
-    <testcase classname="AIService generateDiagram should handle process workflow prompts" name="AIService generateDiagram should handle process workflow prompts" time="0.001">
+    <testcase classname="AIService generateDiagram should handle process workflow prompts" name="AIService generateDiagram should handle process workflow prompts" time="0">
     </testcase>
-    <testcase classname="AIService generateDiagram should handle API-related prompts" name="AIService generateDiagram should handle API-related prompts" time="0">
+    <testcase classname="AIService generateDiagram should handle API-related prompts" name="AIService generateDiagram should handle API-related prompts" time="0.001">
     </testcase>
     <testcase classname="AIService generateDiagram should generate generic flowchart for unknown prompts" name="AIService generateDiagram should generate generic flowchart for unknown prompts" time="0.001">
     </testcase>
-    <testcase classname="AIService generateDiagram should provide meaningful suggestions" name="AIService generateDiagram should provide meaningful suggestions" time="0.001">
+    <testcase classname="AIService generateDiagram should provide meaningful suggestions" name="AIService generateDiagram should provide meaningful suggestions" time="0">
     </testcase>
-    <testcase classname="AIService generateDiagram should handle empty prompts gracefully" name="AIService generateDiagram should handle empty prompts gracefully" time="0">
+    <testcase classname="AIService generateDiagram should handle empty prompts gracefully" name="AIService generateDiagram should handle empty prompts gracefully" time="0.001">
     </testcase>
-    <testcase classname="AIService generateDiagram should handle very long prompts" name="AIService generateDiagram should handle very long prompts" time="0.001">
+    <testcase classname="AIService generateDiagram should handle very long prompts" name="AIService generateDiagram should handle very long prompts" time="0">
     </testcase>
     <testcase classname="AIService generateDiagram should default to flowchart when no type specified" name="AIService generateDiagram should default to flowchart when no type specified" time="0">
     </testcase>
-    <testcase classname="AIService improveDiagram should improve existing diagram based on feedback" name="AIService improveDiagram should improve existing diagram based on feedback" time="0">
+    <testcase classname="AIService improveDiagram should improve existing diagram based on feedback" name="AIService improveDiagram should improve existing diagram based on feedback" time="0.001">
     </testcase>
-    <testcase classname="AIService improveDiagram should provide improvement suggestions" name="AIService improveDiagram should provide improvement suggestions" time="0.001">
+    <testcase classname="AIService improveDiagram should provide improvement suggestions" name="AIService improveDiagram should provide improvement suggestions" time="0">
     </testcase>
     <testcase classname="AIService improveDiagram should handle empty feedback" name="AIService improveDiagram should handle empty feedback" time="0">
     </testcase>
@@ -34,22 +34,22 @@
     <testcase classname="AIService performance should handle multiple concurrent requests" name="AIService performance should handle multiple concurrent requests" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="DiagramEditor" errors="0" failures="0" skipped="0" timestamp="2025-05-30T13:24:49" time="2.014" tests="8">
-    <testcase classname="DiagramEditor renders without crashing" name="DiagramEditor renders without crashing" time="0.237">
+  <testsuite name="DiagramEditor" errors="0" failures="0" skipped="0" timestamp="2025-05-30T13:28:50" time="1.175" tests="8">
+    <testcase classname="DiagramEditor renders without crashing" name="DiagramEditor renders without crashing" time="0.084">
     </testcase>
-    <testcase classname="DiagramEditor displays React Flow components" name="DiagramEditor displays React Flow components" time="0.008">
+    <testcase classname="DiagramEditor displays React Flow components" name="DiagramEditor displays React Flow components" time="0.012">
     </testcase>
     <testcase classname="DiagramEditor calls onDiagramChange when nodes change" name="DiagramEditor calls onDiagramChange when nodes change" time="0.008">
     </testcase>
     <testcase classname="DiagramEditor handles initial nodes and edges" name="DiagramEditor handles initial nodes and edges" time="0.005">
     </testcase>
-    <testcase classname="DiagramEditor has proper accessibility attributes" name="DiagramEditor has proper accessibility attributes" time="0.006">
+    <testcase classname="DiagramEditor has proper accessibility attributes" name="DiagramEditor has proper accessibility attributes" time="0.005">
     </testcase>
-    <testcase classname="DiagramEditor handles keyboard interactions" name="DiagramEditor handles keyboard interactions" time="0.017">
+    <testcase classname="DiagramEditor handles keyboard interactions" name="DiagramEditor handles keyboard interactions" time="0.012">
     </testcase>
     <testcase classname="DiagramEditor handles mouse interactions" name="DiagramEditor handles mouse interactions" time="0.006">
     </testcase>
-    <testcase classname="DiagramEditor maintains performance with large datasets" name="DiagramEditor maintains performance with large datasets" time="0.006">
+    <testcase classname="DiagramEditor maintains performance with large datasets" name="DiagramEditor maintains performance with large datasets" time="0.005">
     </testcase>
   </testsuite>
 </testsuites>

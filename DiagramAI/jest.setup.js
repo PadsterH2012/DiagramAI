@@ -95,7 +95,21 @@ beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is no longer supported')
+      (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+       args[0].includes('Warning: Unknown event handler property') ||
+       args[0].includes('Warning: React does not recognize the') ||
+       args[0].includes('onNodesChange') ||
+       args[0].includes('onEdgesChange') ||
+       args[0].includes('onConnect') ||
+       args[0].includes('onSelectionChange') ||
+       args[0].includes('multiSelectionKeyCode') ||
+       args[0].includes('selectionKeyCode') ||
+       args[0].includes('deleteKeyCode') ||
+       args[0].includes('panOnDrag') ||
+       args[0].includes('panOnScroll') ||
+       args[0].includes('selectionOnDrag') ||
+       args[0].includes('nodeTypes') ||
+       args[0].includes('connectionMode'))
     ) {
       return;
     }
