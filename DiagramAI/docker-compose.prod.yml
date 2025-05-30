@@ -11,7 +11,16 @@
 
 services:
   app:
+    # Use pre-built image from DockerHub (recommended for production)
     image: padster2012/diagramai:latest
+    # Alternative: Build locally with version args (uncomment to use)
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     VERSION_STRING: ${APP_VERSION:-1.0.45}
+    #     BUILD_DATE: ${BUILD_DATE:-}
+    #     GIT_COMMIT: ${GIT_COMMIT:-}
     container_name: diagramai-app
     ports:
       - "3000:3000"
@@ -21,6 +30,10 @@ services:
       - REDIS_URL=redis://redis:6379
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=DiagramAI-Production-Secret-2024-Change-This-In-Production
+      # Version information (automatically set by Docker image)
+      - APP_VERSION=${APP_VERSION:-1.0.45}
+      - BUILD_DATE=${BUILD_DATE:-}
+      - GIT_COMMIT=${GIT_COMMIT:-}
       # Optional: Add your API keys here
       # - OPENAI_API_KEY=your_openai_key_here
       # - ANTHROPIC_API_KEY=your_anthropic_key_here

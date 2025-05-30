@@ -6,6 +6,9 @@ const nextConfig = {
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
+    APP_VERSION: process.env.APP_VERSION,
+    BUILD_DATE: process.env.BUILD_DATE,
+    GIT_COMMIT: process.env.GIT_COMMIT,
   },
   webpack: (config, { isServer }) => {
     // Handle Mermaid.js in client-side builds

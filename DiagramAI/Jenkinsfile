@@ -40,7 +40,7 @@ pipeline {
         DIST_DIR = 'dist'
 
         // Docker and versioning
-        APP_VERSION = "${env.BUILD_NUMBER ? "1.0.${env.BUILD_NUMBER}" : '1.0.0'}"
+        APP_VERSION = "${env.BUILD_NUMBER ? "1.0.${env.BUILD_NUMBER}" : '1.0.45'}"
         BUILD_DATE = "${new Date().format('yyyy-MM-dd HH:mm:ss')}"
         GIT_COMMIT_SHORT = "${env.GIT_COMMIT ? env.GIT_COMMIT.take(8) : 'unknown'}"
         SHOULD_PUSH_DOCKER = "${(env.BRANCH_NAME == 'main' || params.FORCE_DOCKER_PUSH) ? 'true' : 'false'}"

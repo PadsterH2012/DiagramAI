@@ -33,6 +33,8 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f app",
     "docker:build": "docker build -t diagramai .",
+    "version:set": "source scripts/set-version.sh",
+    "version:info": "node -e \"console.log('Version:', process.env.APP_VERSION || '1.0.45'); console.log('Build Date:', process.env.BUILD_DATE || 'unknown'); console.log('Git Commit:', process.env.GIT_COMMIT || 'unknown');\"",
     "prepare": "husky install"
   },
   "dependencies": {

@@ -1,6 +1,11 @@
 # Dockerfile.dev
 FROM node:18-slim
 
+# Accept build arguments for version tracking
+ARG VERSION_STRING=1.0.45-dev
+ARG BUILD_DATE
+ARG GIT_COMMIT
+
 WORKDIR /app
 
 # Install dependencies for development
@@ -16,6 +21,11 @@ RUN npm install
 
 # Copy source code
 COPY . .
+
+# Set environment variables for version tracking
+ENV APP_VERSION=${VERSION_STRING}
+ENV BUILD_DATE=${BUILD_DATE}
+ENV GIT_COMMIT=${GIT_COMMIT}
 
 # Expose port and start development server
 EXPOSE 3000

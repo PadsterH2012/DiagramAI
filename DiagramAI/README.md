@@ -145,6 +145,7 @@ npm run test:all
 ## 📚 Documentation
 
 - [Production Deployment Guide](PRODUCTION-DEPLOYMENT.md)
+- [Version Tracking System](VERSION-TRACKING.md)
 - [Docker Push Implementation](DOCKER-PUSH-IMPLEMENTATION.md)
 - [Jenkins CI/CD Setup](JENKINS-CICD-SUMMARY.md)
 - [API Documentation](documentation/api/)

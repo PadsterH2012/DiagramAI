@@ -16,7 +16,7 @@ FROM node:18-alpine3.20 AS builder
 WORKDIR /app
 
 # Accept build arguments
-ARG VERSION_STRING=1.0.0
+ARG VERSION_STRING=1.0.45
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
@@ -43,7 +43,7 @@ FROM node:18-alpine3.20 AS runner
 WORKDIR /app
 
 # Accept build arguments for runtime
-ARG VERSION_STRING=1.0.0
+ARG VERSION_STRING=1.0.45
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
