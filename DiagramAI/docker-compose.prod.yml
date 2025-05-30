@@ -9,11 +9,9 @@
 #   - Database Admin: http://localhost:8080
 #   - Health Check: http://localhost:3000/api/health
 
-version: '3.8'
-
 services:
   app:
-    image: diagramai-fixed
+    image: padster2012/diagramai:latest
     container_name: diagramai-app
     ports:
       - "3000:3000"
