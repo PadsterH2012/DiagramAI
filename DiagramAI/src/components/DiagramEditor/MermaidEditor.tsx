@@ -291,8 +291,8 @@ sequenceDiagram
               <div><code>A[Box]</code> - Rectangle</div>
               <div><code>B&#123;Diamond&#125;</code> - Decision</div>
               <div><code>C((Circle))</code> - Circle</div>
-              <div><code>A --> B</code> - Arrow</div>
-              <div><code>A -->|Label| B</code> - Labeled Arrow</div>
+              <div><code>A --&gt; B</code> - Arrow</div>
+              <div><code>A --&gt;|Label| B</code> - Labeled Arrow</div>
             </div>
           </div>
         </div>

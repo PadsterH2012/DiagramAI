@@ -2,16 +2,24 @@
 /node_modules
 /.pnp
 .pnp.js
+node_modules/
+jspm_packages/
 
 # Testing
 /coverage
+coverage/
+*.lcov
+.nyc_output
 
 # Next.js
 /.next/
 /out/
+.next
 
 # Production
 /build
+build/
+dist/
 
 # Misc
 .DS_Store
@@ -21,10 +29,15 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+logs/
 
 # Local env files
 .env*.local
 .env
+.env.development
+.env.production
+.env.test
 
 # Vercel
 .vercel
@@ -36,36 +49,29 @@ next-env.d.ts
 # Database
 /prisma/dev.db
 /prisma/dev.db-journal
+*.db
+*.db-journal
 
 # Docker
 docker-compose.override.yml
+.dockerignore
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# Logs
-logs
-*.log
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-node_modules/
-jspm_packages/
 
 # Optional npm cache directory
 .npm
@@ -88,16 +94,15 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
+# Package manager lock files (keep package-lock.json but ignore yarn.lock if using npm)
+# yarn.lock
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
-# Next.js build output
-.next
-
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Storybook build outputs
 .out
@@ -107,12 +112,54 @@ dist
 tmp/
 temp/
 
-# Editor directories and files
+# MCP Server specific
+/DiagramAI-MCP-Server/dist/
+/DiagramAI-MCP-Server/node_modules/
+/DiagramAI-MCP-Server/.env
+/DiagramAI-MCP-Server/*.log
+
+# Agent development directories (for testing)
+/agents/
+/test-agents/
+my-*-agent/
+
+# API Keys and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+.secrets
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files (comprehensive)
 .vscode/*
 !.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Health check and monitoring files
+health-check.log
+monitoring/
+metrics/
+
+# Documentation build outputs
+docs/build/
+docs/.vuepress/dist/

@@ -21,10 +21,10 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
 
   useEffect(() => {
     if (selectedNode) {
-      setLabel(selectedNode.data.label || '')
-      setDescription(selectedNode.data.description || '')
-      setColor(selectedNode.data.color || '#3b82f6')
-      setIcon(selectedNode.data.icon || '')
+      setLabel(String(selectedNode.data?.label || ''))
+      setDescription(String(selectedNode.data?.description || ''))
+      setColor(String(selectedNode.data?.color || '#3b82f6'))
+      setIcon(String(selectedNode.data?.icon || ''))
     }
   }, [selectedNode])
 

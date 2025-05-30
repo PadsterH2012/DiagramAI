@@ -120,6 +120,7 @@ model ApplicationSetting {
 
 model Diagram {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid             String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid // MCP agent access UUID
   userId           String    @map("user_id") @db.Uuid
   title            String    @db.VarChar(255)
   description      String?
@@ -130,6 +131,7 @@ model Diagram {
   isPublic         Boolean   @default(false) @map("is_public")
   isTemplate       Boolean   @default(false) @map("is_template")
   templateCategory String?   @map("template_category") @db.VarChar(50)
+  agentAccessible  Boolean   @default(false) @map("agent_accessible") // MCP agent access control
   viewCount        Int       @default(0) @map("view_count")
   forkCount        Int       @default(0) @map("fork_count")
   likeCount        Int       @default(0) @map("like_count")
@@ -138,10 +140,11 @@ model Diagram {
   lastAccessedAt   DateTime  @default(now()) @map("last_accessed_at") @db.Timestamptz
 
   // Relations
-  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  versions      DiagramVersion[]
-  collaborators DiagramCollaborator[]
-  comments      DiagramComment[]
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions        DiagramVersion[]
+  collaborators   DiagramCollaborator[]
+  comments        DiagramComment[]
+  agentOperations AgentOperation[]      // MCP agent operations audit
 
   @@map("diagrams")
 }
@@ -215,4 +218,48 @@ model DiagramComment {
   replies       DiagramComment[] @relation("CommentThread")
 
   @@map("diagram_comments")
+}
+
+// ============================================================================
+// MCP INTEGRATION MODELS
+// ============================================================================
+
+model AgentCredential {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agentId     String    @unique @map("agent_id") @db.VarChar(100)
+  apiKeyHash  String    @map("api_key_hash") @db.VarChar(255)
+  name        String    @db.VarChar(100)
+  description String?
+  permissions Json      @default("{}")
+  isActive    Boolean   @default(true) @map("is_active")
+  lastUsedAt  DateTime? @map("last_used_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  operations AgentOperation[]
+
+  @@map("agent_credentials")
+}
+
+model AgentOperation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agentId     String   @map("agent_id") @db.VarChar(100)
+  diagramUuid String   @map("diagram_uuid") @db.Uuid
+  operation   String   @db.VarChar(50)
+  operationData Json   @map("operation_data")
+  result      Json?
+  success     Boolean
+  errorMessage String? @map("error_message")
+  duration    Int?     // milliseconds
+  timestamp   DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  agent   AgentCredential @relation(fields: [agentId], references: [agentId], onDelete: Cascade)
+  diagram Diagram         @relation(fields: [diagramUuid], references: [uuid], onDelete: Cascade)
+
+  @@index([diagramUuid])
+  @@index([agentId])
+  @@index([timestamp])
+  @@map("agent_operations")
 }

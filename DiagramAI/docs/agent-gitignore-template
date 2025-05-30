@@ -1,0 +1,94 @@
+# DiagramAI MCP Agent .gitignore Template
+# Copy this to your agent project as .gitignore
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment files (IMPORTANT: Never commit API keys!)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# API Keys and secrets (CRITICAL: Keep these private!)
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+.secrets
+api-keys.txt
+credentials.json
+
+# Logs
+logs/
+*.log
+agent-debug.log
+mcp-*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+*.lcov
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary folders
+tmp/
+temp/
+
+# Test outputs
+test-results/
+test-diagrams/
+*.test.output
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Agent-specific files
+agent-state.json
+diagram-cache/
+local-diagrams/
+
+# Development and testing
+dev-test/
+sandbox/
+experiments/

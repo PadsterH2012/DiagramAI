@@ -10,9 +10,9 @@ interface CloudNodeData {
   icon?: string
 }
 
-export const CloudNode = memo<NodeProps<CloudNodeData>>(({ data, selected, id }) => {
+export const CloudNode = memo<NodeProps>(({ data, selected, id }) => {
   const [isEditing, setIsEditing] = useState(false)
-  const [label, setLabel] = useState(data.label)
+  const [label, setLabel] = useState(String(data?.label || 'Cloud'))
 
   const handleDoubleClick = () => {
     setIsEditing(true)
@@ -47,14 +47,14 @@ export const CloudNode = memo<NodeProps<CloudNodeData>>(({ data, selected, id })
       />
       
       <div className="flex items-center space-x-3">
-        {data.icon && (
-          <div 
+        {data?.icon ? (
+          <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-sm"
-            style={{ backgroundColor: data.color || '#14b8a6' }}
+            style={{ backgroundColor: String(data?.color || '#14b8a6') }}
           >
-            <span className="text-base">{data.icon}</span>
+            <span className="text-base">{String(data.icon)}</span>
           </div>
-        )}
+        ) : null}
         <div className="flex-1">
           {isEditing ? (
             <input
@@ -74,11 +74,11 @@ export const CloudNode = memo<NodeProps<CloudNodeData>>(({ data, selected, id })
               {label}
             </div>
           )}
-          {data.description && (
+          {data?.description ? (
             <div className="text-xs text-gray-600 mt-1">
-              {data.description}
+              {String(data.description)}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
       

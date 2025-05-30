@@ -44,6 +44,21 @@ services:
     networks:
       - diagramai-network
 
+  mcp-server:
+    build:
+      context: ../DiagramAI-MCP-Server
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - DIAGRAMAI_WS_URL=ws://app:3000/ws/diagrams
+      - DATABASE_URL=postgresql://postgres:password@db:5432/diagramai_dev
+    depends_on:
+      - app
+      - db
+    networks:
+      - diagramai-network
+    restart: unless-stopped
+
   adminer:
     image: adminer:latest
     ports:

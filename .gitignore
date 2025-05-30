@@ -42,3 +42,34 @@ project_instructions/update_request_here/*.txt
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# DiagramAI specific exclusions
+DiagramAI/node_modules/
+DiagramAI/.next/
+DiagramAI/dist/
+DiagramAI/.env
+DiagramAI/.env.local
+DiagramAI-MCP-Server/node_modules/
+DiagramAI-MCP-Server/dist/
+DiagramAI-MCP-Server/.env
+
+# Agent development and testing
+agents/
+test-agents/
+my-*-agent/
+*-agent-test/
+
+# Docker volumes and data
+postgres_data/
+docker-data/
+
+# Logs and monitoring
+*.log
+logs/
+monitoring/
+metrics/
+
+# Backup and temporary files
+*.backup
+*.bak
+*.tmp
