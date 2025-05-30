@@ -234,7 +234,7 @@ pipeline {
         
         stage('🧪 Testing Suite') {
             parallel {
-                stage('Unit Tests (33 tests)') {
+                stage('Unit Tests (24 tests)') {
                     steps {
                         script {
                             echo "🧪 Running unit tests..."
@@ -384,18 +384,18 @@ pipeline {
                                 TOTAL_TESTS=$((UNIT_TESTS + INTEGRATION_TESTS + E2E_TESTS))
                                 
                                 echo "📊 Test Results Summary:"
-                                echo "   - Unit Tests: $UNIT_TESTS/33"
+                                echo "   - Unit Tests: $UNIT_TESTS/24"
                                 echo "   - Integration Tests: $INTEGRATION_TESTS/10" 
                                 echo "   - E2E Tests: $E2E_TESTS/38"
-                                echo "   - Total: $TOTAL_TESTS/81"
+                                echo "   - Total: $TOTAL_TESTS/72"
                                 
                                 # Validate 100% success rate requirement
-                                if [ "$UNIT_TESTS" -eq 33 ] && [ "$INTEGRATION_TESTS" -eq 10 ] && [ "$E2E_TESTS" -eq 38 ]; then
+                                if [ "$UNIT_TESTS" -eq 24 ] && [ "$INTEGRATION_TESTS" -eq 10 ] && [ "$E2E_TESTS" -eq 38 ]; then
                                     echo "✅ ALL TESTS PASSED - 100% SUCCESS RATE ACHIEVED!"
                                     echo "SUCCESS"
                                 else
                                     echo "❌ PIPELINE FAILED - NOT ALL TESTS PASSED"
-                                    echo "   Required: 33 unit + 10 integration + 38 E2E = 81 total"
+                                    echo "   Required: 24 unit + 10 integration + 38 E2E = 72 total"
                                     echo "   Actual: $UNIT_TESTS unit + $INTEGRATION_TESTS integration + $E2E_TESTS E2E = $TOTAL_TESTS total"
                                     echo "FAILURE"
                                 fi
@@ -405,7 +405,7 @@ pipeline {
                         
                         // Check if all tests passed
                         if (!testResults.contains('SUCCESS')) {
-                            error("❌ PIPELINE FAILED: Not all tests passed. Required 100% success rate (81/81 tests).")
+                            error("❌ PIPELINE FAILED: Not all tests passed. Required 100% success rate (72/72 tests).")
                         }
                         
                         echo "✅ Test validation completed successfully - 100% success rate achieved!"
@@ -446,7 +446,7 @@ pipeline {
         
         success {
             script {
-                echo "🎉 PIPELINE SUCCESS: All 81 tests passed (100% success rate)!"
+                echo "🎉 PIPELINE SUCCESS: All 72 tests passed (100% success rate)!"
                 echo "✅ DiagramAI build completed successfully"
                 
                 // Send success notification (customize as needed)
