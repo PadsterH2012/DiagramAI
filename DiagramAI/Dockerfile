@@ -32,6 +32,9 @@ ENV APP_VERSION=${VERSION_STRING}
 ENV BUILD_DATE=${BUILD_DATE}
 ENV GIT_COMMIT=${GIT_COMMIT}
 
+# Generate Prisma client for Alpine Linux
+RUN npx prisma generate
+
 # Build application
 RUN npm run build
 
@@ -51,6 +54,11 @@ RUN adduser --system --uid 1001 nextjs
 # Copy built application
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+# Copy Prisma files and generated client
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # Create empty public directory (project doesn't have static assets)
 RUN mkdir -p ./public
