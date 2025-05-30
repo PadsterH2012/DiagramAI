@@ -13,13 +13,13 @@ version: '3.8'
 
 services:
   app:
-    image: padster2012/diagramai:latest
+    image: diagramai-fixed
     container_name: diagramai-app
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:DiagramAI2024!@db:5432/diagramai
+      - DATABASE_URL=postgresql://postgres:DiagramAI2024!@db:5432/diagramai_dev
       - REDIS_URL=redis://redis:6379
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=DiagramAI-Production-Secret-2024-Change-This-In-Production
@@ -49,12 +49,12 @@ services:
     image: postgres:15-alpine
     container_name: diagramai-db
     environment:
-      - POSTGRES_DB=diagramai
+      - POSTGRES_DB=diagramai_dev
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=DiagramAI2024!
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
@@ -62,7 +62,7 @@ services:
       - diagramai-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d diagramai"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d diagramai_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
