@@ -169,13 +169,19 @@ pipeline {
                             echo "❌ package.json not found!"
                             exit 1
                         fi
-                        
+
                         echo "📥 Installing dependencies with npm ci..."
                         npm ci --prefer-offline --no-audit
-                        
+
                         echo "🎭 Installing Playwright browsers..."
-                        npx playwright install --with-deps chromium
-                        
+                        # Try to install browsers without system dependencies first
+                        if npx playwright install chromium; then
+                            echo "✅ Playwright browsers installed successfully"
+                        else
+                            echo "⚠️ Playwright browser installation failed, but continuing..."
+                            echo "   E2E tests may fail if browsers are not available"
+                        fi
+
                         echo "✅ Dependencies installed successfully"
                     '''
                     
