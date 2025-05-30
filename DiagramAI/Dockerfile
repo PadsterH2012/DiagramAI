@@ -8,9 +8,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
-# Skip husky install during Docker build
-ENV HUSKY=0
-RUN npm ci --only=production && npm cache clean --force
+# Skip all scripts (including husky prepare) during Docker build
+RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
 # Stage 2: Builder
 FROM node:18-alpine AS builder
