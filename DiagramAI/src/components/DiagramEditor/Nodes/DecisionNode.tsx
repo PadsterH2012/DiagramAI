@@ -10,7 +10,7 @@ interface DecisionNodeData {
   icon?: string
 }
 
-export const DecisionNode = memo<NodeProps<DecisionNodeData>>(({ data, selected }) => {
+export const DecisionNode = memo(({ data, selected }: NodeProps & { data: DecisionNodeData }) => {
   return (
     <div className={`
       relative px-4 py-2 shadow-md bg-yellow-50 border-2 min-w-[150px]

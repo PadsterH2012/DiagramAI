@@ -10,7 +10,7 @@ interface EndNodeData {
   icon?: string
 }
 
-export const EndNode = memo<NodeProps<EndNodeData>>(({ data, selected }) => {
+export const EndNode = memo(({ data, selected }: NodeProps & { data: EndNodeData }) => {
   return (
     <div className={`
       px-4 py-2 shadow-md rounded-full bg-red-50 border-2 min-w-[120px]

@@ -10,7 +10,7 @@ interface InputNodeData {
   icon?: string
 }
 
-export const InputNode = memo<NodeProps<InputNodeData>>(({ data, selected, id }) => {
+export const InputNode = memo(({ data, selected, id }: NodeProps & { data: InputNodeData }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [label, setLabel] = useState(data.label)
 
