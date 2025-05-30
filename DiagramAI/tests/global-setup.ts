@@ -28,16 +28,33 @@ async function globalSetup(config: FullConfig) {
   const page = await context.newPage();
 
   try {
-    // Navigate to the application
-    await page.goto(baseURL);
-    
+    // Navigate to the application with retry logic
+    let retries = 5;
+    let accessible = false;
+
+    while (retries > 0 && !accessible) {
+      try {
+        await page.goto(baseURL, { timeout: 10000 });
+        accessible = true;
+        console.log('✅ Application is accessible');
+      } catch (error) {
+        retries--;
+        if (retries > 0) {
+          console.log(`⏳ Application not ready, retrying... (${retries} attempts left)`);
+          await page.waitForTimeout(2000);
+        } else {
+          console.log('⚠️ Application not accessible during setup, but continuing with tests');
+          // Don't throw error - let individual tests handle connectivity
+        }
+      }
+    }
+
     // Perform any global authentication or setup
     // For example, creating test users, setting up test data, etc.
-    
-    console.log('✅ Application is accessible');
+
   } catch (error) {
-    console.error('❌ Failed to access application:', error);
-    throw error;
+    console.error('⚠️ Global setup encountered issues:', error);
+    // Don't throw error - let individual tests handle their own setup
   } finally {
     await browser.close();
   }

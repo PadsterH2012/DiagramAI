@@ -43,12 +43,15 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  // Disable webServer in CI mode since Jenkins handles application startup
+  ...(process.env.CI ? {} : {
+    webServer: {
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true,
+      timeout: 120 * 1000,
+    },
+  }),
 
   /* Global setup and teardown */
   globalSetup: require.resolve('./tests/global-setup.ts'),
