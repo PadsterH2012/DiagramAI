@@ -308,7 +308,6 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
           color="#e5e7eb"
           gap={20}
           size={1}
-          variant="dots"
         />
         <Controls
           position="top-right"
