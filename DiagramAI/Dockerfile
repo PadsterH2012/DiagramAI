@@ -49,9 +49,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy built application
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+# Create empty public directory (project doesn't have static assets)
+RUN mkdir -p ./public
 
 # Set runtime environment variables
 ENV APP_VERSION=${VERSION_STRING}
