@@ -4,32 +4,38 @@ pipeline {
     environment {
         // Node.js version
         NODE_VERSION = '18'
-        
+
         // Application configuration
         NODE_ENV = 'test'
         CI = 'true'
-        
+
         // Database configuration for testing
         DATABASE_URL = 'postgresql://postgres:password@localhost:5432/diagramai_test'
         POSTGRES_USER = 'postgres'
         POSTGRES_PASSWORD = 'password'
         POSTGRES_DB = 'diagramai_test'
-        
+
         // Test configuration
         NEXTAUTH_SECRET = 'test-secret-key-for-ci'
         NEXTAUTH_URL = 'http://localhost:3000'
-        
+
         // Disable telemetry
         NEXT_TELEMETRY_DISABLED = '1'
-        
+
         // Test result paths
         UNIT_TEST_RESULTS = 'coverage/lcov.info'
         E2E_TEST_RESULTS = 'test-results/results.xml'
         PLAYWRIGHT_REPORT = 'playwright-report'
-        
+
         // Build artifacts
         BUILD_DIR = '.next'
         DIST_DIR = 'dist'
+
+        // Docker and versioning
+        APP_VERSION = "${env.BUILD_NUMBER ? "1.0.${env.BUILD_NUMBER}" : '1.0.0'}"
+        BUILD_DATE = "${new Date().format('yyyy-MM-dd HH:mm:ss')}"
+        GIT_COMMIT_SHORT = "${env.GIT_COMMIT ? env.GIT_COMMIT.take(8) : 'unknown'}"
+        SHOULD_PUSH_DOCKER = "${env.BRANCH_NAME == 'main' ? 'true' : 'false'}"
     }
     
     options {
@@ -475,8 +481,127 @@ pipeline {
                 }
             }
         }
+
+        stage('🐳 Push to DockerHub') {
+            when {
+                allOf {
+                    expression { return env.SHOULD_PUSH_DOCKER == 'true' }
+                    expression { return currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                }
+            }
+            steps {
+                script {
+                    echo "🐳 Starting Docker build and push process..."
+
+                    // Double-check that we should push to DockerHub
+                    if (currentBuild.result == 'FAILURE') {
+                        error "Build is marked as FAILURE, will not push to DockerHub"
+                    }
+
+                    dir('DiagramAI') {
+                        // Build and tag the Docker image directly
+                        sh """
+                            echo "🏗️ Building Docker image for DiagramAI..."
+
+                            # Build and tag image directly with version
+                            docker build -t padster2012/diagramai:${env.APP_VERSION} \\
+                                --build-arg VERSION_STRING=${env.APP_VERSION} \\
+                                --build-arg BUILD_DATE="${env.BUILD_DATE}" \\
+                                --build-arg GIT_COMMIT=${env.GIT_COMMIT_SHORT} \\
+                                .
+
+                            # Tag image as latest
+                            docker tag padster2012/diagramai:${env.APP_VERSION} padster2012/diagramai:latest
+
+                            # List the tagged images
+                            echo "📋 Tagged Docker images:"
+                            docker images | grep padster2012/diagramai
+                        """
+
+                        // Push images to DockerHub
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            sh """
+                                echo "🔐 Logging into DockerHub..."
+                                echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+
+                                echo "📤 Pushing DiagramAI images to DockerHub..."
+
+                                # Push versioned image
+                                docker push padster2012/diagramai:${env.APP_VERSION}
+
+                                # Push latest image
+                                docker push padster2012/diagramai:latest
+
+                                echo "✅ Successfully pushed images to DockerHub:"
+                                echo "   - padster2012/diagramai:${env.APP_VERSION}"
+                                echo "   - padster2012/diagramai:latest"
+                            """
+                        }
+                    }
+
+                    echo "🎉 Docker images successfully pushed to DockerHub with version ${env.APP_VERSION}"
+                }
+            }
+            post {
+                always {
+                    script {
+                        // Clean up local Docker images to save space
+                        sh """
+                            echo "🧹 Cleaning up local Docker images..."
+                            docker rmi padster2012/diagramai:${env.APP_VERSION} || true
+                            docker rmi padster2012/diagramai:latest || true
+                            echo "✅ Docker cleanup completed"
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('📋 Create GitHub Release') {
+            when {
+                allOf {
+                    expression { return env.SHOULD_PUSH_DOCKER == 'true' }
+                    expression { return currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                }
+            }
+            steps {
+                script {
+                    echo "📋 Creating GitHub release..."
+
+                    // Generate release notes from commit messages
+                    def releaseNotes = sh(script: 'git log $(git describe --tags --abbrev=0 2>/dev/null || echo HEAD^)..HEAD --pretty=format:"- %s" | grep -v "Merge" || echo "- Initial release"', returnStdout: true).trim()
+
+                    echo "📝 Release notes for v${env.APP_VERSION}:"
+                    echo "${releaseNotes}"
+
+                    echo "🚀 Would create GitHub release v${env.APP_VERSION}"
+                    echo "📦 Docker images available at:"
+                    echo "   - docker pull padster2012/diagramai:${env.APP_VERSION}"
+                    echo "   - docker pull padster2012/diagramai:latest"
+
+                    // Uncomment when GitHub token is configured
+                    /*
+                    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                        sh """
+                            curl -X POST \\
+                            -H "Authorization: token ${GITHUB_TOKEN}" \\
+                            -H "Accept: application/vnd.github.v3+json" \\
+                            https://api.github.com/repos/PadsterH2012/DiagramAI/releases \\
+                            -d '{
+                                "tag_name": "v${env.APP_VERSION}",
+                                "name": "Release ${env.APP_VERSION}",
+                                "body": "${releaseNotes.replaceAll('"', '\\"').replaceAll('\n', '\\n')}\\n\\n## Docker Images\\n- \`docker pull padster2012/diagramai:${env.APP_VERSION}\`\\n- \`docker pull padster2012/diagramai:latest\`",
+                                "draft": false,
+                                "prerelease": false
+                            }'
+                        """
+                    }
+                    */
+                }
+            }
+        }
     }
-    
+
     post {
         always {
             script {
@@ -510,7 +635,14 @@ pipeline {
             script {
                 echo "🎉 PIPELINE SUCCESS: All 72 tests passed (100% success rate)!"
                 echo "✅ DiagramAI build completed successfully"
-                
+
+                if (env.SHOULD_PUSH_DOCKER == 'true') {
+                    echo "🐳 Docker images pushed to DockerHub:"
+                    echo "   - docker pull padster2012/diagramai:${env.APP_VERSION}"
+                    echo "   - docker pull padster2012/diagramai:latest"
+                    echo "📋 GitHub release v${env.APP_VERSION} ready for creation"
+                }
+
                 // Send success notification (customize as needed)
                 // emailext (
                 //     subject: "✅ DiagramAI Build Success - ${env.BUILD_NUMBER}",
