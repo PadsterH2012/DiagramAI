@@ -7,6 +7,7 @@ import { SlideOutMenu } from './SlideOutMenu'
 import { MovableChatbox } from './MovableChatbox'
 import { NodePropertiesPanel } from './NodePropertiesPanel'
 import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel'
+import { NodeContextMenu } from './NodeContextMenu'
 import { featureFlags } from '../../lib/featureFlags'
 
 interface DiagramEditorProps {
@@ -34,6 +35,17 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   const [clipboard, setClipboard] = useState<{ nodes: Node[], edges: Edge[] } | null>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [wasExplicitlyCleared, setWasExplicitlyCleared] = useState(false)
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    node: Node | null
+    position: { x: number; y: number }
+    isVisible: boolean
+  }>({
+    node: null,
+    position: { x: 0, y: 0 },
+    isVisible: false
+  })
 
   // Sample initial nodes for demo
   const defaultNodes: Node[] = [
@@ -272,6 +284,72 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     }
   }, [])
 
+  // Context menu handlers
+  const handleNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    setContextMenu({
+      node,
+      position: { x: event.clientX, y: event.clientY },
+      isVisible: true
+    })
+
+    // Select the node when right-clicking
+    setSelectedNode(node)
+    setSelectedNodes([node])
+  }, [])
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(prev => ({ ...prev, isVisible: false }))
+  }, [])
+
+  const handleContextMenuProperties = useCallback(() => {
+    if (contextMenu.node) {
+      setSelectedNode(contextMenu.node)
+      setShowPropertiesPanel(true)
+    }
+  }, [contextMenu.node])
+
+  const handleContextMenuDelete = useCallback(() => {
+    if (contextMenu.node) {
+      const nodeId = contextMenu.node.id
+      setNodes(prevNodes => prevNodes.filter(node => node.id !== nodeId))
+      setEdges(prevEdges => prevEdges.filter(edge =>
+        edge.source !== nodeId && edge.target !== nodeId
+      ))
+      setSelectedNodes([])
+      setSelectedEdges([])
+      setSelectedNode(null)
+    }
+  }, [contextMenu.node])
+
+  const handleContextMenuCopy = useCallback(() => {
+    if (contextMenu.node) {
+      setClipboard({
+        nodes: [contextMenu.node],
+        edges: edges.filter(edge =>
+          edge.source === contextMenu.node!.id || edge.target === contextMenu.node!.id
+        )
+      })
+    }
+  }, [contextMenu.node, edges])
+
+  const handleContextMenuDuplicate = useCallback(() => {
+    if (contextMenu.node) {
+      const newNode: Node = {
+        ...contextMenu.node,
+        id: `node-${Date.now()}`,
+        position: {
+          x: contextMenu.node.position.x + 50,
+          y: contextMenu.node.position.y + 50
+        },
+        selected: false
+      }
+      setNodes(prevNodes => [...prevNodes, newNode])
+    }
+  }, [contextMenu.node])
+
   return (
     <div className="flex h-full bg-white relative">
       {/* Slide-out Menu */}
@@ -360,6 +438,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
               onEdgesChange={handleEdgesChange}
               onNodeSelect={handleNodeSelect}
               onNodeDoubleClick={handleNodeDoubleClick}
+              onNodeContextMenu={handleNodeContextMenu}
               onSelectionChange={handleSelectionChange}
               readOnly={readOnly}
               onCopy={handleCopy}
@@ -403,6 +482,18 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
           onToggle={() => setShowChatbox(!showChatbox)}
         />
       )}
+
+      {/* Node Context Menu */}
+      <NodeContextMenu
+        node={contextMenu.node}
+        position={contextMenu.position}
+        isVisible={contextMenu.isVisible}
+        onClose={handleCloseContextMenu}
+        onShowProperties={handleContextMenuProperties}
+        onDelete={handleContextMenuDelete}
+        onCopy={handleContextMenuCopy}
+        onDuplicate={handleContextMenuDuplicate}
+      />
     </div>
   )
 }

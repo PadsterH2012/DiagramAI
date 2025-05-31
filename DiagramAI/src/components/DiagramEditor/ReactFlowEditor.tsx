@@ -35,6 +35,7 @@ interface ReactFlowEditorProps {
   onEdgesChange?: (edges: Edge[]) => void
   onNodeSelect?: (node: Node | null) => void
   onNodeDoubleClick?: (event: React.MouseEvent, node: Node) => void
+  onNodeContextMenu?: (event: React.MouseEvent, node: Node) => void
   onSelectionChange?: (selection: { nodes: Node[], edges: Edge[] }) => void
   readOnly?: boolean
   collaborativeMode?: boolean
@@ -60,6 +61,7 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
   onEdgesChange,
   onNodeSelect,
   onNodeDoubleClick,
+  onNodeContextMenu,
   onSelectionChange,
   readOnly = false,
   collaborativeMode = false,
@@ -380,6 +382,7 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
         onConnect={onConnect}
         onSelectionChange={onSelectionChangeHandler}
         onNodeDoubleClick={onNodeDoubleClick}
+        onNodeContextMenu={onNodeContextMenu}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
