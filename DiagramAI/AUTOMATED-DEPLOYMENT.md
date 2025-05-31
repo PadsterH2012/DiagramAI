@@ -16,14 +16,14 @@ This guide explains how to deploy DiagramAI in production using the automated de
 Run this command on your production server:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/deploy-production.sh | bash
+curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/refs/heads/main/DiagramAI/scripts/deploy-production.sh | bash
 ```
 
 ### Option 2: Download and Run
 
 ```bash
 # Download the script
-wget https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/deploy-production.sh
+wget https://raw.githubusercontent.com/PadsterH2012/DiagramAI/refs/heads/main/DiagramAI/scripts/deploy-production.sh
 
 # Make it executable
 chmod +x deploy-production.sh
@@ -103,7 +103,7 @@ docker-compose -f docker-compose.prod.yml restart
 To update to the latest version, simply run the deployment script again:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/deploy-production.sh | bash
+curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/refs/heads/main/DiagramAI/scripts/deploy-production.sh | bash
 ```
 
 The script will:

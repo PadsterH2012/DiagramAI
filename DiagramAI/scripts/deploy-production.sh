@@ -4,10 +4,10 @@
 # This script downloads the latest production files and updates the deployment
 #
 # Usage:
-#   curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/deploy-production.sh | bash
-#   
+#   curl -sSL https://raw.githubusercontent.com/PadsterH2012/DiagramAI/refs/heads/main/DiagramAI/scripts/deploy-production.sh | bash
+#
 # Or download and run:
-#   wget https://raw.githubusercontent.com/PadsterH2012/DiagramAI/main/DiagramAI/scripts/deploy-production.sh
+#   wget https://raw.githubusercontent.com/PadsterH2012/DiagramAI/refs/heads/main/DiagramAI/scripts/deploy-production.sh
 #   chmod +x deploy-production.sh
 #   ./deploy-production.sh
 
@@ -16,7 +16,7 @@ set -euo pipefail
 # Configuration
 GITHUB_REPO="PadsterH2012/DiagramAI"
 GITHUB_BRANCH="main"
-BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/DiagramAI"
+BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/refs/heads/${GITHUB_BRANCH}/DiagramAI"
 BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"
 
 # Colors for output
