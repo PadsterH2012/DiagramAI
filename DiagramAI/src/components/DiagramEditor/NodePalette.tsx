@@ -23,11 +23,39 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           data: { label: 'Start', icon: '▶️', color: '#10b981' }
         },
         {
+          type: 'end',
+          label: 'End',
+          icon: '⏹️',
+          description: 'End point of the process',
+          data: { label: 'End', icon: '⏹️', color: '#ef4444' }
+        },
+        {
+          type: 'decision',
+          label: 'Decision',
+          icon: '❓',
+          description: 'Decision or branching point',
+          data: { label: 'Decision?', icon: '❓', color: '#f59e0b' }
+        },
+      ]
+    },
+    flowchart: {
+      label: 'Flowchart',
+      icon: '📊',
+      nodes: [
+        // Basic Process Symbols
+        {
           type: 'process',
           label: 'Process',
           icon: '⚙️',
           description: 'Process or action step',
           data: { label: 'Process', icon: '⚙️', color: '#3b82f6' }
+        },
+        {
+          type: 'start',
+          label: 'Start/End',
+          icon: '▶️',
+          description: 'Terminal (start/end point)',
+          data: { label: 'Start', icon: '▶️', color: '#10b981' }
         },
         {
           type: 'decision',
@@ -37,37 +65,32 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           data: { label: 'Decision?', icon: '❓', color: '#f59e0b' }
         },
         {
-          type: 'end',
-          label: 'End',
-          icon: '⏹️',
-          description: 'End point of the process',
-          data: { label: 'End', icon: '⏹️', color: '#ef4444' }
+          type: 'circle',
+          label: 'Connector',
+          icon: '⭕',
+          description: 'Connector or junction point',
+          data: { label: 'Connector', icon: '⭕', color: '#6b7280' }
         },
-      ]
-    },
-    flowchart: {
-      label: 'Flowchart',
-      icon: '📊',
-      nodes: [
         {
           type: 'input',
-          label: 'Input',
+          label: 'Input/Output',
           icon: '📥',
-          description: 'Data input or user input',
-          data: { label: 'Input', icon: '📥', color: '#8b5cf6' }
+          description: 'Data input or output',
+          data: { label: 'Input/Output', icon: '📥', color: '#8b5cf6' }
         },
         {
-          type: 'output',
-          label: 'Output',
-          icon: '📤',
-          description: 'Data output or display',
-          data: { label: 'Output', icon: '📤', color: '#06b6d4' }
+          type: 'hexagon',
+          label: 'Preparation',
+          icon: '⬡',
+          description: 'Preparation step',
+          data: { label: 'Prepare', icon: '⬡', color: '#7c3aed' }
         },
+        // Data & Storage Symbols
         {
           type: 'database',
           label: 'Database',
           icon: '🗄️',
-          description: 'Database operation',
+          description: 'Database or storage',
           data: { label: 'Database', icon: '🗄️', color: '#84cc16' }
         },
         {
@@ -76,6 +99,57 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           icon: '📄',
           description: 'Document or report',
           data: { label: 'Document', icon: '📄', color: '#f97316' }
+        },
+        {
+          type: 'multiple-documents',
+          label: 'Multiple Docs',
+          icon: '📑',
+          description: 'Multiple documents',
+          data: { label: 'Multi-Docs', icon: '📑', color: '#f97316' }
+        },
+        {
+          type: 'stored-data',
+          label: 'Stored Data',
+          icon: '💾',
+          description: 'Stored data file',
+          data: { label: 'Stored Data', icon: '💾', color: '#059669' }
+        },
+        // Logic & Control Symbols
+        {
+          type: 'manual-operation',
+          label: 'Manual Operation',
+          icon: '✋',
+          description: 'Manual operation step',
+          data: { label: 'Manual Op', icon: '✋', color: '#f59e0b' }
+        },
+        {
+          type: 'manual-input',
+          label: 'Manual Input',
+          icon: '⌨️',
+          description: 'Manual input step',
+          data: { label: 'Manual Input', icon: '⌨️', color: '#06b6d4' }
+        },
+        {
+          type: 'predefined-process',
+          label: 'Subroutine',
+          icon: '📦',
+          description: 'Predefined process',
+          data: { label: 'Subroutine', icon: '📦', color: '#6366f1' }
+        },
+        {
+          type: 'delay',
+          label: 'Delay',
+          icon: '⏱️',
+          description: 'Wait or delay step',
+          data: { label: 'Delay', icon: '⏱️', color: '#ef4444' }
+        },
+        // Advanced Symbols
+        {
+          type: 'cloud',
+          label: 'Cloud Service',
+          icon: '☁️',
+          description: 'Cloud process or service',
+          data: { label: 'Cloud', icon: '☁️', color: '#14b8a6' }
         },
       ]
     },

@@ -35,7 +35,7 @@ describe('Enhanced NodePalette', () => {
     
     // Initially shows basic category nodes
     expect(screen.getByText('Start')).toBeInTheDocument()
-    expect(screen.getByText('Process')).toBeInTheDocument()
+    expect(screen.getByText('Decision')).toBeInTheDocument()
     
     // Search for 'server'
     fireEvent.change(searchInput, { target: { value: 'server' } })
@@ -103,7 +103,7 @@ describe('Enhanced NodePalette', () => {
     render(<NodePalette onNodeAdd={mockOnNodeAdd} />)
     
     expect(screen.getByText('Start point of the process')).toBeInTheDocument()
-    expect(screen.getByText('Process or action step')).toBeInTheDocument()
+    expect(screen.getByText('Decision or branching point')).toBeInTheDocument()
   })
 
   it('shows proper search result count', () => {
