@@ -15,7 +15,10 @@ describe('Enhanced NodePalette', () => {
     
     // Check for category tabs
     expect(screen.getByText('Basic')).toBeInTheDocument()
-    expect(screen.getByText('Flowchart')).toBeInTheDocument()
+    expect(screen.getByText('Basic Process')).toBeInTheDocument()
+    expect(screen.getByText('Data & Storage')).toBeInTheDocument()
+    expect(screen.getByText('Logic & Control')).toBeInTheDocument()
+    expect(screen.getByText('Advanced')).toBeInTheDocument()
     expect(screen.getByText('Network')).toBeInTheDocument()
     expect(screen.getByText('System')).toBeInTheDocument()
     expect(screen.getByText('Shapes')).toBeInTheDocument()
@@ -35,7 +38,7 @@ describe('Enhanced NodePalette', () => {
     
     // Initially shows basic category nodes
     expect(screen.getByText('Start')).toBeInTheDocument()
-    expect(screen.getByText('Process')).toBeInTheDocument()
+    expect(screen.getByText('Decision')).toBeInTheDocument()
     
     // Search for 'server'
     fireEvent.change(searchInput, { target: { value: 'server' } })
@@ -103,7 +106,7 @@ describe('Enhanced NodePalette', () => {
     render(<NodePalette onNodeAdd={mockOnNodeAdd} />)
     
     expect(screen.getByText('Start point of the process')).toBeInTheDocument()
-    expect(screen.getByText('Process or action step')).toBeInTheDocument()
+    expect(screen.getByText('Decision or branching point')).toBeInTheDocument()
   })
 
   it('shows proper search result count', () => {

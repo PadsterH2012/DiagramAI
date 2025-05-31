@@ -31,6 +31,18 @@ import { CloudNode } from './Nodes/CloudNode'
 import { DocumentNode } from './Nodes/DocumentNode'
 import { ServerNode } from './Nodes/ServerNode'
 import { RouterNode } from './Nodes/RouterNode'
+// Professional Flowchart Symbols
+import { HexagonNode } from './Nodes/HexagonNode'
+import { ManualOperationNode } from './Nodes/ManualOperationNode'
+import { ManualInputNode } from './Nodes/ManualInputNode'
+import { DelayNode } from './Nodes/DelayNode'
+import { PredefinedProcessNode } from './Nodes/PredefinedProcessNode'
+import { MultipleDocumentsNode } from './Nodes/MultipleDocumentsNode'
+import { StoredDataNode } from './Nodes/StoredDataNode'
+import { InternalStorageNode } from './Nodes/InternalStorageNode'
+import { SequentialDataNode } from './Nodes/SequentialDataNode'
+import { ExtractNode } from './Nodes/ExtractNode'
+import { OffPageConnectorNode } from './Nodes/OffPageConnectorNode'
 
 interface ReactFlowEditorProps {
   initialNodes?: Node[]
@@ -227,6 +239,18 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
     circle: StartNode, // Reuse StartNode with different styling
     diamond: DecisionNode, // Reuse DecisionNode with different styling
     note: ProcessNode, // Reuse ProcessNode with different styling
+    // Professional Flowchart Symbols
+    hexagon: HexagonNode,
+    'manual-operation': ManualOperationNode,
+    'manual-input': ManualInputNode,
+    delay: DelayNode,
+    'predefined-process': PredefinedProcessNode,
+    'multiple-documents': MultipleDocumentsNode,
+    'stored-data': StoredDataNode,
+    'internal-storage': InternalStorageNode,
+    'sequential-data': SequentialDataNode,
+    extract: ExtractNode,
+    'off-page-connector': OffPageConnectorNode,
   }), [])
 
   const onConnect = useCallback(
