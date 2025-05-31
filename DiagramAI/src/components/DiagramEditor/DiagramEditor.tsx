@@ -300,35 +300,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
           
           {!readOnly && (
             <div className="flex items-center space-x-2">
-              {/* Edit Actions */}
-              <div className="flex items-center space-x-1 border-r border-gray-200 pr-2">
-                <button
-                  onClick={handleCopy}
-                  disabled={selectedNodes.length === 0}
-                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  title="Copy (Ctrl+C)"
-                >
-                  📋 Copy
-                </button>
-                <button
-                  onClick={handlePaste}
-                  disabled={!clipboard}
-                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  title="Paste (Ctrl+V)"
-                >
-                  📄 Paste
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={selectedNodes.length === 0 && selectedEdges.length === 0}
-                  className="px-2 py-1 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-red-100 text-red-700 hover:bg-red-200"
-                  title="Delete (Del)"
-                >
-                  🗑️ Delete
-                </button>
-              </div>
-
-              {/* View Actions */}
+              {/* AI Chat Action */}
               <div className="flex items-center space-x-1">
                 <button
                   onClick={() => setShowChatbox(!showChatbox)}
@@ -341,27 +313,6 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
                 >
                   🤖 AI Chat
                 </button>
-                <button
-                  onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    showPropertiesPanel
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
-                  }`}
-                >
-                  🎨 Properties
-                </button>
-                <button
-                  onClick={() => setShowHelpPanel(!showHelpPanel)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    showHelpPanel
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
-                  }`}
-                  title="Keyboard Shortcuts (? or F1)"
-                >
-                  ❓ Help
-                </button>
               </div>
 
               {/* Diagram Actions */}
@@ -371,12 +322,6 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
                   className="btn-secondary text-sm"
                 >
                   Reset Demo
-                </button>
-                <button
-                  onClick={handleClear}
-                  className="btn-secondary text-sm"
-                >
-                  Clear All
                 </button>
                 <button
                   onClick={handleSave}
@@ -401,6 +346,17 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
               onNodeDoubleClick={handleNodeDoubleClick}
               onSelectionChange={handleSelectionChange}
               readOnly={readOnly}
+              onCopy={handleCopy}
+              onPaste={handlePaste}
+              onDelete={handleDelete}
+              onShowProperties={() => setShowPropertiesPanel(!showPropertiesPanel)}
+              onShowHelp={() => setShowHelpPanel(!showHelpPanel)}
+              onClearAll={handleClear}
+              selectedNodes={selectedNodes}
+              selectedEdges={selectedEdges}
+              clipboard={clipboard}
+              showPropertiesPanel={showPropertiesPanel}
+              showHelpPanel={showHelpPanel}
             />
           </div>
 

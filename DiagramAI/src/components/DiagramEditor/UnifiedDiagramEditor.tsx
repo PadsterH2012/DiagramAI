@@ -375,15 +375,6 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
         </div>
         
         <div className="flex items-center space-x-2">
-          {activeTab === 'visual' && (
-            <button
-              onClick={handleConvertToMermaid}
-              className="btn-secondary text-sm"
-              title="Convert visual diagram to Mermaid syntax"
-            >
-              📝 To Mermaid
-            </button>
-          )}
           {activeTab === 'mermaid' && (
             <button
               onClick={handleConvertToVisual}
