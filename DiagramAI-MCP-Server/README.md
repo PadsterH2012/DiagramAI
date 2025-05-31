@@ -33,13 +33,38 @@ docker run -p 3001:3001 diagramai-mcp-server
 
 ## 🔧 Configuration
 
-Set these environment variables:
+The MCP server supports flexible configuration for different DiagramAI deployments:
 
+```bash
+# Environment variables
+export DIAGRAMAI_HOST="your.diagramai.server"
+export DIAGRAMAI_PORT="3000"
+export DIAGRAMAI_PROTOCOL="http"
+export DIAGRAMAI_WS_URL="ws://your.diagramai.server:3000/ws/diagrams"
+export MCP_AGENT_ID="your-agent-id"
+
+# Start server
+npm start
+```
+
+**Or use command line arguments:**
+```bash
+node dist/index.js --host=your.server --port=3000 --protocol=https
+```
+
+**Standalone version:**
+```bash
+cd DiagramAI-MCP-Server
+node standalone-server.js --host=10.202.28.111 --port=3000
+```
+
+### Legacy Environment Variables
 ```bash
 DATABASE_URL="postgresql://user:pass@localhost:5432/diagramai"
 DIAGRAMAI_API_KEY="your-api-key"
-DIAGRAMAI_WS_URL="ws://localhost:3000/ws/diagrams"
 ```
+
+See [README-STANDALONE.md](./README-STANDALONE.md) for complete configuration options.
 
 ## 📚 Documentation
 

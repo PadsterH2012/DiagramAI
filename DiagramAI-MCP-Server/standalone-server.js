@@ -9,11 +9,50 @@ import {
 import WebSocket from 'ws';
 
 /**
+ * Parse command line arguments and environment variables to create configuration
+ */
+function parseConfiguration() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  const config = {};
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('--host=')) {
+      config.host = arg.split('=')[1];
+    } else if (arg.startsWith('--port=')) {
+      config.port = parseInt(arg.split('=')[1], 10);
+    } else if (arg.startsWith('--protocol=')) {
+      config.protocol = arg.split('=')[1];
+    } else if (arg.startsWith('--config=')) {
+      // TODO: Support config file in future enhancement
+      console.error('⚠️ Config file support not yet implemented');
+    }
+  }
+  
+  // Get configuration from environment variables with CLI args taking precedence
+  const host = config.host || process.env.DIAGRAMAI_HOST || 'localhost';
+  const port = config.port || parseInt(process.env.DIAGRAMAI_PORT, 10) || 3000;
+  const protocol = config.protocol || process.env.DIAGRAMAI_PROTOCOL || 'http';
+  const wsUrl = process.env.DIAGRAMAI_WS_URL || `ws://${host}:${port}/ws/diagrams`;
+  const agentId = process.env.MCP_AGENT_ID || `mcp-agent-${Date.now()}`;
+  
+  return {
+    host,
+    port,
+    protocol,
+    wsUrl,
+    agentId,
+    baseUrl: `${protocol}://${host}:${port}`
+  };
+}
+
+/**
  * Standalone DiagramAI MCP Server
  * This server can be used directly with MCP clients like Augment
  */
 class StandaloneDiagramAIMCPServer extends Server {
-  constructor() {
+  constructor(config = {}) {
     super(
       {
         name: 'diagramai-standalone',
@@ -26,6 +65,7 @@ class StandaloneDiagramAIMCPServer extends Server {
       }
     );
 
+    this.config = config;
     this.setupHandlers();
   }
 
@@ -183,7 +223,9 @@ class StandaloneDiagramAIMCPServer extends Server {
 
   async executeTool(toolName, args) {
     // For now, return mock responses. In a real implementation,
-    // this would connect to the DiagramAI WebSocket API
+    // this would connect to the DiagramAI WebSocket API at the configured endpoint
+    const { wsUrl, baseUrl, host, port } = this.config;
+    
     switch (toolName) {
       case 'create_diagram':
         return {
@@ -191,7 +233,8 @@ class StandaloneDiagramAIMCPServer extends Server {
           diagram_uuid: `diagram_${Date.now()}`,
           title: args.title,
           format: args.format,
-          message: 'Diagram created successfully (mock response)',
+          message: `Diagram created successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl },
           timestamp: new Date().toISOString()
         };
 
@@ -213,7 +256,8 @@ class StandaloneDiagramAIMCPServer extends Server {
             }
           ],
           total: 2,
-          message: 'Diagrams retrieved successfully (mock response)'
+          message: `Diagrams retrieved successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl }
         };
 
       case 'get_diagram':
@@ -230,7 +274,8 @@ class StandaloneDiagramAIMCPServer extends Server {
               edges: []
             }
           },
-          message: 'Diagram retrieved successfully (mock response)'
+          message: `Diagram retrieved successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl }
         };
 
       case 'add_node':
@@ -238,7 +283,8 @@ class StandaloneDiagramAIMCPServer extends Server {
           success: true,
           node_id: `node_${Date.now()}`,
           diagram_uuid: args.diagram_uuid,
-          message: 'Node added successfully (mock response)'
+          message: `Node added successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl }
         };
 
       case 'add_edge':
@@ -246,14 +292,16 @@ class StandaloneDiagramAIMCPServer extends Server {
           success: true,
           edge_id: `edge_${Date.now()}`,
           diagram_uuid: args.diagram_uuid,
-          message: 'Edge added successfully (mock response)'
+          message: `Edge added successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl }
         };
 
       case 'delete_diagram':
         return {
           success: true,
           diagram_uuid: args.diagram_uuid,
-          message: 'Diagram deleted successfully (mock response)'
+          message: `Diagram deleted successfully (mock response from ${baseUrl})`,
+          config: { host, port, wsUrl }
         };
 
       default:
@@ -266,12 +314,21 @@ class StandaloneDiagramAIMCPServer extends Server {
  * Main entry point for the standalone MCP server
  */
 async function main() {
+  // Parse configuration from environment variables and command line arguments
+  const config = parseConfiguration();
+  
   // Only log to stderr to keep stdout clean for MCP JSON
   console.error('🚀 Starting Standalone DiagramAI MCP Server...');
+  console.error(`🔧 Configuration:`);
+  console.error(`   Host: ${config.host}`);
+  console.error(`   Port: ${config.port}`);
+  console.error(`   Protocol: ${config.protocol}`);
+  console.error(`   WebSocket URL: ${config.wsUrl}`);
+  console.error(`   Agent ID: ${config.agentId}`);
 
   try {
-    // Create the MCP server instance
-    const server = new StandaloneDiagramAIMCPServer();
+    // Create the MCP server instance with configuration
+    const server = new StandaloneDiagramAIMCPServer(config);
 
     // Create transport and start the server
     const transport = new StdioServerTransport();
@@ -279,6 +336,7 @@ async function main() {
 
     console.error('✅ Standalone DiagramAI MCP Server is running');
     console.error('📡 Listening for MCP requests via stdio');
+    console.error(`🌐 Configured to connect to DiagramAI at ${config.baseUrl}`);
 
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
