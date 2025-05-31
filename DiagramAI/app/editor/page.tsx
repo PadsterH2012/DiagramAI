@@ -1,7 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { UnifiedDiagramEditor } from '@/components/DiagramEditor/UnifiedDiagramEditor'
+import dynamic from 'next/dynamic'
+
+const UnifiedDiagramEditor = dynamic(
+  () => import('@/components/DiagramEditor/UnifiedDiagramEditor').then(mod => ({ default: mod.UnifiedDiagramEditor })),
+  { ssr: false }
+)
 
 export default function EditorPage() {
   const [diagramText, setDiagramText] = useState(`graph TD
