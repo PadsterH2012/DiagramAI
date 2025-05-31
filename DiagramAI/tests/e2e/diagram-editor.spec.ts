@@ -67,7 +67,7 @@ test.describe('Diagram Editor', () => {
     await expect(page.locator('div').filter({ hasText: 'End' }).first()).toBeVisible();
   });
 
-  test.skip('should have interactive node palette', async ({ page }) => {
+  test('should have interactive node palette', async ({ page }) => {
     // Add debugging information for CI
     console.log('🔍 Starting interactive node palette test');
 
@@ -114,7 +114,9 @@ test.describe('Diagram Editor', () => {
     let menuOpened = false;
     for (let i = 0; i < 3; i++) {
       try {
-        const menuButton = page.locator('button[title*="Open Menu"]');
+        // Use more specific selector for the hamburger menu button
+        // Look for the fixed positioned button in top-left corner
+        const menuButton = page.locator('button.fixed.top-4.left-4');
         await expect(menuButton).toBeVisible({ timeout: 5000 });
         console.log(`✅ Menu button is visible (attempt ${i + 1})`);
 
@@ -131,11 +133,23 @@ test.describe('Diagram Editor', () => {
         break;
       } catch (error) {
         console.log(`⚠️ Menu opening attempt ${i + 1} failed: ${error.message}`);
-        await page.waitForTimeout(2000);
+        // Try alternative selector if the first one fails
+        try {
+          const altMenuButton = page.locator('button').filter({ hasText: /^$/ }).first(); // Button with hamburger icon (no text)
+          await altMenuButton.click();
+          await page.waitForTimeout(3000);
+          await expect(page.locator('h2').filter({ hasText: 'Tools' })).toBeVisible({ timeout: 5000 });
+          console.log('✅ Alternative menu button worked');
+          menuOpened = true;
+          break;
+        } catch (altError) {
+          console.log(`⚠️ Alternative menu button also failed: ${altError.message}`);
+          await page.waitForTimeout(2000);
+        }
       }
     }
     if (!menuOpened) {
-      throw new Error('Menu could not be opened after 3 attempts');
+      throw new Error('Menu could not be opened after 3 attempts with multiple selectors');
     }
 
     // Check that palette nodes are clickable and draggable with retry logic
