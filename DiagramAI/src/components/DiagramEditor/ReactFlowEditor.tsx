@@ -18,6 +18,7 @@ import {
   SelectionMode,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
+import { createStyledEdge, connectionPresets } from '@/utils/edge-config'
 
 // Custom Node Components
 import { ProcessNode } from './Nodes/ProcessNode'
@@ -27,6 +28,9 @@ import { EndNode } from './Nodes/EndNode'
 import { InputNode } from './Nodes/InputNode'
 import { DatabaseNode } from './Nodes/DatabaseNode'
 import { CloudNode } from './Nodes/CloudNode'
+import { DocumentNode } from './Nodes/DocumentNode'
+import { ServerNode } from './Nodes/ServerNode'
+import { RouterNode } from './Nodes/RouterNode'
 
 interface ReactFlowEditorProps {
   initialNodes?: Node[]
@@ -213,8 +217,9 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
     input: InputNode,
     output: InputNode, // Reuse InputNode with different styling
     database: DatabaseNode,
-    document: ProcessNode, // Reuse ProcessNode with different styling
-    server: ProcessNode, // Reuse ProcessNode with different styling
+    document: DocumentNode,
+    server: ServerNode,
+    router: RouterNode,
     api: ProcessNode, // Reuse ProcessNode with different styling
     cloud: CloudNode,
     user: ProcessNode, // Reuse ProcessNode with different styling
@@ -236,21 +241,14 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
           strokeWidth: 2,
         },
         markerEnd: {
-          type: 'arrowclosed',
-          color: '#374151',
-          width: 20,
-          height: 20,
-        },
-        labelStyle: {
-          fill: '#374151',
-          fontWeight: 600,
-          fontSize: 12,
+          type: 'arrow' as const,
         },
       }
+      
       setEdges((eds) => addEdge(newEdge, eds))
       onEdgesChange?.(edges)
     },
-    [edges, onEdgesChange, setEdges]
+    [setEdges, onEdgesChange, edges]
   )
 
   const onNodesChangeHandler = useCallback(

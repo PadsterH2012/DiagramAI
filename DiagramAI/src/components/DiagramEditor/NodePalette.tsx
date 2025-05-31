@@ -8,6 +8,7 @@ interface NodePaletteProps {
 
 export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
   const [activeCategory, setActiveCategory] = useState('basic')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const nodeCategories = {
     basic: {
@@ -78,9 +79,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
         },
       ]
     },
-    system: {
-      label: 'System',
-      icon: '🖥️',
+    network: {
+      label: 'Network',
+      icon: '🌐',
       nodes: [
         {
           type: 'server',
@@ -90,11 +91,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           data: { label: 'Server', icon: '🖥️', color: '#6366f1' }
         },
         {
-          type: 'api',
-          label: 'API',
-          icon: '🔌',
-          description: 'API endpoint',
-          data: { label: 'API', icon: '🔌', color: '#ec4899' }
+          type: 'router',
+          label: 'Router',
+          icon: '📡',
+          description: 'Network router',
+          data: { label: 'Router', icon: '📡', color: '#059669' }
         },
         {
           type: 'cloud',
@@ -104,11 +105,45 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           data: { label: 'Cloud', icon: '☁️', color: '#14b8a6' }
         },
         {
+          type: 'api',
+          label: 'API',
+          icon: '🔌',
+          description: 'API endpoint',
+          data: { label: 'API', icon: '🔌', color: '#ec4899' }
+        },
+      ]
+    },
+    system: {
+      label: 'System',
+      icon: '🖥️',
+      nodes: [
+        {
           type: 'user',
           label: 'User',
           icon: '👤',
           description: 'User or actor',
           data: { label: 'User', icon: '👤', color: '#f59e0b' }
+        },
+        {
+          type: 'process',
+          label: 'System',
+          icon: '⚡',
+          description: 'System component',
+          data: { label: 'System', icon: '⚡', color: '#7c3aed' }
+        },
+        {
+          type: 'database',
+          label: 'Data Store',
+          icon: '💾',
+          description: 'Data storage',
+          data: { label: 'Data Store', icon: '💾', color: '#16a34a' }
+        },
+        {
+          type: 'api',
+          label: 'Service',
+          icon: '🔄',
+          description: 'External service',
+          data: { label: 'Service', icon: '🔄', color: '#dc2626' }
         },
       ]
     },
@@ -160,32 +195,63 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
 
   const currentCategory = nodeCategories[activeCategory as keyof typeof nodeCategories]
 
+  // Filter nodes based on search query
+  const filteredNodes = searchQuery 
+    ? Object.values(nodeCategories).flatMap(category => 
+        category.nodes.filter(node => 
+          node.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          node.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          node.type.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      )
+    : currentCategory.nodes
+
   return (
     <div className="w-full flex flex-col h-full">
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-1 mb-3">
-        {Object.entries(nodeCategories).map(([key, category]) => (
-          <button
-            key={key}
-            onClick={() => setActiveCategory(key)}
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
-              activeCategory === key
-                ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
-            }`}
-          >
-            <span className="mr-1">{category.icon}</span>
-            {category.label}
-          </button>
-        ))}
+      {/* Search Box */}
+      <div className="mb-3">
+        <input
+          type="text"
+          placeholder="Search nodes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+        />
       </div>
+
+      {/* Category Tabs - Hide when searching */}
+      {!searchQuery && (
+        <div className="flex flex-wrap gap-1 mb-3">
+          {Object.entries(nodeCategories).map(([key, category]) => (
+            <button
+              key={key}
+              onClick={() => setActiveCategory(key)}
+              className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                activeCategory === key
+                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <span className="mr-1">{category.icon}</span>
+              {category.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Search Results Header */}
+      {searchQuery && (
+        <div className="mb-2 text-sm text-gray-600">
+          {filteredNodes.length} result{filteredNodes.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+        </div>
+      )}
 
       {/* Node List */}
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-2">
-          {currentCategory.nodes.map((template) => (
+          {filteredNodes.map((template) => (
             <div
-              key={template.type}
+              key={`${template.type}-${template.label}`}
               className="p-2 border border-gray-200 rounded-lg cursor-move hover:bg-gray-50 transition-all hover:shadow-sm group"
               draggable
               onDragStart={(e) => onDragStart(e, template.type, template.data)}
@@ -209,6 +275,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
               </div>
             </div>
           ))}
+          
+          {/* No results message */}
+          {searchQuery && filteredNodes.length === 0 && (
+            <div className="text-center py-4 text-gray-500">
+              <div className="text-sm">No nodes found</div>
+              <div className="text-xs mt-1">Try a different search term</div>
+            </div>
+          )}
         </div>
       </div>
     </div>
