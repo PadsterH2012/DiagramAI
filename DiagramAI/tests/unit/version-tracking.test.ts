@@ -1,13 +1,10 @@
 /**
- * @jest-environment node
+ * Version Tracking System Tests
+ * Tests the version tracking functionality without UI components
  */
-
-// Mock fetch for API calls
-global.fetch = jest.fn()
 
 describe('Version Tracking System', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
     // Reset environment variables
     delete process.env.APP_VERSION
     delete process.env.BUILD_DATE

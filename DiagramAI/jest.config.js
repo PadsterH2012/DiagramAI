@@ -75,6 +75,10 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/e2e/',
   ],
+  // Exclude .next directory from haste map to prevent naming collisions
+  modulePathIgnorePatterns: [
+    '<rootDir>/.next/',
+  ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
