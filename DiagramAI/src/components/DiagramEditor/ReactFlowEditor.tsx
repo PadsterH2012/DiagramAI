@@ -39,6 +39,10 @@ import { DelayNode } from './Nodes/DelayNode'
 import { PredefinedProcessNode } from './Nodes/PredefinedProcessNode'
 import { MultipleDocumentsNode } from './Nodes/MultipleDocumentsNode'
 import { StoredDataNode } from './Nodes/StoredDataNode'
+import { InternalStorageNode } from './Nodes/InternalStorageNode'
+import { SequentialDataNode } from './Nodes/SequentialDataNode'
+import { ExtractNode } from './Nodes/ExtractNode'
+import { OffPageConnectorNode } from './Nodes/OffPageConnectorNode'
 
 interface ReactFlowEditorProps {
   initialNodes?: Node[]
@@ -243,6 +247,10 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
     'predefined-process': PredefinedProcessNode,
     'multiple-documents': MultipleDocumentsNode,
     'stored-data': StoredDataNode,
+    'internal-storage': InternalStorageNode,
+    'sequential-data': SequentialDataNode,
+    extract: ExtractNode,
+    'off-page-connector': OffPageConnectorNode,
   }), [])
 
   const onConnect = useCallback(

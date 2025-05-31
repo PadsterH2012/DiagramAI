@@ -15,7 +15,10 @@ describe('Enhanced NodePalette', () => {
     
     // Check for category tabs
     expect(screen.getByText('Basic')).toBeInTheDocument()
-    expect(screen.getByText('Flowchart')).toBeInTheDocument()
+    expect(screen.getByText('Basic Process')).toBeInTheDocument()
+    expect(screen.getByText('Data & Storage')).toBeInTheDocument()
+    expect(screen.getByText('Logic & Control')).toBeInTheDocument()
+    expect(screen.getByText('Advanced')).toBeInTheDocument()
     expect(screen.getByText('Network')).toBeInTheDocument()
     expect(screen.getByText('System')).toBeInTheDocument()
     expect(screen.getByText('Shapes')).toBeInTheDocument()

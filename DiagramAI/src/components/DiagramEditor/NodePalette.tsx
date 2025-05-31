@@ -39,10 +39,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
       ]
     },
     flowchart: {
-      label: 'Flowchart',
+      label: 'Basic Process',
       icon: '📊',
       nodes: [
-        // Basic Process Symbols
+        // Core Process Symbols
         {
           type: 'process',
           label: 'Process',
@@ -85,7 +85,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           description: 'Preparation step',
           data: { label: 'Prepare', icon: '⬡', color: '#7c3aed' }
         },
-        // Data & Storage Symbols
+      ]
+    },
+    'data-storage': {
+      label: 'Data & Storage',
+      icon: '💾',
+      nodes: [
         {
           type: 'database',
           label: 'Database',
@@ -114,7 +119,26 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           description: 'Stored data file',
           data: { label: 'Stored Data', icon: '💾', color: '#059669' }
         },
-        // Logic & Control Symbols
+        {
+          type: 'internal-storage',
+          label: 'Internal Storage',
+          icon: '🗃️',
+          description: 'Internal storage system',
+          data: { label: 'Internal Storage', icon: '🗃️', color: '#7c2d12' }
+        },
+        {
+          type: 'sequential-data',
+          label: 'Sequential Data',
+          icon: '📼',
+          description: 'Sequential access storage',
+          data: { label: 'Sequential Data', icon: '📼', color: '#1e40af' }
+        },
+      ]
+    },
+    'logic-control': {
+      label: 'Logic & Control',
+      icon: '🎛️',
+      nodes: [
         {
           type: 'manual-operation',
           label: 'Manual Operation',
@@ -143,7 +167,26 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
           description: 'Wait or delay step',
           data: { label: 'Delay', icon: '⏱️', color: '#ef4444' }
         },
-        // Advanced Symbols
+      ]
+    },
+    advanced: {
+      label: 'Advanced',
+      icon: '🚀',
+      nodes: [
+        {
+          type: 'extract',
+          label: 'Extract/Filter',
+          icon: '🔽',
+          description: 'Extract or filter data',
+          data: { label: 'Extract', icon: '🔽', color: '#dc2626' }
+        },
+        {
+          type: 'off-page-connector',
+          label: 'Off-page Ref',
+          icon: '🔗',
+          description: 'Reference to another page',
+          data: { label: 'Page Ref', icon: '🔗', color: '#7c3aed' }
+        },
         {
           type: 'cloud',
           label: 'Cloud Service',
