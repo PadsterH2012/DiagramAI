@@ -79,6 +79,7 @@ export interface EnhancedNodeData {
   label: string
   description?: string
   color?: string
+  backgroundColor?: string
   icon?: string
   connections?: NodeConnectionConfig
   symbolType?: string

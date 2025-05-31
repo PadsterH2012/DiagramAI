@@ -18,7 +18,7 @@ export const EnhancedProcessNode = memo(({ data, selected }: NodeProps & { data:
       hover:shadow-lg transition-shadow
     `}
     style={{ 
-      backgroundColor: data.backgroundColor || '#ffffff',
+      backgroundColor: (data as any).backgroundColor || '#ffffff',
       borderColor: selected ? data.color || '#3b82f6' : '#d1d5db'
     }}>
       {/* Dynamic Handles */}

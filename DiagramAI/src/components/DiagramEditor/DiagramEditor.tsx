@@ -5,7 +5,7 @@ import { Node, Edge } from '@xyflow/react'
 import { ReactFlowEditor } from './ReactFlowEditor'
 import { SlideOutMenu } from './SlideOutMenu'
 import { MovableChatbox } from './MovableChatbox'
-import { NodePropertiesPanel } from './NodePropertiesPanel'
+import { CompactNodePropertiesPanel } from './CompactNodePropertiesPanel'
 import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel'
 import { NodeContextMenu } from './NodeContextMenu'
 import { featureFlags } from '../../lib/featureFlags'
@@ -457,7 +457,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
 
           {/* Node Properties Panel */}
           {showPropertiesPanel && (
-            <NodePropertiesPanel
+            <CompactNodePropertiesPanel
               selectedNode={selectedNode}
               onNodeUpdate={handleNodeUpdate}
               onClose={() => {

@@ -51,8 +51,8 @@ jest.mock('../MovableChatbox', () => ({
   )
 }))
 
-jest.mock('../NodePropertiesPanel', () => ({
-  NodePropertiesPanel: ({ children, ...props }: any) => (
+jest.mock('../CompactNodePropertiesPanel', () => ({
+  CompactNodePropertiesPanel: ({ children, ...props }: any) => (
     <div data-testid="node-properties-panel" {...props}>{children}</div>
   )
 }))

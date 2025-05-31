@@ -25,7 +25,7 @@ export const CompactNodePropertiesPanel: React.FC<CompactNodePropertiesPanelProp
 
   useEffect(() => {
     if (selectedNode) {
-      const data = selectedNode.data as EnhancedNodeData
+      const data = selectedNode.data as unknown as EnhancedNodeData | undefined
       setLabel(String(data?.label || ''))
       setColor(String(data?.color || '#3b82f6'))
       setBackgroundColor(String(data?.backgroundColor || '#ffffff'))
