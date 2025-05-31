@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 
 interface NodePaletteProps {
-  onNodeAdd: (nodeType: string, nodeData: any) => void
+  onNodeAdd?: (nodeType: string, nodeData: any) => void
 }
 
 export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
@@ -189,7 +189,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onNodeAdd }) => {
               className="p-2 border border-gray-200 rounded-lg cursor-move hover:bg-gray-50 transition-all hover:shadow-sm group"
               draggable
               onDragStart={(e) => onDragStart(e, template.type, template.data)}
-              onClick={() => onNodeAdd(template.type, template.data)}
+              onClick={() => onNodeAdd?.(template.type, template.data)}
             >
               <div className="flex items-center space-x-2">
                 <div
