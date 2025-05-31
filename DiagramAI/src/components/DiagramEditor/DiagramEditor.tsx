@@ -33,6 +33,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   const [showChatbox, setShowChatbox] = useState(false)
   const [clipboard, setClipboard] = useState<{ nodes: Node[], edges: Edge[] } | null>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [wasExplicitlyCleared, setWasExplicitlyCleared] = useState(false)
 
   // Sample initial nodes for demo
   const defaultNodes: Node[] = [
@@ -75,13 +76,17 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     { id: 'e3-5', source: '3', target: '5', label: 'No' },
   ]
 
-  // Use current state, fall back to defaults only if no initial nodes provided and state is empty
-  const currentNodes = nodes.length > 0 ? nodes : (initialNodes.length > 0 ? initialNodes : defaultNodes)
-  const currentEdges = edges.length > 0 ? edges : (initialEdges.length > 0 ? initialEdges : defaultEdges)
+  // Use current state, fall back to defaults only if no initial nodes provided and state is empty and not explicitly cleared
+  const currentNodes = nodes.length > 0 ? nodes : (wasExplicitlyCleared ? [] : (initialNodes.length > 0 ? initialNodes : defaultNodes))
+  const currentEdges = edges.length > 0 ? edges : (wasExplicitlyCleared ? [] : (initialEdges.length > 0 ? initialEdges : defaultEdges))
 
   const handleNodesChange = useCallback((newNodes: Node[]) => {
     setNodes(newNodes)
-  }, [])
+    // Reset cleared state when nodes are added
+    if (newNodes.length > 0 && wasExplicitlyCleared) {
+      setWasExplicitlyCleared(false)
+    }
+  }, [wasExplicitlyCleared])
 
   const handleEdgesChange = useCallback((newEdges: Edge[]) => {
     setEdges(newEdges)
@@ -256,13 +261,21 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   }, [currentNodes, currentEdges, onSave])
 
   const handleClear = useCallback(() => {
-    setNodes([])
-    setEdges([])
+    const confirmed = confirm('Are you sure you want to clear all nodes and connections?')
+    if (confirmed) {
+      setNodes([])
+      setEdges([])
+      setWasExplicitlyCleared(true)
+      setSelectedNodes([])
+      setSelectedEdges([])
+      setSelectedNode(null)
+    }
   }, [])
 
   const handleReset = useCallback(() => {
     setNodes(defaultNodes)
     setEdges(defaultEdges)
+    setWasExplicitlyCleared(false)
   }, [])
 
   return (

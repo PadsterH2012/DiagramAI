@@ -297,6 +297,10 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
     setMermaidSyntax(newSyntax)
   }, [])
 
+  const handleMermaidClear = useCallback(() => {
+    setMermaidSyntax('')
+  }, [])
+
   const handleConvertToMermaid = useCallback(() => {
     // Simple conversion from React Flow to Mermaid
     // This is a basic implementation - full conversion would be more complex
@@ -422,6 +426,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
           <MermaidEditor
             initialSyntax={mermaidSyntax}
             onSyntaxChange={handleMermaidChange}
+            onClearAll={handleMermaidClear}
             readOnly={readOnly}
           />
         )}

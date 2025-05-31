@@ -8,6 +8,7 @@ interface MermaidEditorProps {
   onSyntaxChange?: (syntax: string) => void
   readOnly?: boolean
   theme?: 'light' | 'dark'
+  onClearAll?: () => void
 }
 
 export const MermaidEditor: React.FC<MermaidEditorProps> = ({
@@ -15,6 +16,7 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
   onSyntaxChange,
   readOnly = false,
   theme = 'light',
+  onClearAll,
 }) => {
   const [syntax, setSyntax] = useState(initialSyntax)
   const [renderError, setRenderError] = useState<string | null>(null)
@@ -185,6 +187,15 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
     onSyntaxChange?.(template)
   }
 
+  const handleClearAll = () => {
+    const confirmed = confirm('Are you sure you want to clear all content?')
+    if (confirmed) {
+      setSyntax('')
+      onSyntaxChange?.('')
+      onClearAll?.()
+    }
+  }
+
   const templates = {
     flowchart: `graph TD
     A[Start] --> B{Decision}
@@ -259,6 +270,15 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
             >
               🥧 Pie
             </button>
+            {!readOnly && (
+              <button
+                onClick={handleClearAll}
+                className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                title="Clear All"
+              >
+                🗑️
+              </button>
+            )}
           </div>
         </div>
         <div className="relative flex-1 overflow-hidden">

@@ -530,10 +530,10 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
                 <div className="flex items-center">
                   <button
                     onClick={onClearAll}
-                    className="px-2 py-1 text-xs font-medium rounded transition-colors bg-orange-100 text-orange-700 hover:bg-orange-200"
+                    className="px-2 py-1 text-xs font-medium rounded transition-colors bg-red-100 text-red-700 hover:bg-red-200"
                     title="Clear All"
                   >
-                    🧹
+                    🗑️
                   </button>
                 </div>
               </div>
