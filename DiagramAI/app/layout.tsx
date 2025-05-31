@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import './globals.css'
 import ClientLayout from '@/components/ClientLayout'
 import VersionDisplay from '@/components/VersionDisplay'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'DiagramAI - AI-Powered Diagram Generation',
@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className=""> {/* {inter.className} */}
         <div className="min-h-screen bg-gray-50">
           <header className="bg-white shadow-sm border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

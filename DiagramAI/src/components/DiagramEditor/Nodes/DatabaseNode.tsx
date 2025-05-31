@@ -29,32 +29,103 @@ export const DatabaseNode = memo(({ data, selected, id }: NodeProps & { data: Da
   }
 
   return (
-    <div className={`
-      relative px-4 py-3 shadow-md border-2 min-w-[150px] max-w-[250px]
-      ${selected ? 'border-green-500 ring-2 ring-green-200' : 'border-green-300'}
-      hover:shadow-lg transition-all duration-200
-      bg-gradient-to-br from-green-50 to-green-100
-      rounded-t-lg
-    `}>
-      {/* Database cylinder top */}
-      <div className="absolute -top-2 left-0 right-0 h-4 bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300 rounded-full"></div>
-      
+    <div className="relative">
+      {/* Database cylinder shape using SVG */}
+      <svg
+        width="100"
+        height="120"
+        viewBox="0 0 100 120"
+        className={`
+          shadow-md
+          ${selected ? 'filter drop-shadow-lg' : ''}
+          hover:filter hover:drop-shadow-lg transition-all duration-200
+        `}
+      >
+        {/* Cylinder body */}
+        <rect
+          x="20"
+          y="20"
+          width="60"
+          height="80"
+          fill="url(#databaseGradient)"
+          stroke={selected ? '#84cc16' : '#65a30d'}
+          strokeWidth={selected ? 3 : 2}
+        />
+        
+        {/* Top ellipse */}
+        <ellipse
+          cx="50"
+          cy="20"
+          rx="30"
+          ry="8"
+          fill="#bbf7d0"
+          stroke={selected ? '#84cc16' : '#65a30d'}
+          strokeWidth={selected ? 3 : 2}
+        />
+        
+        {/* Bottom ellipse */}
+        <ellipse
+          cx="50"
+          cy="100"
+          rx="30"
+          ry="8"
+          fill="#bbf7d0"
+          stroke={selected ? '#84cc16' : '#65a30d'}
+          strokeWidth={selected ? 3 : 2}
+        />
+        
+        {/* Database disks */}
+        <ellipse cx="50" cy="35" rx="25" ry="3" fill="#16a34a" opacity="0.3" />
+        <ellipse cx="50" cy="50" rx="25" ry="3" fill="#16a34a" opacity="0.3" />
+        <ellipse cx="50" cy="65" rx="25" ry="3" fill="#16a34a" opacity="0.3" />
+        <ellipse cx="50" cy="80" rx="25" ry="3" fill="#16a34a" opacity="0.3" />
+        
+        {/* Gradient definition */}
+        <defs>
+          <linearGradient id="databaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#dcfce7" />
+            <stop offset="100%" stopColor="#bbf7d0" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {/* Handles */}
       <Handle
         type="target"
         position={Position.Top}
-        className="w-3 h-3 !bg-green-500 border-2 border-white z-10"
+        className="w-3 h-3 !bg-green-500 border-2 border-white"
+        style={{ left: '50%', top: '12px', transform: 'translateX(-50%)' }}
       />
-      
-      <div className="flex items-center space-x-3 mt-2">
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="w-3 h-3 !bg-green-500 border-2 border-white"
+        style={{ left: '20px', top: '50%', transform: 'translateY(-50%)' }}
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="w-3 h-3 !bg-green-500 border-2 border-white"
+        style={{ right: '20px', top: '50%', transform: 'translateY(-50%)' }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="w-3 h-3 !bg-green-500 border-2 border-white"
+        style={{ left: '50%', bottom: '12px', transform: 'translateX(-50%)' }}
+      />
+
+      {/* Content overlay */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
         {data.icon && (
-          <div 
-            className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-medium shadow-sm"
+          <div
+            className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-medium mb-1"
             style={{ backgroundColor: data.color || '#84cc16' }}
           >
-            <span className="text-base">{data.icon}</span>
+            <span className="text-sm">{data.icon}</span>
           </div>
         )}
-        <div className="flex-1">
+        <div className="text-center px-1 pointer-events-auto">
           {isEditing ? (
             <input
               type="text"
@@ -62,42 +133,24 @@ export const DatabaseNode = memo(({ data, selected, id }: NodeProps & { data: Da
               onChange={(e) => setLabel(e.target.value)}
               onKeyPress={handleKeyPress}
               onBlur={handleBlur}
-              className="text-sm font-medium bg-transparent border-none outline-none w-full text-gray-900"
+              className="text-xs font-medium bg-white border border-gray-300 rounded px-1 text-center text-gray-900 w-16"
               autoFocus
             />
           ) : (
-            <div 
-              className="text-sm font-medium text-gray-900 cursor-pointer hover:text-green-700"
+            <div
+              className="text-xs font-medium text-gray-900 cursor-pointer hover:text-green-700 bg-white bg-opacity-90 px-1 rounded"
               onDoubleClick={handleDoubleClick}
             >
               {label}
             </div>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 mt-1">
+            <div className="text-xs text-gray-600 mt-1 bg-white bg-opacity-80 px-1 rounded">
               {data.description}
             </div>
           )}
         </div>
       </div>
-      
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="w-3 h-3 !bg-green-500 border-2 border-white"
-      />
-      
-      {/* Side handles */}
-      <Handle
-        type="source"
-        position={Position.Left}
-        className="w-3 h-3 !bg-green-500 border-2 border-white"
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="w-3 h-3 !bg-green-500 border-2 border-white"
-      />
     </div>
   )
 })
