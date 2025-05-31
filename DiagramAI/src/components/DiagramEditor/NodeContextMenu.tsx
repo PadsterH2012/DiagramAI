@@ -29,7 +29,7 @@ export const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (menuRef.current && !menuRef.current.contains(event.target as HTMLElement)) {
         onClose()
       }
     }
@@ -117,7 +117,7 @@ export const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
             {node.type} Node
           </div>
           <div className="text-sm font-medium text-gray-900 truncate">
-            {node.data?.label || node.id}
+            {(node.data?.label as string) || node.id}
           </div>
         </div>
 
