@@ -5,7 +5,7 @@ pipeline {
         booleanParam(
             name: 'FORCE_DOCKER_PUSH',
             defaultValue: false,
-            description: 'Force Docker push regardless of branch (for testing)'
+            description: 'Legacy parameter - Docker images now build automatically on successful tests'
         )
     }
 
@@ -43,7 +43,8 @@ pipeline {
         APP_VERSION = "${env.BUILD_NUMBER ? "1.0.${env.BUILD_NUMBER}" : '1.0.45'}"
         BUILD_DATE = "${new Date().format('yyyy-MM-dd HH:mm:ss')}"
         GIT_COMMIT_SHORT = "${env.GIT_COMMIT ? env.GIT_COMMIT.take(8) : 'unknown'}"
-        SHOULD_PUSH_DOCKER = "${(env.BRANCH_NAME == 'main' || params.FORCE_DOCKER_PUSH) ? 'true' : 'false'}"
+        // Build Docker images on successful tests for any branch
+        SHOULD_PUSH_DOCKER = "true"
     }
     
     options {
@@ -77,9 +78,7 @@ pipeline {
                     echo "   - APP_VERSION: ${env.APP_VERSION}"
                     echo "   - SHOULD_PUSH_DOCKER: ${env.SHOULD_PUSH_DOCKER}"
                     echo "   - BRANCH_NAME: '${env.BRANCH_NAME}'"
-                    echo "   - FORCE_DOCKER_PUSH: ${params.FORCE_DOCKER_PUSH}"
-                    echo "   - Branch check result: ${env.BRANCH_NAME == 'main'}"
-                    echo "   - Force push enabled: ${params.FORCE_DOCKER_PUSH}"
+                    echo "   - Auto-build enabled: Docker images will build on successful tests"
                 }
                 
                 // Clean workspace
