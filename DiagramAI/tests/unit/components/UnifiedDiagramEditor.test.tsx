@@ -93,22 +93,24 @@ describe('UnifiedDiagramEditor', () => {
 
     it('should open and close hamburger menu in both tabs', () => {
       render(<UnifiedDiagramEditor />);
-      
+
       // Test in Visual Editor tab
       const hamburgerButton = screen.getByTitle('Open Menu');
       fireEvent.click(hamburgerButton);
-      expect(screen.getByText('Tools')).toBeInTheDocument();
-      
+      // Use more specific selector for the slide-out menu header
+      expect(screen.getByRole('heading', { name: 'Tools' })).toBeInTheDocument();
+
       const closeButton = screen.getByTitle('Close Menu');
       fireEvent.click(closeButton);
-      
+
       // Switch to Mermaid Code tab
       fireEvent.click(screen.getByText('📝 Mermaid Code'));
-      
+
       // Test hamburger menu in Mermaid tab
       const hamburgerButtonMermaid = screen.getByTitle('Open Menu');
       fireEvent.click(hamburgerButtonMermaid);
-      expect(screen.getByText('Tools')).toBeInTheDocument();
+      // Use more specific selector for the slide-out menu header
+      expect(screen.getByRole('heading', { name: 'Tools' })).toBeInTheDocument();
     });
   });
 });
