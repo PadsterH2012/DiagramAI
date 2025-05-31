@@ -141,15 +141,13 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
   const handleToolbarMouseDown = React.useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('drag-handle')) {
       setIsToolbarDragging(true)
-      const rect = toolbarRef.current?.getBoundingClientRect()
-      if (rect) {
-        setDragOffset({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        })
-      }
+      // Calculate offset relative to current toolbar position, not bounding rect
+      setDragOffset({
+        x: e.clientX - toolbarPosition.x,
+        y: e.clientY - toolbarPosition.y
+      })
     }
-  }, [])
+  }, [toolbarPosition])
 
   const handleToolbarMouseMove = React.useCallback((e: MouseEvent) => {
     if (isToolbarDragging) {

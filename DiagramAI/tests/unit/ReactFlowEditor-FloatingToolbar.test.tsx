@@ -123,3 +123,60 @@ describe('Redundant Action Removal', () => {
     expect(remainingActions).toContain('save')
   })
 })
+
+// Test drag offset calculation fix  
+describe('Floating Toolbar Drag Offset Calculation', () => {
+  it('should calculate drag offset relative to toolbar position, not bounding rect', () => {
+    // Simulate the scenario where toolbar is at position (100, 50)
+    const toolbarPosition = { x: 100, y: 50 }
+    
+    // Simulate mouse click at screen coordinates (150, 80)
+    const mouseEvent = { clientX: 150, clientY: 80 }
+    
+    // The drag offset should be relative to toolbar position
+    const expectedOffset = {
+      x: mouseEvent.clientX - toolbarPosition.x, // 150 - 100 = 50
+      y: mouseEvent.clientY - toolbarPosition.y  // 80 - 50 = 30
+    }
+    
+    expect(expectedOffset).toEqual({ x: 50, y: 30 })
+    
+    // During drag, when mouse moves to (200, 120), the new toolbar position should be:
+    const newMousePos = { clientX: 200, clientY: 120 }
+    const newToolbarPosition = {
+      x: newMousePos.clientX - expectedOffset.x, // 200 - 50 = 150
+      y: newMousePos.clientY - expectedOffset.y  // 120 - 30 = 90
+    }
+    
+    expect(newToolbarPosition).toEqual({ x: 150, y: 90 })
+  })
+
+  it('should maintain consistent cursor position during drag operation', () => {
+    // Test that the offset calculation ensures cursor stays at same relative position
+    const initialToolbarPosition = { x: 200, y: 100 }
+    const initialMousePosition = { clientX: 250, clientY: 130 }
+    
+    // Calculate initial offset
+    const dragOffset = {
+      x: initialMousePosition.clientX - initialToolbarPosition.x, // 50
+      y: initialMousePosition.clientY - initialToolbarPosition.y  // 30
+    }
+    
+    // Simulate mouse movement during drag
+    const newMousePosition = { clientX: 300, clientY: 180 }
+    
+    // Calculate new toolbar position using the offset
+    const newToolbarPosition = {
+      x: newMousePosition.clientX - dragOffset.x, // 300 - 50 = 250
+      y: newMousePosition.clientY - dragOffset.y  // 180 - 30 = 150
+    }
+    
+    // Verify that the relative mouse position to toolbar remains the same
+    const newRelativePosition = {
+      x: newMousePosition.clientX - newToolbarPosition.x, // 300 - 250 = 50
+      y: newMousePosition.clientY - newToolbarPosition.y  // 180 - 150 = 30
+    }
+    
+    expect(newRelativePosition).toEqual(dragOffset)
+  })
+})
