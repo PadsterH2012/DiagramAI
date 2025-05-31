@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     bash \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
@@ -29,4 +30,4 @@ ENV GIT_COMMIT=${GIT_COMMIT}
 
 # Expose port and start development server
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["./scripts/start-dev.sh"]

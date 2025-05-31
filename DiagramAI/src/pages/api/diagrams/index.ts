@@ -62,13 +62,29 @@ async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
     console.error('Get diagrams error:', error)
     
     // Provide more specific error information for debugging
-    const errorMessage = error instanceof Error 
-      ? `Database error: ${error.message}` 
-      : 'Failed to fetch diagrams'
+    let errorMessage = 'Failed to fetch diagrams'
+    let statusCode = 500
     
-    return res.status(500).json({
+    if (error instanceof Error) {
+      errorMessage = `Database error: ${error.message}`
+      
+      // Handle specific database errors
+      if (error.message.includes('does not exist in the current database')) {
+        errorMessage = 'Database tables not initialized. Please run database migrations.'
+        statusCode = 503 // Service Unavailable
+      } else if (error.message.includes('connect')) {
+        errorMessage = 'Unable to connect to database. Please check database configuration.'
+        statusCode = 503 // Service Unavailable
+      }
+    }
+    
+    return res.status(statusCode).json({
       success: false,
-      error: { message: errorMessage }
+      error: { 
+        message: errorMessage,
+        type: 'DATABASE_ERROR',
+        hint: statusCode === 503 ? 'Database may still be initializing. Please try again in a few moments.' : undefined
+      }
     })
   }
 }

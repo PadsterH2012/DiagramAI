@@ -276,6 +276,62 @@ SELECT id, type, data FROM "Node" WHERE "diagramUuid" = 'your-diagram-uuid';
 
 ## 🗄️ Database Issues
 
+### Database Tables Missing (diagrams table not found)
+
+**Symptoms:**
+- Error: "The table `public.diagrams` does not exist in the current database"
+- "Recent Diagrams" section shows database error
+- API endpoint `/api/diagrams` returns 500 error
+
+**Root Cause:**
+Database migrations haven't been applied to create the required tables.
+
+**Solutions:**
+
+1. **Automatic fix (Docker):**
+```bash
+# Restart containers to trigger migration
+docker-compose down
+docker-compose up -d
+
+# Check startup logs
+docker-compose logs -f app
+```
+
+2. **Manual migration:**
+```bash
+# Enter application container
+docker-compose exec app bash
+
+# Run migrations manually
+npx prisma migrate deploy
+npx prisma generate
+```
+
+3. **Reset database completely:**
+```bash
+# Enter application container
+docker-compose exec app bash
+
+# Reset and apply all migrations
+npx prisma migrate reset --force
+npx prisma migrate deploy
+```
+
+4. **Verify table creation:**
+```bash
+# Check database tables
+docker-compose exec db psql -U postgres -d diagramai_dev -c "\\dt"
+
+# Test API endpoint
+curl http://localhost:3000/api/diagrams
+```
+
+**Prevention:**
+- Ensure `scripts/verify-database.sh` runs during container startup
+- Check health endpoint: `http://localhost:3000/api/health`
+- Monitor container logs during startup
+
 ### Migration Failures
 
 **Symptoms:**
