@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Link from 'next/link'
 import './globals.css'
 import ClientLayout from '@/components/ClientLayout'
 import VersionDisplay from '@/components/VersionDisplay'
@@ -37,19 +38,19 @@ export default function RootLayout({
                   </div>
                 </div>
                 <nav className="flex space-x-4">
-                  <a href="/" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  <Link href="/" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     Home
-                  </a>
-                  <a href="/editor" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  </Link>
+                  <Link href="/editor" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     Editor
-                  </a>
-                  <a href="/dashboard" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  </Link>
+                  <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     Dashboard
-                  </a>
-                  <a href="/settings" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1">
+                  </Link>
+                  <Link href="/settings" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1">
                     <span>⚙️</span>
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </nav>
               </div>
             </div>

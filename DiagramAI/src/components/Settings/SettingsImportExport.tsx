@@ -184,8 +184,8 @@ export const SettingsImportExport: React.FC<SettingsImportExportProps> = ({
             </div>
             <div className="ml-3">
               <p className="text-sm text-yellow-700">
-                <strong>Security Notice:</strong> API keys are automatically redacted during export. 
-                You'll need to re-enter your API keys after importing settings.
+                <strong>Security Notice:</strong> API keys are automatically redacted during export.
+                You&apos;ll need to re-enter your API keys after importing settings.
               </p>
             </div>
           </div>

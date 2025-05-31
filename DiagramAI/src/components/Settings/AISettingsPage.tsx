@@ -189,11 +189,11 @@ export const AISettingsPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">AI Chat Features Coming Soon</h3>
           <p className="text-gray-500 mb-6">
-            We're working hard to bring you AI-powered diagram assistance. 
+            We&apos;re working hard to bring you AI-powered diagram assistance.
             AI chat functionality is currently under development and will be available soon.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-blue-900 mb-2">🎯 What's Coming</h4>
+            <h4 className="text-sm font-medium text-blue-900 mb-2">🎯 What&apos;s Coming</h4>
             <ul className="text-sm text-blue-800 space-y-1 text-left">
               <li>• AI-powered diagram generation and editing</li>
               <li>• Smart suggestions for workflow improvements</li>
