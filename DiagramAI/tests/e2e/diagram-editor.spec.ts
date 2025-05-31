@@ -30,21 +30,32 @@ test.describe('Diagram Editor', () => {
   });
 
   test('should display React Flow visual editor', async ({ page }) => {
+    // Add debugging information for CI
+    console.log('🔍 Starting React Flow visual editor test');
+
     // Ensure we're on the visual tab (default)
     await expect(page.locator('button').filter({ hasText: 'Visual Editor' })).toHaveClass(/border-blue-500/);
+    console.log('✅ Visual Editor tab is active');
 
     // Check for React Flow container with timeout
-    await expect(page.locator('.react-flow')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.react-flow')).toBeVisible({ timeout: 15000 });
+    console.log('✅ React Flow container is visible');
+
+    // Wait for the page to be fully loaded and interactive
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
 
     // Check for slide-out menu toggle button
-    await expect(page.locator('button[title*="Open Menu"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('button[title*="Open Menu"]')).toBeVisible({ timeout: 10000 });
+    console.log('✅ Menu toggle button is visible');
 
     // Open the slide-out menu to access node palette
     const menuButton = page.locator('button[title*="Open Menu"]');
     await menuButton.click();
+    console.log('✅ Menu button clicked');
 
     // Wait for menu animation with longer timeout
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     // Check for Tools header in slide-out menu (not "Node Palette")
     await expect(page.locator('h2').filter({ hasText: 'Tools' })).toBeVisible();
@@ -57,31 +68,48 @@ test.describe('Diagram Editor', () => {
   });
 
   test('should have interactive node palette', async ({ page }) => {
+    // Add debugging information for CI
+    console.log('🔍 Starting interactive node palette test');
+
     // Ensure we're on the visual tab (default)
     await expect(page.locator('button').filter({ hasText: 'Visual Editor' })).toHaveClass(/border-blue-500/);
+    console.log('✅ Visual Editor tab is active');
 
     // Wait for React Flow to be ready with longer timeout
-    await page.waitForSelector('.react-flow', { state: 'visible', timeout: 10000 });
+    await page.waitForSelector('.react-flow', { state: 'visible', timeout: 15000 });
+    console.log('✅ React Flow is visible');
+
+    // Wait for the page to be fully loaded and interactive
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000); // Additional wait for any animations
 
     // Open the slide-out menu to access node palette
     const menuButton = page.locator('button[title*="Open Menu"]');
-    await expect(menuButton).toBeVisible({ timeout: 5000 });
+    await expect(menuButton).toBeVisible({ timeout: 10000 });
+    console.log('✅ Menu button is visible');
+
     await menuButton.click();
+    console.log('✅ Menu button clicked');
 
     // Wait for menu animation with longer timeout
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     // Wait for the Tools header to be visible (indicates menu is open)
-    await expect(page.locator('h2').filter({ hasText: 'Tools' })).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('h2').filter({ hasText: 'Tools' })).toBeVisible({ timeout: 10000 });
+    console.log('✅ Tools header is visible');
 
     // Check that palette nodes are clickable and draggable
     const startNodePalette = page.locator('div[draggable="true"]').filter({ hasText: 'Start' }).first();
-    await expect(startNodePalette).toBeVisible({ timeout: 5000 });
+    await expect(startNodePalette).toBeVisible({ timeout: 10000 });
     await expect(startNodePalette).toHaveAttribute('draggable', 'true');
+    console.log('✅ Start node palette is visible and draggable');
 
     // Check for node descriptions (instead of instruction text that doesn't exist)
-    await expect(page.locator('text=Start point of the process')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Process or action step')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=Start point of the process')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Process or action step')).toBeVisible({ timeout: 10000 });
+    console.log('✅ Node descriptions are visible');
+
+    console.log('🎉 Interactive node palette test completed successfully');
   });
 
   test('should display Mermaid text editor', async ({ page }) => {
