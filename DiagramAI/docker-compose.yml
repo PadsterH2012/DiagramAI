@@ -23,8 +23,10 @@ services:
       - BUILD_DATE=${BUILD_DATE:-}
       - GIT_COMMIT=${GIT_COMMIT:-}
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - diagramai-network
 
@@ -41,6 +43,12 @@ services:
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - diagramai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d diagramai_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
@@ -50,6 +58,11 @@ services:
       - redis_data:/data
     networks:
       - diagramai-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   mcp-server:
     build:
