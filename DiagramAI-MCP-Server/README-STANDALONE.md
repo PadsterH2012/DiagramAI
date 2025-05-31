@@ -14,13 +14,36 @@ Add this to your Augment configuration:
         {
             "name": "diagramai",
             "command": "node",
-            "args": ["/path/to/DiagramAI-MCP-Server/standalone-server.js"]
+            "args": ["/path/to/DiagramAI-MCP-Server/standalone-server.js"],
+            "env": {
+                "DIAGRAMAI_HOST": "10.202.28.111",
+                "DIAGRAMAI_PORT": "3000",
+                "DIAGRAMAI_PROTOCOL": "http"
+            }
         }
     ]
 }
 ```
 
 Replace `/path/to/DiagramAI-MCP-Server/` with the actual path to this directory.
+
+**Alternative with CLI arguments:**
+```json
+"augment.advanced": {
+    "mcpServers": [
+        {
+            "name": "diagramai",
+            "command": "node",
+            "args": [
+                "/path/to/DiagramAI-MCP-Server/standalone-server.js",
+                "--host=10.202.28.111",
+                "--port=3000",
+                "--protocol=http"
+            ]
+        }
+    ]
+}
+```
 
 ### Option 2: Install Globally (Recommended)
 
@@ -90,11 +113,73 @@ The server will start and listen for MCP requests via stdio.
 
 ## 🔧 Configuration
 
-The standalone server currently returns mock responses for demonstration. To connect to a live DiagramAI instance, you would need to:
+The standalone server supports multiple configuration methods to connect to your DiagramAI instance:
 
-1. Ensure DiagramAI is running on `http://localhost:3000`
-2. Update the `executeTool` method to make actual API calls to DiagramAI
-3. Configure authentication if required
+### Environment Variables (Recommended for deployment)
+```bash
+export DIAGRAMAI_HOST="192.168.1.100"
+export DIAGRAMAI_PORT="3000"
+export DIAGRAMAI_PROTOCOL="http"
+export DIAGRAMAI_WS_URL="ws://192.168.1.100:3000/ws/diagrams"
+export MCP_AGENT_ID="my-agent-id"
+
+node standalone-server.js
+```
+
+### Command Line Arguments (Recommended for testing)
+```bash
+node standalone-server.js --host=192.168.1.100 --port=3000 --protocol=http
+```
+
+### Configuration Priority
+1. **Command line arguments** (highest priority)
+2. **Environment variables** 
+3. **Default values** (lowest priority)
+
+### Available Options
+
+| Option | CLI Argument | Environment Variable | Default | Description |
+|--------|-------------|---------------------|---------|-------------|
+| Host | `--host=<ip>` | `DIAGRAMAI_HOST` | `localhost` | DiagramAI server hostname/IP |
+| Port | `--port=<port>` | `DIAGRAMAI_PORT` | `3000` | DiagramAI server port |
+| Protocol | `--protocol=<proto>` | `DIAGRAMAI_PROTOCOL` | `http` | HTTP protocol (http/https) |
+| WebSocket URL | N/A | `DIAGRAMAI_WS_URL` | Auto-generated | Full WebSocket URL |
+| Agent ID | N/A | `MCP_AGENT_ID` | Auto-generated | Unique agent identifier |
+
+### Deployment Examples
+
+#### Docker Deployment
+```bash
+docker run -e DIAGRAMAI_HOST=10.202.28.111 -e DIAGRAMAI_PORT=3000 \
+  node standalone-server.js
+```
+
+#### Cloud Instance
+```bash
+export DIAGRAMAI_HOST="diagramai.example.com"
+export DIAGRAMAI_PORT="443"
+export DIAGRAMAI_PROTOCOL="https"
+node standalone-server.js
+```
+
+#### Local Development
+```bash
+node standalone-server.js --host=localhost --port=3001
+```
+
+#### Multiple Environments
+```bash
+# Development
+export DIAGRAMAI_HOST="dev.diagramai.local"
+node standalone-server.js
+
+# Production  
+export DIAGRAMAI_HOST="prod.diagramai.com"
+export DIAGRAMAI_PROTOCOL="https"
+node standalone-server.js
+```
+
+**Note**: The standalone server currently returns mock responses for demonstration. To connect to a live DiagramAI instance, the mock responses in `executeTool` method would need to be replaced with actual API calls to the configured DiagramAI endpoint.
 
 ## 🐛 Troubleshooting
 
