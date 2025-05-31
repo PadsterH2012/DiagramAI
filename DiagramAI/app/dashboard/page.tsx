@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import ProjectList from '../../src/components/Projects/ProjectList'
 import ProjectForm from '../../src/components/Projects/ProjectForm'
+import Breadcrumb from '../../src/components/Navigation/Breadcrumb'
 
 interface Project {
   id: string
@@ -39,17 +40,29 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [showProjectForm, setShowProjectForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterFavorites, setFilterFavorites] = useState(false)
 
   useEffect(() => {
     fetchDiagrams()
-  }, [selectedProject])
+  }, [selectedProject, searchQuery, filterFavorites])
 
   const fetchDiagrams = async () => {
     try {
       setLoading(true)
-      const url = selectedProject 
-        ? `/api/diagrams?project_id=${selectedProject.id}`
-        : '/api/diagrams'
+      const params = new URLSearchParams()
+      
+      if (selectedProject) {
+        params.append('project_id', selectedProject.id)
+      }
+      if (searchQuery) {
+        params.append('search', searchQuery)
+      }
+      if (filterFavorites) {
+        params.append('favorites', 'true')
+      }
+      
+      const url = `/api/diagrams${params.toString() ? '?' + params.toString() : ''}`
       const response = await fetch(url)
       const result = await response.json()
 
@@ -111,6 +124,16 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <div className="mb-4">
+          <Breadcrumb 
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Dashboard', isActive: true }
+            ]}
+          />
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
@@ -175,26 +198,66 @@ export default function DashboardPage() {
             {/* Diagrams List */}
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                   <h2 className="text-lg font-semibold text-gray-900">
                     {selectedProject ? `Diagrams in "${selectedProject.name}"` : 'Recent Diagrams'}
                   </h2>
-                  <div className="flex items-center space-x-3">
-                    {selectedProject && (
-                      <button
-                        onClick={() => setSelectedProject(null)}
-                        className="text-sm text-gray-600 hover:text-gray-800"
+                  
+                  {/* Search and Filter */}
+                  <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3">
+                    {/* Search Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search diagrams..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-8 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
+                      />
+                      <svg
+                        className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        Show All
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    
+                    {/* Favorites Filter */}
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={filterFavorites}
+                        onChange={(e) => setFilterFavorites(e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">⭐ Favorites only</span>
+                    </label>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex items-center space-x-2">
+                      {selectedProject && (
+                        <button
+                          onClick={() => setSelectedProject(null)}
+                          className="text-sm text-gray-600 hover:text-gray-800"
+                        >
+                          Show All
+                        </button>
+                      )}
+                      <button
+                        onClick={fetchDiagrams}
+                        className="text-sm text-blue-600 hover:text-blue-800"
+                        disabled={loading}
+                      >
+                        {loading ? '🔄' : '↻'} Refresh
                       </button>
-                    )}
-                    <button
-                      onClick={fetchDiagrams}
-                      className="text-sm text-blue-600 hover:text-blue-800"
-                      disabled={loading}
-                    >
-                      {loading ? '🔄' : '↻'} Refresh
-                    </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,11 +281,24 @@ export default function DashboardPage() {
                 <div className="px-6 py-8 text-center">
                   <p className="text-gray-500 mb-2">📊 No diagrams found</p>
                   <p className="text-sm text-gray-400 mb-4">
-                    {selectedProject 
+                    {searchQuery || filterFavorites
+                      ? `No diagrams match your current filters.`
+                      : selectedProject 
                       ? `No diagrams in "${selectedProject.name}" yet.`
                       : 'Create your first diagram or have an AI agent create one for you!'
                     }
                   </p>
+                  {(searchQuery || filterFavorites) && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        setFilterFavorites(false)
+                      }}
+                      className="btn-secondary inline-block mr-3"
+                    >
+                      Clear Filters
+                    </button>
+                  )}
                   <Link href="/editor" className="btn-primary inline-block">
                     Create Diagram
                   </Link>

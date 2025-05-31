@@ -13,6 +13,8 @@ export interface DiagramData {
   format: 'reactflow' | 'mermaid'
   tags?: string[]
   isPublic?: boolean
+  isFavorite?: boolean
+  projectId?: string | null
   userId?: string
 }
 
@@ -46,6 +48,8 @@ class DiagramService {
           format: diagramData.format,
           tags: diagramData.tags || [],
           isPublic: diagramData.isPublic || false,
+          isFavorite: diagramData.isFavorite || false,
+          projectId: diagramData.projectId || null,
         }),
       })
 

@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { Node, Edge } from '@xyflow/react'
 import { DiagramEditor } from './DiagramEditor'
 import { MermaidEditor } from './MermaidEditor'
+import SaveDialog, { SaveDialogData } from './SaveDialog'
 import { diagramService, DiagramData } from '../../services/diagramService'
 
 // Mermaid to ReactFlow conversion utility
@@ -249,29 +250,32 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
     D --> E`)
 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
 
-  const handleSave = useCallback(async () => {
+  const handleSaveWithDialog = useCallback(async (saveData: SaveDialogData) => {
     setSaveStatus('saving')
     try {
       const diagramData: DiagramData = {
-        title: `Diagram ${new Date().toLocaleDateString()}`,
-        description: 'Auto-saved diagram',
+        title: saveData.title,
+        description: saveData.description,
         content: {
           nodes,
-          edges
+          edges,
         },
         format: 'reactflow',
-        tags: ['auto-save'],
-        isPublic: false
+        tags: saveData.tags,
+        isPublic: saveData.isPublic,
+        isFavorite: saveData.isFavorite,
+        projectId: saveData.projectId,
       }
 
       const result = await diagramService.autoSave(diagramData)
-
+      
       if (result.success) {
         onSave?.({
           nodes,
           edges,
-          mermaidSyntax
+          mermaidSyntax,
         })
         setSaveStatus('saved')
         setTimeout(() => setSaveStatus('idle'), 2000)
@@ -282,6 +286,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
       console.error('Save error:', error)
       setSaveStatus('error')
       setTimeout(() => setSaveStatus('idle'), 3000)
+      throw error // Re-throw to let the dialog handle it
     }
   }, [nodes, edges, mermaidSyntax, onSave])
 
@@ -385,7 +390,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
             </button>
           )}
           <button
-            onClick={handleSave}
+            onClick={() => setShowSaveDialog(true)}
             disabled={saveStatus === 'saving'}
             className={`text-sm px-4 py-2 rounded-md font-medium transition-colors ${
               saveStatus === 'saving'
@@ -400,7 +405,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
             {saveStatus === 'saving' && '⏳ Saving...'}
             {saveStatus === 'saved' && '✅ Saved!'}
             {saveStatus === 'error' && '❌ Error'}
-            {saveStatus === 'idle' && '💾 Save'}
+            {saveStatus === 'idle' && '💾 Save Diagram'}
           </button>
         </div>
       </div>
@@ -414,7 +419,7 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
             onSave={(newNodes, newEdges) => {
               setNodes(newNodes)
               setEdges(newEdges)
-              handleSave()
+              setShowSaveDialog(true)
             }}
             readOnly={readOnly}
           />
@@ -426,6 +431,21 @@ export const UnifiedDiagramEditor: React.FC<UnifiedDiagramEditorProps> = ({
           />
         )}
       </div>
+
+      {/* Save Dialog */}
+      <SaveDialog
+        isOpen={showSaveDialog}
+        onClose={() => setShowSaveDialog(false)}
+        onSave={handleSaveWithDialog}
+        initialData={{
+          title: `Diagram ${new Date().toLocaleDateString()}`,
+          description: '',
+          tags: [],
+          isPublic: false,
+          isFavorite: false,
+          projectId: null,
+        }}
+      />
     </div>
   )
 }
