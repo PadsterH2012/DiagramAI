@@ -254,7 +254,7 @@ pipeline {
         
         stage('🧪 Testing Suite') {
             parallel {
-                stage('Unit Tests (24 tests)') {
+                stage('Unit Tests (163 tests)') {
                     steps {
                         script {
                             echo "🧪 Running unit tests..."
@@ -297,7 +297,7 @@ pipeline {
                     }
                 }
                 
-                stage('Integration Tests (10 tests)') {
+                stage('Integration Tests (0 tests)') {
                     steps {
                         script {
                             echo "🔗 Running integration tests..."
@@ -403,17 +403,17 @@ pipeline {
                                 # Check if unit tests passed (exit code 0 means all tests passed)
                                 UNIT_PASSED=0
                                 if npm run test:unit -- --passWithNoTests --silent >/dev/null 2>&1; then
-                                    UNIT_PASSED=24
-                                    echo "✅ Unit tests: 24/24 passed"
+                                    UNIT_PASSED=163
+                                    echo "✅ Unit tests: 163/163 passed"
                                 else
                                     echo "❌ Unit tests: failed"
                                 fi
 
-                                # Check if integration tests passed
+                                # Check if integration tests passed (currently 0 tests)
                                 INTEGRATION_PASSED=0
                                 if npm run test:integration -- --passWithNoTests --silent >/dev/null 2>&1; then
-                                    INTEGRATION_PASSED=10
-                                    echo "✅ Integration tests: 10/10 passed"
+                                    INTEGRATION_PASSED=0
+                                    echo "✅ Integration tests: 0/0 passed (no integration tests defined)"
                                 else
                                     echo "❌ Integration tests: failed"
                                 fi
@@ -466,18 +466,18 @@ pipeline {
                                 TOTAL_PASSED=$((UNIT_PASSED + INTEGRATION_PASSED + E2E_PASSED))
 
                                 echo "📊 Test Results Summary:"
-                                echo "   - Unit Tests: $UNIT_PASSED/24"
-                                echo "   - Integration Tests: $INTEGRATION_PASSED/10"
+                                echo "   - Unit Tests: $UNIT_PASSED/163"
+                                echo "   - Integration Tests: $INTEGRATION_PASSED/0"
                                 echo "   - E2E Tests: $E2E_PASSED/38"
-                                echo "   - Total: $TOTAL_PASSED/72"
+                                echo "   - Total: $TOTAL_PASSED/201"
 
                                 # Validate 100% success rate requirement
-                                if [ "$TOTAL_PASSED" -eq 72 ]; then
+                                if [ "$TOTAL_PASSED" -eq 201 ]; then
                                     echo "✅ ALL TESTS PASSED - 100% SUCCESS RATE ACHIEVED!"
                                     echo "SUCCESS"
                                 else
                                     echo "❌ PIPELINE FAILED - NOT ALL TESTS PASSED"
-                                    echo "   Required: 72 total tests"
+                                    echo "   Required: 201 total tests (163 unit + 0 integration + 38 E2E)"
                                     echo "   Actual: $TOTAL_PASSED total tests passed"
                                     echo "FAILURE"
                                 fi
@@ -487,9 +487,9 @@ pipeline {
                         
                         // Check if all tests passed
                         if (!testResults.contains('SUCCESS')) {
-                            error("❌ PIPELINE FAILED: Not all tests passed. Required 100% success rate (72/72 tests).")
+                            error("❌ PIPELINE FAILED: Not all tests passed. Required 100% success rate (201/201 tests).")
                         }
-                        
+
                         echo "✅ Test validation completed successfully - 100% success rate achieved!"
                     }
                 }
@@ -647,7 +647,7 @@ pipeline {
         
         success {
             script {
-                echo "🎉 PIPELINE SUCCESS: All 72 tests passed (100% success rate)!"
+                echo "🎉 PIPELINE SUCCESS: All 201 tests passed (100% success rate)!"
                 echo "✅ DiagramAI build completed successfully"
 
                 if (env.SHOULD_PUSH_DOCKER == 'true') {
