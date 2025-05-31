@@ -142,6 +142,47 @@ npm run test:all
 - **E2E Tests**: 38/38 passing
 - **Total Coverage**: 100% success rate
 
+## 🤖 AI Agent Integration
+
+### MCP Server for Claude Desktop
+
+DiagramAI includes a Model Context Protocol (MCP) server that allows AI agents like Claude Desktop to create and edit diagrams programmatically.
+
+**Repository**: [mcp-server-diagramai](https://github.com/PadsterH2012/mcp-server-diagramai)
+
+#### Installation
+```bash
+# Install globally via npm
+npm install -g mcp-server-diagramai
+```
+
+#### Claude Desktop Configuration
+Add to your Claude Desktop config file:
+
+```json
+{
+  "mcpServers": {
+    "diagramai": {
+      "command": "npx",
+      "args": ["mcp-server-diagramai"],
+      "env": {
+        "DIAGRAMAI_API_URL": "http://localhost:3000",
+        "DIAGRAMAI_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+#### Available Tools
+- `create_diagram` - Create new diagrams
+- `get_diagram` - Retrieve diagram content
+- `update_diagram` - Modify existing diagrams
+- `delete_diagram` - Remove diagrams
+- `add_node` - Add nodes to diagrams
+- `add_edge` - Connect nodes with edges
+- `list_diagrams` - Get all accessible diagrams
+
 ## 📚 Documentation
 
 - [Production Deployment Guide](PRODUCTION-DEPLOYMENT.md)
@@ -150,6 +191,7 @@ npm run test:all
 - [Jenkins CI/CD Setup](JENKINS-CICD-SUMMARY.md)
 - [API Documentation](documentation/api/)
 - [Architecture Overview](documentation/architecture/)
+- [MCP Server Documentation](https://github.com/PadsterH2012/mcp-server-diagramai)
 
 ## 🚀 Production Deployment
 
