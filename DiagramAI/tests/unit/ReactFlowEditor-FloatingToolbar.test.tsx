@@ -110,7 +110,7 @@ describe('Redundant Action Removal', () => {
     const movedActions = ['copy', 'paste', 'delete', 'properties', 'help', 'clearAll']
     
     // Actions that should remain in main toolbar  
-    const remainingActions = ['aiChat', 'resetDemo', 'save']
+    const remainingActions = ['aiChat', 'save']
     
     expect(movedActions).toContain('copy')
     expect(movedActions).toContain('delete')
