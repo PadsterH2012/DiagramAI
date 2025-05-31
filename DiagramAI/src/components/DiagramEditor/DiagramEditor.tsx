@@ -32,6 +32,7 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false)
   const [showHelpPanel, setShowHelpPanel] = useState(false)
   const [showChatbox, setShowChatbox] = useState(false)
+  const [showSlideOutMenu, setShowSlideOutMenu] = useState(false)
   const [clipboard, setClipboard] = useState<{ nodes: Node[], edges: Edge[] } | null>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [wasExplicitlyCleared, setWasExplicitlyCleared] = useState(false)
@@ -354,7 +355,11 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     <div className="flex h-full bg-white relative">
       {/* Slide-out Menu */}
       {!readOnly && (
-        <SlideOutMenu onNodeAdd={handleNodeAdd} />
+        <SlideOutMenu 
+          onNodeAdd={handleNodeAdd} 
+          isOpen={showSlideOutMenu}
+          onToggle={setShowSlideOutMenu}
+        />
       )}
 
       {/* Main Editor Area */}
@@ -447,6 +452,10 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
               onShowProperties={() => setShowPropertiesPanel(!showPropertiesPanel)}
               onShowHelp={() => setShowHelpPanel(!showHelpPanel)}
               onClearAll={handleClear}
+              onNodeAdd={handleNodeAdd}
+              onOpenNodePalette={() => {
+                setShowSlideOutMenu(true)
+              }}
               selectedNodes={selectedNodes}
               selectedEdges={selectedEdges}
               clipboard={clipboard}
