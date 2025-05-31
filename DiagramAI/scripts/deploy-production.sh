@@ -101,8 +101,10 @@ download_files() {
     # Download docker-compose.prod.yml
     download_file "$BASE_URL/docker-compose.prod.yml" "docker-compose.prod.yml" "Production Docker Compose file"
     
-    # Download redis.conf
-    download_file "$BASE_URL/redis.conf" "redis.conf" "Redis configuration"
+    # Download redis.conf (optional - Redis will use defaults if not available)
+    if ! download_file "$BASE_URL/redis.conf" "redis.conf" "Redis configuration"; then
+        log_warning "Redis configuration download failed, using Redis defaults"
+    fi
     
     # Download essential scripts
     local scripts=(
