@@ -2,6 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import ProjectList from '../../src/components/Projects/ProjectList'
+import ProjectForm from '../../src/components/Projects/ProjectForm'
+
+interface Project {
+  id: string
+  name: string
+  description?: string
+  color?: string
+  createdAt: string
+  updatedAt: string
+  _count: {
+    diagrams: number
+  }
+}
 
 interface Diagram {
   id: string
@@ -9,23 +23,34 @@ interface Diagram {
   description?: string
   format: 'reactflow' | 'mermaid'
   isPublic: boolean
+  isFavorite?: boolean
   createdAt: string
   updatedAt: string
+  project?: {
+    id: string
+    name: string
+    color?: string
+  } | null
 }
 
 export default function DashboardPage() {
   const [diagrams, setDiagrams] = useState<Diagram[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [showProjectForm, setShowProjectForm] = useState(false)
 
   useEffect(() => {
     fetchDiagrams()
-  }, [])
+  }, [selectedProject])
 
   const fetchDiagrams = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/diagrams')
+      const url = selectedProject 
+        ? `/api/diagrams?project_id=${selectedProject.id}`
+        : '/api/diagrams'
+      const response = await fetch(url)
       const result = await response.json()
 
       if (result.success) {
@@ -38,6 +63,28 @@ export default function DashboardPage() {
       console.error('Error fetching diagrams:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCreateProject = async (projectData: { name: string; description?: string; color?: string }) => {
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData),
+      })
+      
+      const result = await response.json()
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to create project')
+      }
+      
+      // Refresh the diagrams to update project counts
+      fetchDiagrams()
+    } catch (error) {
+      throw error
     }
   }
 
@@ -69,46 +116,86 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-              <p className="text-gray-600">Manage your diagrams and track your progress</p>
+              <p className="text-gray-600">
+                {selectedProject 
+                  ? `Viewing diagrams in "${selectedProject.name}"` 
+                  : 'Manage your diagrams and track your progress'
+                }
+              </p>
             </div>
-            <Link href="/editor" className="btn-primary">
-              Create New Diagram
-            </Link>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowProjectForm(true)}
+                className="btn-secondary"
+              >
+                📁 New Project
+              </button>
+              <Link href="/editor" className="btn-primary">
+                Create New Diagram
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm border p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-green-600">{stat.change}</p>
-                </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Projects Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm border">
+              <div className="px-4 py-3 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900">Projects</h2>
               </div>
+              <ProjectList
+                selectedProjectId={selectedProject?.id || null}
+                onSelectProject={setSelectedProject}
+                className="p-2"
+              />
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Diagrams List */}
-          <div className="lg:col-span-2">
+          {/* Main Content */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-sm border p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-green-600">{stat.change}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Diagrams List */}
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900">Recent Diagrams</h2>
-                  <button
-                    onClick={fetchDiagrams}
-                    className="text-sm text-blue-600 hover:text-blue-800"
-                    disabled={loading}
-                  >
-                    {loading ? '🔄' : '↻'} Refresh
-                  </button>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {selectedProject ? `Diagrams in "${selectedProject.name}"` : 'Recent Diagrams'}
+                  </h2>
+                  <div className="flex items-center space-x-3">
+                    {selectedProject && (
+                      <button
+                        onClick={() => setSelectedProject(null)}
+                        className="text-sm text-gray-600 hover:text-gray-800"
+                      >
+                        Show All
+                      </button>
+                    )}
+                    <button
+                      onClick={fetchDiagrams}
+                      className="text-sm text-blue-600 hover:text-blue-800"
+                      disabled={loading}
+                    >
+                      {loading ? '🔄' : '↻'} Refresh
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -129,8 +216,13 @@ export default function DashboardPage() {
                 </div>
               ) : diagrams.length === 0 ? (
                 <div className="px-6 py-8 text-center">
-                  <p className="text-gray-500 mb-2">📊 No diagrams yet</p>
-                  <p className="text-sm text-gray-400 mb-4">Create your first diagram or have an AI agent create one for you!</p>
+                  <p className="text-gray-500 mb-2">📊 No diagrams found</p>
+                  <p className="text-sm text-gray-400 mb-4">
+                    {selectedProject 
+                      ? `No diagrams in "${selectedProject.name}" yet.`
+                      : 'Create your first diagram or have an AI agent create one for you!'
+                    }
+                  </p>
                   <Link href="/editor" className="btn-primary inline-block">
                     Create Diagram
                   </Link>
@@ -141,11 +233,27 @@ export default function DashboardPage() {
                     <div key={diagram.id} className="px-6 py-4 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h3 className="text-sm font-medium text-gray-900">{diagram.title}</h3>
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h3 className="text-sm font-medium text-gray-900">{diagram.title}</h3>
+                            {diagram.isFavorite && (
+                              <span className="text-yellow-500 text-sm">⭐</span>
+                            )}
+                          </div>
                           {diagram.description && (
                             <p className="text-xs text-gray-600 mt-1">{diagram.description}</p>
                           )}
                           <div className="flex items-center space-x-4 mt-1">
+                            {diagram.project && !selectedProject && (
+                              <div className="flex items-center space-x-1">
+                                {diagram.project.color && (
+                                  <div 
+                                    className="w-2 h-2 rounded-full"
+                                    style={{ backgroundColor: diagram.project.color }}
+                                  />
+                                )}
+                                <span className="text-xs text-gray-500">{diagram.project.name}</span>
+                              </div>
+                            )}
                             <span className="text-xs text-gray-500 capitalize">
                               {diagram.format === 'reactflow' ? '🎨 Visual' : '📝 Mermaid'}
                             </span>
@@ -186,81 +294,15 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-
-          {/* Quick Actions & System Status */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <Link href="/editor" className="block w-full btn-primary text-center">
-                  🎨 Create Diagram
-                </Link>
-                <button className="block w-full btn-secondary">
-                  📤 Import Mermaid
-                </button>
-                <button className="block w-full btn-secondary">
-                  👥 Invite Collaborator
-                </button>
-                <button className="block w-full btn-secondary">
-                  📊 View Analytics
-                </button>
-              </div>
-            </div>
-
-            {/* System Status */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Application</span>
-                  <span className="status-indicator status-success text-xs">Online</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Database</span>
-                  <span className="status-indicator status-success text-xs">Connected</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">AI Services</span>
-                  <span className="status-indicator status-warning text-xs">Setup Required</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Cache</span>
-                  <span className="status-indicator status-success text-xs">Active</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start space-x-2">
-                  <span className="text-blue-600">🎨</span>
-                  <div>
-                    <p className="text-gray-900">Created new diagram</p>
-                    <p className="text-gray-500 text-xs">2 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-600">✅</span>
-                  <div>
-                    <p className="text-gray-900">Published diagram</p>
-                    <p className="text-gray-500 text-xs">1 day ago</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-purple-600">🤖</span>
-                  <div>
-                    <p className="text-gray-900">AI generated flowchart</p>
-                    <p className="text-gray-500 text-xs">3 days ago</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* Project Form Modal */}
+      <ProjectForm
+        isOpen={showProjectForm}
+        onClose={() => setShowProjectForm(false)}
+        onSubmit={handleCreateProject}
+      />
     </div>
   )
 }

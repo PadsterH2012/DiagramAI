@@ -26,18 +26,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Get diagrams for the default user or all public diagrams
-    // In production, this would filter by authenticated user ID
-    const diagrams = await prisma.diagram.findMany({
-      where: {
-        OR: [
-          { isPublic: true },
-          {
-            user: {
-              email: 'default@diagramai.dev'
-            }
+    const { project_id, favorites, search, tags } = req.query
+
+    // Build where clause
+    const whereClause: any = {
+      OR: [
+        { isPublic: true },
+        {
+          user: {
+            email: 'default@diagramai.dev'
           }
-        ]
+        }
+      ]
+    }
+
+    // Add project filter
+    if (project_id && typeof project_id === 'string') {
+      whereClause.projectId = project_id
+    }
+
+    // Add favorites filter
+    if (favorites === 'true') {
+      whereClause.isFavorite = true
+    }
+
+    // Add search filter
+    if (search && typeof search === 'string') {
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    // Add tags filter
+    if (tags && typeof tags === 'string') {
+      const tagArray = tags.split(',').map(tag => tag.trim()).filter(Boolean)
+      if (tagArray.length > 0) {
+        whereClause.tags = {
+          hasSome: tagArray
+        }
+      }
+    }
+
+    const diagrams = await prisma.diagram.findMany({
+      where: whereClause,
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true,
+            color: true
+          }
+        }
       },
       orderBy: { updatedAt: 'desc' },
       take: 20,
@@ -48,9 +88,12 @@ async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
         content: true,
         format: true,
         tags: true,
+        isFavorite: true,
         isPublic: true,
+        project: true,
         createdAt: true,
         updatedAt: true,
+        lastAccessedAt: true,
       }
     })
 
@@ -75,7 +118,7 @@ async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
 
 async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { title, description, content, format, tags, isPublic } = req.body
+    const { title, description, content, format, tags, isPublic, projectId, isFavorite } = req.body
 
     // Validate required fields
     if (!title || !content || !format) {
@@ -106,9 +149,28 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
       })
     }
 
+    // Validate project exists if provided
+    let validatedProjectId = null
+    if (projectId) {
+      const project = await prisma.project.findFirst({
+        where: {
+          id: projectId,
+          userId: defaultUser.id
+        }
+      })
+      if (!project) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'Invalid project ID or project does not belong to user' }
+        })
+      }
+      validatedProjectId = projectId
+    }
+
     const diagram = await prisma.diagram.create({
       data: {
         userId: defaultUser.id,
+        projectId: validatedProjectId,
         title,
         description: description || null,
         content,
@@ -116,6 +178,16 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
         contentHash,
         tags: tags || [],
         isPublic: isPublic || false,
+        isFavorite: isFavorite || false,
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true,
+            color: true
+          }
+        }
       },
       select: {
         id: true,
@@ -124,9 +196,12 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
         content: true,
         format: true,
         tags: true,
+        isFavorite: true,
         isPublic: true,
+        project: true,
         createdAt: true,
         updatedAt: true,
+        lastAccessedAt: true,
       }
     })
 
@@ -141,7 +216,7 @@ async function createDiagram(req: NextApiRequest, res: NextApiResponse) {
     if (error instanceof Error && error.message.includes('Foreign key constraint')) {
       return res.status(400).json({
         success: false,
-        error: { message: 'Invalid user reference' }
+        error: { message: 'Invalid user or project reference' }
       })
     }
 

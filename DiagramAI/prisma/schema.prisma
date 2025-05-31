@@ -34,6 +34,7 @@ model User {
   profile                UserProfile?
   sessions               UserSession[]
   passwordResetTokens    PasswordResetToken[]
+  projects               Project[]
   diagrams               Diagram[]
   diagramVersions        DiagramVersion[]
   collaboratorInvitations DiagramCollaborator[] @relation("InvitedBy")
@@ -115,19 +116,44 @@ model ApplicationSetting {
 }
 
 // ============================================================================
-// DIAGRAM MODELS (from db_lld_02.md)
+// PROJECT MODELS (Priority 2: Project Names & Diagram Titles)
+// ============================================================================
+
+model Project {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?
+  color       String?   @db.VarChar(7) // Hex color for project identification
+  userId      String    @map("user_id") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diagrams Diagram[]
+
+  @@unique([name, userId])
+  @@index([userId])
+  @@index([name])
+  @@map("projects")
+}
+
+// ============================================================================
+// DIAGRAM MODELS (from db_lld_02.md - Enhanced for Project Organization)
 // ============================================================================
 
 model Diagram {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   uuid             String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid // MCP agent access UUID
   userId           String    @map("user_id") @db.Uuid
+  projectId        String?   @map("project_id") @db.Uuid // Project organization
   title            String    @db.VarChar(255)
   description      String?
   content          Json
   format           String    @db.VarChar(20)
   contentHash      String    @map("content_hash") @db.VarChar(64)
   tags             String[]  @default([])
+  isFavorite       Boolean   @default(false) @map("is_favorite") // User favorites
   isPublic         Boolean   @default(false) @map("is_public")
   isTemplate       Boolean   @default(false) @map("is_template")
   templateCategory String?   @map("template_category") @db.VarChar(50)
@@ -141,11 +167,16 @@ model Diagram {
 
   // Relations
   user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project         Project?              @relation(fields: [projectId], references: [id], onDelete: SetNull)
   versions        DiagramVersion[]
   collaborators   DiagramCollaborator[]
   comments        DiagramComment[]
   agentOperations AgentOperation[]      // MCP agent operations audit
 
+  @@index([projectId])
+  @@index([title])
+  @@index([tags])
+  @@index([userId, projectId])
   @@map("diagrams")
 }
 
