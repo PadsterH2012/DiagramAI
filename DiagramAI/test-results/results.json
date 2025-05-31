@@ -11,7 +11,7 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 1
+      "actualWorkers": 4
     },
     "preserveOutput": "always",
     "reporter": [
@@ -43,7 +43,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "chromium",
         "name": "chromium",
@@ -68,6 +68,1248 @@
     }
   },
   "suites": [
+    {
+      "title": "debug-mermaid-test.spec.ts",
+      "file": "debug-mermaid-test.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Debug Mermaid Test",
+          "file": "debug-mermaid-test.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should test Mermaid rendering in isolation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4001,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Testing debug Mermaid page...\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Starting Mermaid render\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Container found: JSHandle@node\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Container in DOM: true\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Container dimensions: 800 x 500\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Mermaid div created and appended\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Mermaid div dimensions: 600 x 400\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Mermaid div in DOM: true\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Dimensions OK, calling mermaid.init\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 DEBUG: Mermaid init SUCCESS!\n"
+                        },
+                        {
+                          "text": "Page title: Debug Mermaid Page\n"
+                        },
+                        {
+                          "text": "Blue container visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Green mermaid div visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "SVG element visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Screenshot saved\n"
+                        },
+                        {
+                          "text": "\n=== BROWSER CONSOLE LOGS ===\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "[log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Starting Mermaid render\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Container found: JSHandle@node\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Container in DOM: true\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Container dimensions: 800 x 500\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Mermaid div created and appended\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Mermaid div dimensions: 600 x 400\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Mermaid div in DOM: true\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Dimensions OK, calling mermaid.init\n"
+                        },
+                        {
+                          "text": "[log] 🔧 DEBUG: Mermaid init SUCCESS!\n"
+                        },
+                        {
+                          "text": "\n=== BROWSER ERRORS ===\n"
+                        },
+                        {
+                          "text": "No browser errors detected\n"
+                        },
+                        {
+                          "text": "\n=== DEBUG ANALYSIS ===\n"
+                        },
+                        {
+                          "text": "Container found: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Container in DOM: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dimensions OK: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Mermaid success: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "MermaidService logs: \u001b[33mtrue\u001b[39m\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:58.416Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e2aba973dc70dc5a6152-a8ce68579a2a8f4b314b",
+              "file": "debug-mermaid-test.spec.ts",
+              "line": 4,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "diagram-editor.spec.ts",
+      "file": "diagram-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Diagram Editor",
+          "file": "diagram-editor.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load the editor page successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 529,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:58.404Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-7d02562a0e05c78765f1",
+              "file": "diagram-editor.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "should have both Visual and Mermaid editor tabs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 677,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:58.392Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-46f612736c492f27255a",
+              "file": "diagram-editor.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "should display React Flow visual editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1091,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:58.400Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-21d7c5d1a8e25966c068",
+              "file": "diagram-editor.spec.ts",
+              "line": 32,
+              "column": 7
+            },
+            {
+              "title": "should have interactive node palette",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 957,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:59.085Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-d4e169c81df25c88f31b",
+              "file": "diagram-editor.spec.ts",
+              "line": 58,
+              "column": 7
+            },
+            {
+              "title": "should display Mermaid text editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 403,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:59.201Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-1c4fcadf5d08f9d72896",
+              "file": "diagram-editor.spec.ts",
+              "line": 81,
+              "column": 7
+            },
+            {
+              "title": "should allow text input in Mermaid editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 464,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:59.614Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-0a70859b5213b6742066",
+              "file": "diagram-editor.spec.ts",
+              "line": 92,
+              "column": 7
+            },
+            {
+              "title": "should be responsive on different screen sizes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 560,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:33:59.615Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-d155a14f6d9e8ec297db",
+              "file": "diagram-editor.spec.ts",
+              "line": 113,
+              "column": 7
+            },
+            {
+              "title": "should handle keyboard navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 422,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.052Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-97255acb3ade39f633c8",
+              "file": "diagram-editor.spec.ts",
+              "line": 127,
+              "column": 7
+            },
+            {
+              "title": "should load without JavaScript errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.084Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3fd4bd8771c947d63432-0e779ecd38dfd5e9ee18",
+              "file": "diagram-editor.spec.ts",
+              "line": 136,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "homepage.spec.ts",
+      "file": "homepage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Homepage",
+          "file": "homepage.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load the homepage successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 324,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.187Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-9fed3458574e5d2041f0",
+              "file": "homepage.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "should have working navigation links",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 598,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.483Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-b0abebc5dd4e01f4e739",
+              "file": "homepage.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "should be responsive on mobile devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 273,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.518Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-44a7cc4315b65ee17151",
+              "file": "homepage.spec.ts",
+              "line": 36,
+              "column": 7
+            },
+            {
+              "title": "should have proper meta tags for SEO",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 344,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.796Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-62c535d95bd72c081638",
+              "file": "homepage.spec.ts",
+              "line": 49,
+              "column": 7
+            },
+            {
+              "title": "should load without console errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2405,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:00.966Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-93a67b0c9725cfbdf9a1",
+              "file": "homepage.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "should have accessible content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 332,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:01.087Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-b1c11636485c8fa1831b",
+              "file": "homepage.spec.ts",
+              "line": 85,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "mermaid-rendering.spec.ts",
+      "file": "mermaid-rendering.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Mermaid Diagram Rendering",
+          "file": "mermaid-rendering.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should render simple Mermaid diagram correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3942,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Testing simple Mermaid diagram...\n"
+                        },
+                        {
+                          "text": "⚠️ Diagram not found - this is expected in test environment\n"
+                        },
+                        {
+                          "text": "Error message: ❌ Failed to fetch diagram\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:01.155Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d1715013457273e708-9c0ba5f9165d39415bf6",
+              "file": "mermaid-rendering.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "should render complex Mermaid diagram correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4946,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Testing complex Mermaid diagram...\n"
+                        },
+                        {
+                          "text": "⚠️ Diagram not found - this is expected in test environment\n"
+                        },
+                        {
+                          "text": "Error message: ❌ Failed to fetch diagram\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:01.428Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d1715013457273e708-0b4d16e2090b354c1ebd",
+              "file": "mermaid-rendering.spec.ts",
+              "line": 84,
+              "column": 7
+            },
+            {
+              "title": "should capture and analyze specific Mermaid errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6169,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Capturing detailed browser console logs and errors...\n"
+                        },
+                        {
+                          "text": "🔍 MERMAID LOG: [log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "🔍 MERMAID LOG: [log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "🔍 MERMAID LOG: [log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "Browser console: [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔌 Connecting to WebSocket: ws://localhost:3000/ws/diagrams\n"
+                        },
+                        {
+                          "text": "\n=== UI ERROR INDICATORS ===\n"
+                        },
+                        {
+                          "text": "Rendering Error visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Cannot render Mermaid visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Zero dimensions error visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "\n=== MERMAID-SPECIFIC LOGS ===\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "[log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "\n=== CRITICAL ERRORS ===\n"
+                        },
+                        {
+                          "text": "\n=== ALL BROWSER CONSOLE LOGS ===\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "[log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "[error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)\n"
+                        },
+                        {
+                          "text": "[log] 🔌 Connecting to WebSocket: ws://localhost:3000/ws/diagrams\n"
+                        },
+                        {
+                          "text": "\n=== BROWSER ERRORS ===\n"
+                        },
+                        {
+                          "text": "No browser errors detected\n"
+                        },
+                        {
+                          "text": "\n=== ERROR ANALYSIS ===\n"
+                        },
+                        {
+                          "text": "Has zero dimensions error: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Has element not in DOM error: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Has critical error: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Has rendering error: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Screenshot saved to tests/screenshots/mermaid-error-analysis.png\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:02.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d1715013457273e708-f59a853fcb70dec6eee2",
+              "file": "mermaid-rendering.spec.ts",
+              "line": 166,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "performance.spec.ts",
+      "file": "performance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Performance Tests",
+          "file": "performance.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load homepage within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3411,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Performance metrics: { domContentLoaded: \u001b[33m0\u001b[39m, loadComplete: \u001b[33m0\u001b[39m }\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:03.381Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-26c14b6bbca15e5beef5",
+              "file": "performance.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "should load editor page within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 674,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:05.110Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-b02cd5be7a9038a1a0f9",
+              "file": "performance.spec.ts",
+              "line": 69,
+              "column": 7
+            },
+            {
+              "title": "should handle large diagrams efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1458,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:05.789Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-e6e1d71446efefbd1450",
+              "file": "performance.spec.ts",
+              "line": 85,
+              "column": 7
+            },
+            {
+              "title": "should maintain responsiveness during AI generation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3258,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:06.381Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-2e68655d84bab8522b13",
+              "file": "performance.spec.ts",
+              "line": 116,
+              "column": 7
+            },
+            {
+              "title": "should handle rapid user interactions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:06.797Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-d68b9c54ce87ddac7677",
+              "file": "performance.spec.ts",
+              "line": 157,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance on mobile devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 763,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:07.253Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-d894e5b4ab7a43c1087c",
+              "file": "performance.spec.ts",
+              "line": 181,
+              "column": 7
+            },
+            {
+              "title": "should handle memory efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3661,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:08.021Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-ef767a8c07463a5a6745",
+              "file": "performance.spec.ts",
+              "line": 204,
+              "column": 7
+            },
+            {
+              "title": "should handle concurrent users simulation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 695,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:08.751Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-fcd1f67a9f1a6c7f45f5",
+              "file": "performance.spec.ts",
+              "line": 244,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
     {
       "title": "security.spec.ts",
       "file": "security.spec.ts",
@@ -94,15 +1336,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 3502,
+                      "duration": 3540,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-05-31T01:36:27.215Z",
+                      "startTime": "2025-05-31T21:34:09.062Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -114,6 +1356,456 @@
               "file": "security.spec.ts",
               "line": 13,
               "column": 7
+            },
+            {
+              "title": "should prevent XSS in Mermaid editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1519,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:09.457Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-f8a8bf2b4dfcc1bf9f28",
+              "file": "security.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "should have proper Content Security Policy headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 302,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Security header x-frame-options: DENY\n"
+                        },
+                        {
+                          "text": "Security header x-content-type-options: nosniff\n"
+                        },
+                        {
+                          "text": "Security header referrer-policy: strict-origin-when-cross-origin\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:09.647Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-d538f85a8eb7fc5151be",
+              "file": "security.spec.ts",
+              "line": 90,
+              "column": 7
+            },
+            {
+              "title": "should prevent clickjacking attacks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 252,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Can be framed: \u001b[33mtrue\u001b[39m\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:09.955Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-de0db3dcbf973a1c0d7e",
+              "file": "security.spec.ts",
+              "line": 116,
+              "column": 7
+            },
+            {
+              "title": "should sanitize user input in diagram labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1468,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:10.212Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-76262f1fffc0d735a619",
+              "file": "security.spec.ts",
+              "line": 133,
+              "column": 7
+            },
+            {
+              "title": "should handle malformed input gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7645,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:10.981Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-2b8794f902fe7c697537",
+              "file": "security.spec.ts",
+              "line": 163,
+              "column": 7
+            },
+            {
+              "title": "should prevent CSRF attacks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 373,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "CSRF protection should be implemented at the API level\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:11.685Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-3350656940dd9582cfdc",
+              "file": "security.spec.ts",
+              "line": 208,
+              "column": 7
+            },
+            {
+              "title": "should handle file upload security",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 386,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "No file upload inputs found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:11.690Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-6b1182f68ad7638b0e92",
+              "file": "security.spec.ts",
+              "line": 222,
+              "column": 7
+            },
+            {
+              "title": "should validate data integrity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 494,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:12.063Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-038acd8d11730d928087",
+              "file": "security.spec.ts",
+              "line": 253,
+              "column": 7
+            },
+            {
+              "title": "should handle authentication securely",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 291,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Authentication security checks completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:12.081Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7e9410bcc1ef00e9656-eb1c961b62001978b669",
+              "file": "security.spec.ts",
+              "line": 277,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "simple-mermaid-test.spec.ts",
+      "file": "simple-mermaid-test.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Simple Mermaid Test",
+          "file": "simple-mermaid-test.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should render Mermaid on test page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3805,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Testing simple Mermaid test page...\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "Browser console: [log] Test page: Rendering Mermaid diagram\n"
+                        },
+                        {
+                          "text": "Browser console: [log] Test page: Mermaid div dimensions: 796 x 400\n"
+                        },
+                        {
+                          "text": "Browser console: [log] Test page: Mermaid init completed\n"
+                        },
+                        {
+                          "text": "Page title: Mermaid Test Page\n"
+                        },
+                        {
+                          "text": "SVG element visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "SVG content length: \u001b[33m9089\u001b[39m\n"
+                        },
+                        {
+                          "text": "SVG content preview: <style>#mermaid-1748727253044{font-family:\"trebuchet ms\",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoff...\n"
+                        },
+                        {
+                          "text": "Error message visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Screenshot saved\n"
+                        },
+                        {
+                          "text": "\n=== BROWSER CONSOLE LOGS ===\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initializing Mermaid globally...\n"
+                        },
+                        {
+                          "text": "[log] 🔧 MermaidService: Initialization complete!\n"
+                        },
+                        {
+                          "text": "[log] 🚀 Mermaid pre-loaded successfully!\n"
+                        },
+                        {
+                          "text": "[log] Test page: Rendering Mermaid diagram\n"
+                        },
+                        {
+                          "text": "[log] Test page: Mermaid div dimensions: 796 x 400\n"
+                        },
+                        {
+                          "text": "[log] Test page: Mermaid init completed\n"
+                        },
+                        {
+                          "text": "\n=== BROWSER ERRORS ===\n"
+                        },
+                        {
+                          "text": "No browser errors detected\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T21:34:12.378Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "57036bd73110089eed86-3ecea302f5954856c625",
+              "file": "simple-mermaid-test.spec.ts",
+              "line": 4,
+              "column": 7
             }
           ]
         }
@@ -122,9 +1814,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-05-31T01:36:25.878Z",
-    "duration": 4980.545999999999,
-    "expected": 1,
+    "startTime": "2025-05-31T21:33:57.002Z",
+    "duration": 21682.525999999998,
+    "expected": 38,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

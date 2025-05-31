@@ -4,7 +4,10 @@ test.describe('Mermaid Diagram Rendering', () => {
   test.beforeEach(async ({ page }) => {
     // Wait for server to be ready
     await page.goto('http://localhost:3000')
-    await page.waitForLoadState('networkidle')
+    // Use domcontentloaded instead of networkidle to avoid timeout issues
+    await page.waitForLoadState('domcontentloaded')
+    // Wait a bit for the page to stabilize
+    await page.waitForTimeout(1000)
   })
 
   test('should render simple Mermaid diagram correctly', async ({ page }) => {

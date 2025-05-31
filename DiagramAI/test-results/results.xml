@@ -1,6 +1,243 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="4.9805459999999995">
-<testsuite name="security.spec.ts" timestamp="2025-05-31T01:36:26.358Z" hostname="chromium" tests="1" failures="0" skipped="0" time="3.502" errors="0">
-<testcase name="Security Tests › should prevent XSS attacks in AI input" classname="security.spec.ts" time="3.502">
+<testsuites id="" name="" tests="38" failures="0" skipped="0" errors="0" time="21.682526">
+<testsuite name="debug-mermaid-test.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="1" failures="0" skipped="0" time="4.001" errors="0">
+<testcase name="Debug Mermaid Test › should test Mermaid rendering in isolation" classname="debug-mermaid-test.spec.ts" time="4.001">
+<system-out>
+<![CDATA[Testing debug Mermaid page...
+Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...
+Browser console: [log] 🔧 MermaidService: Initialization complete!
+Browser console: [log] 🚀 Mermaid pre-loaded successfully!
+Browser console: [log] 🔧 DEBUG: Starting Mermaid render
+Browser console: [log] 🔧 DEBUG: Container found: JSHandle@node
+Browser console: [log] 🔧 DEBUG: Container in DOM: true
+Browser console: [log] 🔧 DEBUG: Container dimensions: 800 x 500
+Browser console: [log] 🔧 DEBUG: Mermaid div created and appended
+Browser console: [log] 🔧 DEBUG: Mermaid div dimensions: 600 x 400
+Browser console: [log] 🔧 DEBUG: Mermaid div in DOM: true
+Browser console: [log] 🔧 DEBUG: Dimensions OK, calling mermaid.init
+Browser console: [log] 🔧 DEBUG: Mermaid init SUCCESS!
+Page title: Debug Mermaid Page
+Blue container visible: [33mfalse[39m
+Green mermaid div visible: [33mfalse[39m
+SVG element visible: [33mtrue[39m
+Screenshot saved
+
+=== BROWSER CONSOLE LOGS ===
+[log] 🔧 MermaidService: Initializing Mermaid globally...
+[log] 🔧 MermaidService: Initialization complete!
+[log] 🚀 Mermaid pre-loaded successfully!
+[log] 🔧 DEBUG: Starting Mermaid render
+[log] 🔧 DEBUG: Container found: JSHandle@node
+[log] 🔧 DEBUG: Container in DOM: true
+[log] 🔧 DEBUG: Container dimensions: 800 x 500
+[log] 🔧 DEBUG: Mermaid div created and appended
+[log] 🔧 DEBUG: Mermaid div dimensions: 600 x 400
+[log] 🔧 DEBUG: Mermaid div in DOM: true
+[log] 🔧 DEBUG: Dimensions OK, calling mermaid.init
+[log] 🔧 DEBUG: Mermaid init SUCCESS!
+
+=== BROWSER ERRORS ===
+No browser errors detected
+
+=== DEBUG ANALYSIS ===
+Container found: [33mtrue[39m
+Container in DOM: [33mtrue[39m
+Dimensions OK: [33mtrue[39m
+Mermaid success: [33mtrue[39m
+MermaidService logs: [33mtrue[39m
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="diagram-editor.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="9" failures="0" skipped="0" time="5.967" errors="0">
+<testcase name="Diagram Editor › should load the editor page successfully" classname="diagram-editor.spec.ts" time="0.529">
+</testcase>
+<testcase name="Diagram Editor › should have both Visual and Mermaid editor tabs" classname="diagram-editor.spec.ts" time="0.677">
+</testcase>
+<testcase name="Diagram Editor › should display React Flow visual editor" classname="diagram-editor.spec.ts" time="1.091">
+</testcase>
+<testcase name="Diagram Editor › should have interactive node palette" classname="diagram-editor.spec.ts" time="0.957">
+</testcase>
+<testcase name="Diagram Editor › should display Mermaid text editor" classname="diagram-editor.spec.ts" time="0.403">
+</testcase>
+<testcase name="Diagram Editor › should allow text input in Mermaid editor" classname="diagram-editor.spec.ts" time="0.464">
+</testcase>
+<testcase name="Diagram Editor › should be responsive on different screen sizes" classname="diagram-editor.spec.ts" time="0.56">
+</testcase>
+<testcase name="Diagram Editor › should handle keyboard navigation" classname="diagram-editor.spec.ts" time="0.422">
+</testcase>
+<testcase name="Diagram Editor › should load without JavaScript errors" classname="diagram-editor.spec.ts" time="0.864">
+</testcase>
+</testsuite>
+<testsuite name="homepage.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="6" failures="0" skipped="0" time="4.276" errors="0">
+<testcase name="Homepage › should load the homepage successfully" classname="homepage.spec.ts" time="0.324">
+</testcase>
+<testcase name="Homepage › should have working navigation links" classname="homepage.spec.ts" time="0.598">
+</testcase>
+<testcase name="Homepage › should be responsive on mobile devices" classname="homepage.spec.ts" time="0.273">
+</testcase>
+<testcase name="Homepage › should have proper meta tags for SEO" classname="homepage.spec.ts" time="0.344">
+</testcase>
+<testcase name="Homepage › should load without console errors" classname="homepage.spec.ts" time="2.405">
+</testcase>
+<testcase name="Homepage › should have accessible content" classname="homepage.spec.ts" time="0.332">
+</testcase>
+</testsuite>
+<testsuite name="mermaid-rendering.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="3" failures="0" skipped="0" time="15.057" errors="0">
+<testcase name="Mermaid Diagram Rendering › should render simple Mermaid diagram correctly" classname="mermaid-rendering.spec.ts" time="3.942">
+<system-out>
+<![CDATA[Testing simple Mermaid diagram...
+⚠️ Diagram not found - this is expected in test environment
+Error message: ❌ Failed to fetch diagram
+]]>
+</system-out>
+</testcase>
+<testcase name="Mermaid Diagram Rendering › should render complex Mermaid diagram correctly" classname="mermaid-rendering.spec.ts" time="4.946">
+<system-out>
+<![CDATA[Testing complex Mermaid diagram...
+⚠️ Diagram not found - this is expected in test environment
+Error message: ❌ Failed to fetch diagram
+]]>
+</system-out>
+</testcase>
+<testcase name="Mermaid Diagram Rendering › should capture and analyze specific Mermaid errors" classname="mermaid-rendering.spec.ts" time="6.169">
+<system-out>
+<![CDATA[Capturing detailed browser console logs and errors...
+🔍 MERMAID LOG: [log] 🔧 MermaidService: Initializing Mermaid globally...
+Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...
+🔍 MERMAID LOG: [log] 🔧 MermaidService: Initialization complete!
+Browser console: [log] 🔧 MermaidService: Initialization complete!
+🔍 MERMAID LOG: [log] 🚀 Mermaid pre-loaded successfully!
+Browser console: [log] 🚀 Mermaid pre-loaded successfully!
+Browser console: [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+Browser console: [log] 🔌 Connecting to WebSocket: ws://localhost:3000/ws/diagrams
+
+=== UI ERROR INDICATORS ===
+Rendering Error visible: [33mfalse[39m
+Cannot render Mermaid visible: [33mfalse[39m
+Zero dimensions error visible: [33mfalse[39m
+
+=== MERMAID-SPECIFIC LOGS ===
+[log] 🔧 MermaidService: Initializing Mermaid globally...
+[log] 🔧 MermaidService: Initialization complete!
+[log] 🚀 Mermaid pre-loaded successfully!
+
+=== CRITICAL ERRORS ===
+
+=== ALL BROWSER CONSOLE LOGS ===
+[log] 🔧 MermaidService: Initializing Mermaid globally...
+[log] 🔧 MermaidService: Initialization complete!
+[log] 🚀 Mermaid pre-loaded successfully!
+[error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[log] 🔌 Connecting to WebSocket: ws://localhost:3000/ws/diagrams
+
+=== BROWSER ERRORS ===
+No browser errors detected
+
+=== ERROR ANALYSIS ===
+Has zero dimensions error: [33mfalse[39m
+Has element not in DOM error: [33mfalse[39m
+Has critical error: [33mfalse[39m
+Has rendering error: [33mfalse[39m
+Screenshot saved to tests/screenshots/mermaid-error-analysis.png
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="8" failures="0" skipped="0" time="16.176" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="3.411">
+<system-out>
+<![CDATA[Performance metrics: { domContentLoaded: [33m0[39m, loadComplete: [33m0[39m }
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should load editor page within performance budget" classname="performance.spec.ts" time="0.674">
+</testcase>
+<testcase name="Performance Tests › should handle large diagrams efficiently" classname="performance.spec.ts" time="1.458">
+</testcase>
+<testcase name="Performance Tests › should maintain responsiveness during AI generation" classname="performance.spec.ts" time="3.258">
+</testcase>
+<testcase name="Performance Tests › should handle rapid user interactions" classname="performance.spec.ts" time="2.256">
+</testcase>
+<testcase name="Performance Tests › should maintain performance on mobile devices" classname="performance.spec.ts" time="0.763">
+</testcase>
+<testcase name="Performance Tests › should handle memory efficiently" classname="performance.spec.ts" time="3.661">
+</testcase>
+<testcase name="Performance Tests › should handle concurrent users simulation" classname="performance.spec.ts" time="0.695">
+</testcase>
+</testsuite>
+<testsuite name="security.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="10" failures="0" skipped="0" time="16.27" errors="0">
+<testcase name="Security Tests › should prevent XSS attacks in AI input" classname="security.spec.ts" time="3.54">
+</testcase>
+<testcase name="Security Tests › should prevent XSS in Mermaid editor" classname="security.spec.ts" time="1.519">
+</testcase>
+<testcase name="Security Tests › should have proper Content Security Policy headers" classname="security.spec.ts" time="0.302">
+<system-out>
+<![CDATA[Security header x-frame-options: DENY
+Security header x-content-type-options: nosniff
+Security header referrer-policy: strict-origin-when-cross-origin
+]]>
+</system-out>
+</testcase>
+<testcase name="Security Tests › should prevent clickjacking attacks" classname="security.spec.ts" time="0.252">
+<system-out>
+<![CDATA[Can be framed: [33mtrue[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="Security Tests › should sanitize user input in diagram labels" classname="security.spec.ts" time="1.468">
+</testcase>
+<testcase name="Security Tests › should handle malformed input gracefully" classname="security.spec.ts" time="7.645">
+</testcase>
+<testcase name="Security Tests › should prevent CSRF attacks" classname="security.spec.ts" time="0.373">
+<system-out>
+<![CDATA[CSRF protection should be implemented at the API level
+]]>
+</system-out>
+</testcase>
+<testcase name="Security Tests › should handle file upload security" classname="security.spec.ts" time="0.386">
+<system-out>
+<![CDATA[No file upload inputs found
+]]>
+</system-out>
+</testcase>
+<testcase name="Security Tests › should validate data integrity" classname="security.spec.ts" time="0.494">
+</testcase>
+<testcase name="Security Tests › should handle authentication securely" classname="security.spec.ts" time="0.291">
+<system-out>
+<![CDATA[Authentication security checks completed
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="simple-mermaid-test.spec.ts" timestamp="2025-05-31T21:33:57.374Z" hostname="chromium" tests="1" failures="0" skipped="0" time="3.805" errors="0">
+<testcase name="Simple Mermaid Test › should render Mermaid on test page" classname="simple-mermaid-test.spec.ts" time="3.805">
+<system-out>
+<![CDATA[Testing simple Mermaid test page...
+Browser console: [log] 🔧 MermaidService: Initializing Mermaid globally...
+Browser console: [log] 🔧 MermaidService: Initialization complete!
+Browser console: [log] 🚀 Mermaid pre-loaded successfully!
+Browser console: [log] Test page: Rendering Mermaid diagram
+Browser console: [log] Test page: Mermaid div dimensions: 796 x 400
+Browser console: [log] Test page: Mermaid init completed
+Page title: Mermaid Test Page
+SVG element visible: [33mtrue[39m
+SVG content length: [33m9089[39m
+SVG content preview: <style>#mermaid-1748727253044{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoff...
+Error message visible: [33mfalse[39m
+Screenshot saved
+
+=== BROWSER CONSOLE LOGS ===
+[log] 🔧 MermaidService: Initializing Mermaid globally...
+[log] 🔧 MermaidService: Initialization complete!
+[log] 🚀 Mermaid pre-loaded successfully!
+[log] Test page: Rendering Mermaid diagram
+[log] Test page: Mermaid div dimensions: 796 x 400
+[log] Test page: Mermaid init completed
+
+=== BROWSER ERRORS ===
+No browser errors detected
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>

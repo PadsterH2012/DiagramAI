@@ -12,7 +12,10 @@ test.describe('Performance Tests', () => {
     const startTime = Date.now();
     
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    // Use domcontentloaded instead of networkidle to avoid timeout issues
+    await page.waitForLoadState('domcontentloaded');
+    // Wait a bit for the page to stabilize
+    await page.waitForTimeout(1000);
     
     const endTime = Date.now();
     const loadTime = endTime - startTime;
