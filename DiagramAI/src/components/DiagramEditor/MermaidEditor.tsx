@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { SlideOutMenu } from './SlideOutMenu'
 
 interface MermaidEditorProps {
   initialSyntax?: string
@@ -214,12 +215,19 @@ export const MermaidEditor: React.FC<MermaidEditorProps> = ({
   }
 
   return (
-    <div ref={containerRef} className="flex h-full mermaid-editor relative">
-      {/* Editor Panel */}
-      <div
-        className="border-r border-gray-200 flex flex-col"
-        style={{ width: `${leftPanelWidth}%` }}
-      >
+    <div className="flex h-full bg-white relative">
+      {/* Slide-out Menu */}
+      {!readOnly && (
+        <SlideOutMenu />
+      )}
+
+      {/* Main Editor Area */}
+      <div ref={containerRef} className="flex h-full mermaid-editor relative flex-1">
+        {/* Editor Panel */}
+        <div
+          className="border-r border-gray-200 flex flex-col"
+          style={{ width: `${leftPanelWidth}%` }}
+        >
         <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center justify-between px-3 flex-shrink-0">
           <span className="text-sm font-medium text-gray-700">Mermaid Syntax</span>
           <div className="flex items-center space-x-1">
@@ -348,6 +356,7 @@ sequenceDiagram
             <div ref={previewRef} className="w-full h-full flex items-center justify-center min-h-[400px]" />
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

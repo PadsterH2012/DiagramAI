@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { NodePalette } from './NodePalette'
 
 interface SlideOutMenuProps {
-  onNodeAdd: (nodeType: string, nodeData: any) => void
+  onNodeAdd?: (nodeType: string, nodeData: any) => void
 }
 
 export const SlideOutMenu: React.FC<SlideOutMenuProps> = ({ onNodeAdd }) => {
