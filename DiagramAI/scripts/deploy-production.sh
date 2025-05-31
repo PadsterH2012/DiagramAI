@@ -188,28 +188,54 @@ start_containers() {
     log_success "Containers started"
 }
 
-# Function to run database migrations
+# Function to check database state and handle migrations
 run_migrations() {
-    log_info "Running database migrations..."
+    log_info "Checking database state and running migrations..."
 
     # Wait a moment for containers to be fully ready
     sleep 10
 
-    # Run Prisma migrations
+    # Check if database has tables (baseline schema applied)
+    local has_tables=false
     if command_exists docker-compose; then
-        if docker-compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
-            log_success "Database migrations completed successfully"
-        else
-            log_warning "Migration failed, trying db push..."
-            docker-compose -f docker-compose.prod.yml exec -T app npx prisma db push --force-reset
+        if docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres -d diagramai_dev -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users';" | grep -q "1"; then
+            has_tables=true
         fi
     else
-        if docker compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
-            log_success "Database migrations completed successfully"
-        else
-            log_warning "Migration failed, trying db push..."
-            docker compose -f docker-compose.prod.yml exec -T app npx prisma db push --force-reset
+        if docker compose -f docker-compose.prod.yml exec -T db psql -U postgres -d diagramai_dev -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users';" | grep -q "1"; then
+            has_tables=true
         fi
+    fi
+
+    if [ "$has_tables" = true ]; then
+        log_info "Database has existing schema, running incremental migrations only..."
+
+        # Run Prisma migrations for existing database
+        if command_exists docker-compose; then
+            if docker-compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
+                log_success "Incremental migrations completed successfully"
+            else
+                log_warning "Migrations failed - database may be up to date"
+            fi
+        else
+            if docker compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
+                log_success "Incremental migrations completed successfully"
+            else
+                log_warning "Migrations failed - database may be up to date"
+            fi
+        fi
+    else
+        log_info "Fresh database detected, baseline schema should be applied by init-db.sql"
+        log_info "Generating Prisma client..."
+
+        # Generate Prisma client for fresh database
+        if command_exists docker-compose; then
+            docker-compose -f docker-compose.prod.yml exec -T app npx prisma generate
+        else
+            docker compose -f docker-compose.prod.yml exec -T app npx prisma generate
+        fi
+
+        log_success "Database initialization completed - baseline schema ready"
     fi
 }
 

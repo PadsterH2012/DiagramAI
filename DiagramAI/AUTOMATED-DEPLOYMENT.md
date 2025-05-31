@@ -46,8 +46,12 @@ The deployment script automatically:
 4. **🛑 Stop**: Gracefully stops existing containers
 5. **📦 Pull**: Downloads the latest Docker images
 6. **🚀 Start**: Starts the updated containers
-7. **❤️ Health Check**: Waits for services to become healthy
-8. **📊 Status**: Shows deployment status and access URLs
+7. **🗄️ Smart Database Handling**:
+   - **Fresh Install**: Applies complete baseline schema
+   - **Existing Database**: Runs only incremental migrations
+   - **Data Preservation**: Never deletes existing data
+8. **❤️ Health Check**: Waits for services to become healthy
+9. **📊 Status**: Shows deployment status and access URLs
 
 ## 📁 Files Downloaded
 
@@ -111,6 +115,37 @@ The script will:
 - Download the latest files
 - Update the deployment
 - Preserve your data
+
+## 🗄️ Database Strategy
+
+### **Baseline + Incremental Approach**
+
+The deployment uses a **production-ready database strategy**:
+
+#### **Fresh Installation:**
+1. **✅ Baseline Schema**: Complete working database structure applied via `init-db.sql`
+2. **✅ All Tables Created**: Users, diagrams, settings, and all related tables
+3. **✅ Indexes & Constraints**: Performance optimizations included
+4. **✅ Initial Data**: Default application settings inserted
+5. **✅ Ready to Use**: No additional migrations needed
+
+#### **Existing Database:**
+1. **✅ Data Preservation**: Existing data is never deleted
+2. **✅ Incremental Migrations**: Only new features/improvements applied
+3. **✅ Version Control**: Proper migration tracking
+4. **✅ Rollback Safe**: Changes can be reverted if needed
+
+#### **Safety Features:**
+- **🚫 No Force Reset**: Never uses `--force-reset` that deletes data
+- **🔍 Smart Detection**: Automatically detects fresh vs existing databases
+- **💾 Backup First**: Always creates backup before any changes
+- **🛡️ Fail Safe**: Stops deployment if critical errors occur
+
+### **Migration Flow:**
+```
+Fresh Database:     Empty → Baseline Schema → Ready
+Existing Database:  Current → Incremental Updates → Enhanced
+```
 
 ## 💾 Backup and Recovery
 
