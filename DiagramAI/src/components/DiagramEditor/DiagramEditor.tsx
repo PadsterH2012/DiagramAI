@@ -7,6 +7,7 @@ import { SlideOutMenu } from './SlideOutMenu'
 import { MovableChatbox } from './MovableChatbox'
 import { NodePropertiesPanel } from './NodePropertiesPanel'
 import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel'
+import { featureFlags } from '../../lib/featureFlags'
 
 interface DiagramEditorProps {
   initialNodes?: Node[]
@@ -302,16 +303,39 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
             <div className="flex items-center space-x-2">
               {/* AI Chat Action */}
               <div className="flex items-center space-x-1">
+                {featureFlags.aiChat && (
+                  <button
+                    onClick={() => setShowChatbox(!showChatbox)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      showChatbox
+                        ? 'bg-green-100 text-green-700 border border-green-200'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                    }`}
+                    title="AI Assistant"
+                  >
+                    🤖 AI Chat
+                  </button>
+                )}
                 <button
-                  onClick={() => setShowChatbox(!showChatbox)}
+                  onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    showChatbox
-                      ? 'bg-green-100 text-green-700 border border-green-200'
+                    showPropertiesPanel
+                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                   }`}
-                  title="AI Assistant"
                 >
-                  🤖 AI Chat
+                  🎨 Properties
+                </button>
+                <button
+                  onClick={() => setShowHelpPanel(!showHelpPanel)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    showHelpPanel
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  }`}
+                  title="Keyboard Shortcuts (? or F1)"
+                >
+                  ❓ Help
                 </button>
               </div>
 
@@ -381,10 +405,12 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
       />
 
       {/* Movable Chatbox */}
-      <MovableChatbox
-        isOpen={showChatbox}
-        onToggle={() => setShowChatbox(!showChatbox)}
-      />
+      {featureFlags.aiChat && (
+        <MovableChatbox
+          isOpen={showChatbox}
+          onToggle={() => setShowChatbox(!showChatbox)}
+        />
+      )}
     </div>
   )
 }
