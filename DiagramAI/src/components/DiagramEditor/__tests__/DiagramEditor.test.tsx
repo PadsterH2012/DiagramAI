@@ -115,10 +115,9 @@ describe('DiagramEditor', () => {
     it('should still show other toolbar buttons', () => {
       render(<DiagramEditor />)
       
-      expect(screen.getByText('📋 Copy')).toBeInTheDocument()
-      expect(screen.getByText('📄 Paste')).toBeInTheDocument()
-      expect(screen.getByText('🎨 Properties')).toBeInTheDocument()
       expect(screen.getByText('❓ Help')).toBeInTheDocument()
+      expect(screen.getByText('💾 Save Diagram')).toBeInTheDocument()
+      expect(screen.getByText('Reset Demo')).toBeInTheDocument()
     })
   })
 
@@ -136,11 +135,9 @@ describe('DiagramEditor', () => {
     it('should show default toolbar buttons', () => {
       render(<DiagramEditor />)
       
-      expect(screen.getByText('📋 Copy')).toBeInTheDocument()
-      expect(screen.getByText('📄 Paste')).toBeInTheDocument()
-      expect(screen.getByText('🗑️ Delete')).toBeInTheDocument()
-      expect(screen.getByText('🎨 Properties')).toBeInTheDocument()
       expect(screen.getByText('❓ Help')).toBeInTheDocument()
+      expect(screen.getByText('💾 Save Diagram')).toBeInTheDocument()
+      expect(screen.getByText('Reset Demo')).toBeInTheDocument()
     })
 
     it('should render main editor components', () => {
@@ -148,6 +145,13 @@ describe('DiagramEditor', () => {
       
       expect(screen.getByTestId('slide-out-menu')).toBeInTheDocument()
       expect(screen.getByTestId('react-flow-editor')).toBeInTheDocument()
+    })
+
+    it('should not have Properties button in main toolbar', () => {
+      render(<DiagramEditor />)
+      
+      // Verify Properties button is NOT in the main toolbar
+      expect(screen.queryByText('🎨 Properties')).not.toBeInTheDocument()
     })
   })
 })
