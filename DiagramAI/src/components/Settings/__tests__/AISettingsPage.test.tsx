@@ -9,6 +9,14 @@ import { AIProviderService } from '../../../services/aiProviderService'
 jest.mock('../../../services/settingsStorage')
 jest.mock('../../../services/aiProviderService')
 
+// Mock the feature flags
+let mockAIChatEnabled = true
+jest.mock('../../../lib/featureFlags', () => ({
+  featureFlags: {
+    get aiChat() { return mockAIChatEnabled }
+  }
+}))
+
 const mockSettingsStorage = SettingsStorage as jest.Mocked<typeof SettingsStorage>
 const mockAIProviderService = AIProviderService as jest.Mocked<typeof AIProviderService>
 
@@ -36,6 +44,38 @@ describe('AISettingsPage', () => {
     mockSettingsStorage.saveSettings.mockResolvedValue()
     mockSettingsStorage.clearSettings.mockResolvedValue()
   })
+
+  describe('when AI chat is disabled', () => {
+    beforeEach(() => {
+      mockAIChatEnabled = false
+    })
+
+    it('shows coming soon message', async () => {
+      render(<AISettingsPage />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('AI Chat Features Coming Soon')).toBeInTheDocument()
+        expect(screen.getByText(/We're working hard to bring you AI-powered diagram assistance/)).toBeInTheDocument()
+      })
+    })
+
+    it('does not show AI provider cards', async () => {
+      render(<AISettingsPage />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('AI Chat Features Coming Soon')).toBeInTheDocument()
+      })
+
+      expect(screen.queryByText('OpenAI')).not.toBeInTheDocument()
+      expect(screen.queryByText('Anthropic')).not.toBeInTheDocument()
+      expect(screen.queryByText('OpenRouter')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('when AI chat is enabled', () => {
+    beforeEach(() => {
+      mockAIChatEnabled = true
+    })
 
   it('renders all AI provider cards', async () => {
     render(<AISettingsPage />)
@@ -230,4 +270,5 @@ describe('AISettingsPage', () => {
       expect(screen.getByText(/openrouter.ai/)).toBeInTheDocument()
     })
   })
+  }) // End of 'when AI chat is enabled' describe block
 })

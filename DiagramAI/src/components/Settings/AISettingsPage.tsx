@@ -5,6 +5,7 @@ import { AIProviderCard } from './AIProviderCard'
 import { SettingsImportExport } from './SettingsImportExport'
 import { SettingsStorage } from '../../services/settingsStorage'
 import { AIProviderService } from '../../services/aiProviderService'
+import { featureFlags } from '../../lib/featureFlags'
 
 export interface AIProvider {
   id: 'openai' | 'anthropic' | 'openrouter'
@@ -174,6 +175,33 @@ export const AISettingsPage: React.FC = () => {
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         <span className="ml-3 text-gray-600">Loading settings...</span>
+      </div>
+    )
+  }
+
+  // Show coming soon message when AI features are disabled
+  if (!featureFlags.aiChat) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <div className="text-center">
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+            <span className="text-2xl">🚧</span>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">AI Chat Features Coming Soon</h3>
+          <p className="text-gray-500 mb-6">
+            We're working hard to bring you AI-powered diagram assistance. 
+            AI chat functionality is currently under development and will be available soon.
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-blue-900 mb-2">🎯 What's Coming</h4>
+            <ul className="text-sm text-blue-800 space-y-1 text-left">
+              <li>• AI-powered diagram generation and editing</li>
+              <li>• Smart suggestions for workflow improvements</li>
+              <li>• Natural language diagram creation</li>
+              <li>• Multiple AI provider options (OpenAI, Anthropic, OpenRouter)</li>
+            </ul>
+          </div>
+        </div>
       </div>
     )
   }
