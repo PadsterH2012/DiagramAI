@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../../lib/prisma'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -62,9 +60,15 @@ async function getDiagrams(req: NextApiRequest, res: NextApiResponse) {
     })
   } catch (error) {
     console.error('Get diagrams error:', error)
+    
+    // Provide more specific error information for debugging
+    const errorMessage = error instanceof Error 
+      ? `Database error: ${error.message}` 
+      : 'Failed to fetch diagrams'
+    
     return res.status(500).json({
       success: false,
-      error: { message: 'Failed to fetch diagrams' }
+      error: { message: errorMessage }
     })
   }
 }
