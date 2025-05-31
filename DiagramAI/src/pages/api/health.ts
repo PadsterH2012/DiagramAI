@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           await table.check()
           databaseTables.push(table.name)
         } catch (error) {
-          console.error(`Table ${table.name} check failed:`, error.message)
+          console.error(`Table ${table.name} check failed:`, error instanceof Error ? error.message : 'Unknown error')
           // Table might not exist or be accessible
         }
       }
