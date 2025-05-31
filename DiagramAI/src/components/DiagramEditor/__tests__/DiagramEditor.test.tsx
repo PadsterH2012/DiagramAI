@@ -114,10 +114,9 @@ describe('DiagramEditor', () => {
 
     it('should still show other toolbar buttons', () => {
       render(<DiagramEditor />)
-      
+
       expect(screen.getByText('❓ Help')).toBeInTheDocument()
       expect(screen.getByText('💾 Save Diagram')).toBeInTheDocument()
-      expect(screen.getByText('Reset Demo')).toBeInTheDocument()
     })
   })
 
@@ -134,10 +133,9 @@ describe('DiagramEditor', () => {
 
     it('should show default toolbar buttons', () => {
       render(<DiagramEditor />)
-      
+
       expect(screen.getByText('❓ Help')).toBeInTheDocument()
       expect(screen.getByText('💾 Save Diagram')).toBeInTheDocument()
-      expect(screen.getByText('Reset Demo')).toBeInTheDocument()
     })
 
     it('should render main editor components', () => {

@@ -272,12 +272,6 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
     }
   }, [])
 
-  const handleReset = useCallback(() => {
-    setNodes(defaultNodes)
-    setEdges(defaultEdges)
-    setWasExplicitlyCleared(false)
-  }, [])
-
   return (
     <div className="flex h-full bg-white relative">
       {/* Slide-out Menu */}
@@ -345,12 +339,6 @@ export const DiagramEditor: React.FC<DiagramEditorProps> = ({
 
               {/* Diagram Actions */}
               <div className="flex items-center space-x-1 border-l border-gray-200 pl-2">
-                <button
-                  onClick={handleReset}
-                  className="btn-secondary text-sm"
-                >
-                  Reset Demo
-                </button>
                 <button
                   onClick={handleSave}
                   className="btn-primary text-sm"
