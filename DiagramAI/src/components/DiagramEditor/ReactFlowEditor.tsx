@@ -19,6 +19,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { createStyledEdge, connectionPresets } from '@/utils/edge-config'
+import { QuickNodePopup } from './QuickNodePopup'
 
 // Custom Node Components
 import { ProcessNode } from './Nodes/ProcessNode'
@@ -62,6 +63,8 @@ interface ReactFlowEditorProps {
   onShowProperties?: () => void
   onShowHelp?: () => void
   onClearAll?: () => void
+  onNodeAdd?: (nodeType: string, nodeData: any) => void
+  onOpenNodePalette?: () => void
   selectedNodes?: Node[]
   selectedEdges?: Edge[]
   clipboard?: { nodes: Node[], edges: Edge[] } | null
@@ -88,6 +91,8 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
   onShowProperties,
   onShowHelp,
   onClearAll,
+  onNodeAdd,
+  onOpenNodePalette,
   selectedNodes = [],
   selectedEdges = [],
   clipboard,
@@ -116,6 +121,7 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
   const [isToolbarDragging, setIsToolbarDragging] = React.useState(false)
   const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 })
   const [isToolbarExpanded, setIsToolbarExpanded] = React.useState(true)
+  const [showQuickNodes, setShowQuickNodes] = React.useState(false)
   const toolbarRef = React.useRef<HTMLDivElement>(null)
 
   // Global drag detection
@@ -141,13 +147,16 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
     }
   }, [])
 
-  // Keyboard shortcuts for mode switching
+  // Keyboard shortcuts for mode switching and quick node creation
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'v' && !e.ctrlKey && !e.metaKey) {
         setInteractionMode('select')
       } else if (e.key === 'h' && !e.ctrlKey && !e.metaKey) {
         setInteractionMode('pan')
+      } else if (e.key === 'n' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        setShowQuickNodes(true)
       }
     }
 
@@ -376,6 +385,77 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
     event.preventDefault()
   }, [])
 
+  // Quick node creation functions
+  const calculateOptimalPosition = useCallback(() => {
+    const { x, y } = screenToFlowPosition({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    })
+
+    // Check for overlapping nodes and adjust position if needed
+    const spacing = 150
+    let optimalX = x
+    let optimalY = y
+
+    const isPositionOccupied = (checkX: number, checkY: number) => {
+      return nodes.some(node => {
+        const distance = Math.sqrt(
+          Math.pow(node.position.x - checkX, 2) + 
+          Math.pow(node.position.y - checkY, 2)
+        )
+        return distance < spacing
+      })
+    }
+
+    // Try to find an unoccupied position in a spiral pattern
+    let attempts = 0
+    const maxAttempts = 16
+    
+    while (isPositionOccupied(optimalX, optimalY) && attempts < maxAttempts) {
+      const angle = (attempts * Math.PI * 2) / 8 // 8 directions
+      const radius = Math.ceil(attempts / 8) * spacing
+      optimalX = x + Math.cos(angle) * radius
+      optimalY = y + Math.sin(angle) * radius
+      attempts++
+    }
+
+    return { x: optimalX, y: optimalY }
+  }, [screenToFlowPosition, nodes])
+
+  const handleQuickNodeAdd = useCallback((nodeType: string, nodeData: any) => {
+    if (onNodeAdd) {
+      onNodeAdd(nodeType, nodeData)
+    } else {
+      // Fallback to creating node directly if no onNodeAdd prop
+      const newNode: Node = {
+        id: `node-${Date.now()}`,
+        type: nodeType,
+        position: calculateOptimalPosition(),
+        data: nodeData,
+      }
+
+      setNodes((prevNodes) => [...prevNodes, newNode])
+      
+      // Notify parent
+      setTimeout(() => {
+        onNodesChange?.([...nodes, newNode])
+      }, 0)
+    }
+  }, [onNodeAdd, calculateOptimalPosition, setNodes, onNodesChange, nodes])
+
+  const handleQuickNodeToggle = useCallback(() => {
+    setShowQuickNodes(!showQuickNodes)
+  }, [showQuickNodes])
+
+  const handleQuickNodeClose = useCallback(() => {
+    setShowQuickNodes(false)
+  }, [])
+
+  const handleViewAllNodes = useCallback(() => {
+    setShowQuickNodes(false)
+    onOpenNodePalette?.()
+  }, [onOpenNodePalette])
+
   return (
     <div
       className="w-full h-full relative"
@@ -497,6 +577,17 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
                   </button>
                 </div>
 
+                {/* Quick Node Creation Row */}
+                <div className="flex items-center space-x-1 mb-2 pb-2 border-b border-gray-100">
+                  <button
+                    onClick={handleQuickNodeToggle}
+                    className="px-2 py-1 text-xs font-medium rounded transition-colors bg-green-100 text-green-700 hover:bg-green-200"
+                    title="Add Node (Ctrl+N)"
+                  >
+                    ➕
+                  </button>
+                </div>
+
                 {/* Edit Actions Row */}
                 <div className="flex items-center space-x-1 mb-2 pb-2 border-b border-gray-100">
                   <button
@@ -565,6 +656,21 @@ const ReactFlowEditorWithProvider: React.FC<ReactFlowEditorProps> = ({
             )}
           </div>
         )}
+        
+        {/* Quick Node Creation Popup */}
+        {!readOnly && (
+          <QuickNodePopup
+            isOpen={showQuickNodes}
+            onClose={handleQuickNodeClose}
+            onNodeSelect={handleQuickNodeAdd}
+            onViewAll={handleViewAllNodes}
+            position={{
+              x: toolbarPosition.x + 60, // Position relative to toolbar
+              y: toolbarPosition.y + 120
+            }}
+          />
+        )}
+        
         <MiniMap
           nodeColor="#3b82f6"
           maskColor="rgba(255, 255, 255, 0.8)"

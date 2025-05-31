@@ -5,14 +5,27 @@ import { NodePalette } from './NodePalette'
 
 interface SlideOutMenuProps {
   onNodeAdd?: (nodeType: string, nodeData: any) => void
+  isOpen?: boolean
+  onToggle?: (isOpen: boolean) => void
 }
 
-export const SlideOutMenu: React.FC<SlideOutMenuProps> = ({ onNodeAdd }) => {
-  const [isOpen, setIsOpen] = useState(false)
+export const SlideOutMenu: React.FC<SlideOutMenuProps> = ({ 
+  onNodeAdd, 
+  isOpen: controlledIsOpen, 
+  onToggle 
+}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'nodes' | 'layers' | 'history'>('nodes')
 
+  // Use controlled or internal state
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen
+
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
+    if (onToggle) {
+      onToggle(!isOpen)
+    } else {
+      setInternalIsOpen(!internalIsOpen)
+    }
   }
 
   return (
