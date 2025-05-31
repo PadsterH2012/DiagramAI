@@ -18,7 +18,14 @@ jest.mock('@xyflow/react', () => ({
 
 const mockNodeProps = {
   id: 'test-node',
+  type: 'document',
   selected: false,
+  draggable: true,
+  dragging: false,
+  zIndex: 1,
+  selectable: true,
+  deletable: true,
+  position: { x: 0, y: 0 },
   data: {
     label: 'Test Node',
     description: 'Test Description',
