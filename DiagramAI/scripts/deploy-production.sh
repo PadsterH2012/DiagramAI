@@ -178,14 +178,39 @@ pull_images() {
 # Function to start containers
 start_containers() {
     log_info "Starting containers..."
-    
+
     if command_exists docker-compose; then
         docker-compose -f docker-compose.prod.yml up -d
     else
         docker compose -f docker-compose.prod.yml up -d
     fi
-    
+
     log_success "Containers started"
+}
+
+# Function to run database migrations
+run_migrations() {
+    log_info "Running database migrations..."
+
+    # Wait a moment for containers to be fully ready
+    sleep 10
+
+    # Run Prisma migrations
+    if command_exists docker-compose; then
+        if docker-compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
+            log_success "Database migrations completed successfully"
+        else
+            log_warning "Migration failed, trying db push..."
+            docker-compose -f docker-compose.prod.yml exec -T app npx prisma db push --force-reset
+        fi
+    else
+        if docker compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy; then
+            log_success "Database migrations completed successfully"
+        else
+            log_warning "Migration failed, trying db push..."
+            docker compose -f docker-compose.prod.yml exec -T app npx prisma db push --force-reset
+        fi
+    fi
 }
 
 # Function to wait for services to be healthy
@@ -294,7 +319,10 @@ main() {
     
     # Start containers
     start_containers
-    
+
+    # Run database migrations
+    run_migrations
+
     # Wait for health
     wait_for_health
     
