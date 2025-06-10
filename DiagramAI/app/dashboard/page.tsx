@@ -2,11 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+
+// Import the thumbnail component
+const DiagramThumbnail = dynamic(() => import('@/components/DiagramThumbnail'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-[200px] h-[150px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
+      <div className="text-xs text-gray-400">Loading...</div>
+    </div>
+  )
+})
 
 interface Diagram {
   id: string
   title: string
   description?: string
+  content?: any // Add content field for thumbnails
   format: 'reactflow' | 'mermaid'
   isPublic: boolean
   createdAt: string
@@ -136,44 +148,69 @@ export default function DashboardPage() {
                   </Link>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200">
-                  {diagrams.map((diagram) => (
-                    <div key={diagram.id} className="px-6 py-4 hover:bg-gray-50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-sm font-medium text-gray-900">{diagram.title}</h3>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {diagrams.map((diagram) => (
+                      <div key={diagram.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                        {/* Diagram Thumbnail */}
+                        <div className="mb-3">
+                          <DiagramThumbnail
+                            content={diagram.content}
+                            format={diagram.format}
+                            title={diagram.title}
+                            width={200}
+                            height={150}
+                            onClick={() => window.open(`/diagram/${diagram.id}`, '_blank')}
+                            className="mx-auto"
+                          />
+                        </div>
+                        
+                        {/* Diagram Info */}
+                        <div className="space-y-2">
+                          <h3 className="text-sm font-medium text-gray-900 truncate" title={diagram.title}>
+                            {diagram.title}
+                          </h3>
                           {diagram.description && (
-                            <p className="text-xs text-gray-600 mt-1">{diagram.description}</p>
+                            <p className="text-xs text-gray-600 line-clamp-2" title={diagram.description}>
+                              {diagram.description}
+                            </p>
                           )}
-                          <div className="flex items-center space-x-4 mt-1">
-                            <span className="text-xs text-gray-500 capitalize">
+                          
+                          {/* Metadata */}
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className="text-gray-500 capitalize">
                               {diagram.format === 'reactflow' ? '🎨 Visual' : '📝 Mermaid'}
                             </span>
-                            <span className="text-xs text-gray-500">{formatDate(diagram.updatedAt)}</span>
-                            <span className={`status-indicator text-xs ${
-                              diagram.isPublic ? 'status-success' : 'status-warning'
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-500">{formatDate(diagram.updatedAt)}</span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              diagram.isPublic 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-yellow-100 text-yellow-800'
                             }`}>
                               {diagram.isPublic ? 'Public' : 'Private'}
                             </span>
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Link
-                            href={`/editor?id=${diagram.id}`}
-                            className="text-blue-600 hover:text-blue-800 text-sm"
-                          >
-                            Edit
-                          </Link>
-                          <Link
-                            href={`/diagram/${diagram.id}`}
-                            className="text-green-600 hover:text-green-800 text-sm"
-                          >
-                            View
-                          </Link>
+                          
+                          {/* Action Buttons */}
+                          <div className="flex space-x-2 pt-2">
+                            <Link
+                              href={`/editor?id=${diagram.id}`}
+                              className="flex-1 text-center px-3 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
+                            >
+                              ✏️ Edit
+                            </Link>
+                            <Link
+                              href={`/diagram/${diagram.id}`}
+                              className="flex-1 text-center px-3 py-2 text-xs font-medium text-green-600 hover:text-green-800 hover:bg-green-50 rounded-md transition-colors"
+                            >
+                              👁️ View
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
 
